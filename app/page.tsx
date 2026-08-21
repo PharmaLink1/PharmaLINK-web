@@ -24,9 +24,9 @@ const features = [
 ];
 
 const steps = [
-  { n: "1", title: "Search", body: "Type the medicine you need." },
-  { n: "2", title: "Compare", body: "See nearby pharmacies, stock, and prices." },
-  { n: "3", title: "Go", body: "Head to the pharmacy that works for you." },
+  { n: "01", title: "Search", body: "Type the medicine you need." },
+  { n: "02", title: "Compare", body: "See nearby pharmacies, stock, and prices." },
+  { n: "03", title: "Go", body: "Head to the pharmacy that works for you." },
 ];
 
 export default function HomePage() {
@@ -38,11 +38,11 @@ export default function HomePage() {
         {/* Hero */}
         <section className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pt-24">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-primary-subtle px-3 py-1 text-sm font-medium text-primary-hover">
-              <MapPin className="size-4" aria-hidden />
-              For patients & pharmacies in Ethiopia
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 font-mono text-xs uppercase tracking-widest text-primary">
+              <span className="size-1.5 rounded-full bg-primary" aria-hidden />
+              For patients &amp; pharmacies in Ethiopia
             </span>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
               Find the medicine you need, at a pharmacy near you.
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -51,7 +51,7 @@ export default function HomePage() {
             </p>
 
             {/* Mock search affordance → routes to sign up */}
-            <div className="mx-auto mt-8 flex max-w-md items-center gap-2 rounded-xl border border-border bg-card p-2 shadow-sm">
+            <div className="mx-auto mt-8 flex max-w-md items-center gap-2 rounded-lg border border-border bg-card p-2">
               <span className="flex items-center pl-2 text-muted-foreground">
                 <Search className="size-5" aria-hidden />
               </span>
@@ -76,26 +76,34 @@ export default function HomePage() {
         </section>
 
         {/* How it works */}
-        <section className="border-y border-border bg-muted/40">
-          <div className="mx-auto grid max-w-4xl gap-6 px-6 py-14 sm:grid-cols-3">
-            {steps.map((step) => (
-              <div key={step.n} className="flex flex-col items-center text-center">
-                <span className="flex size-10 items-center justify-center rounded-full bg-primary text-lg font-semibold text-primary-foreground">
-                  {step.n}
-                </span>
-                <h3 className="mt-3 font-semibold">{step.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{step.body}</p>
-              </div>
-            ))}
+        <section className="border-y border-border bg-card/30">
+          <div className="mx-auto max-w-4xl px-6 py-14">
+            <p className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              How it works
+            </p>
+            <div className="grid gap-6 sm:grid-cols-3">
+              {steps.map((step) => (
+                <div key={step.n} className="flex flex-col items-center text-center">
+                  <span className="flex size-10 items-center justify-center rounded-md border border-primary/30 bg-primary-subtle font-mono text-sm font-semibold text-primary">
+                    {step.n}
+                  </span>
+                  <h3 className="mt-3 font-semibold">{step.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{step.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* Features */}
         <section className="mx-auto max-w-6xl px-6 py-16">
+          <p className="mb-8 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            What you can do
+          </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(({ icon: Icon, title, body }) => (
-              <Card key={title} className="p-5">
-                <span className="flex size-10 items-center justify-center rounded-lg bg-primary-subtle text-primary">
+              <Card key={title} className="p-5 transition-colors hover:border-primary/40">
+                <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <h3 className="mt-4 font-semibold">{title}</h3>
@@ -107,23 +115,21 @@ export default function HomePage() {
 
         {/* Pharmacy (supply-side) callout */}
         <section className="mx-auto max-w-6xl px-6 pb-20">
-          <Card className="flex flex-col items-start gap-5 bg-gradient-to-br from-primary to-primary-hover p-8 text-primary-foreground sm:flex-row sm:items-center sm:justify-between">
-            <div className="max-w-xl">
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-primary-foreground/80">
+          <Card className="relative flex flex-col items-start gap-5 overflow-hidden p-8 sm:flex-row sm:items-center sm:justify-between">
+            <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-[320px] w-[320px] rounded-full bg-primary/15 blur-[100px]" />
+            <div className="relative max-w-xl">
+              <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary">
                 <Store className="size-4" aria-hidden />
                 For pharmacies
-              </span>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight">
                 Reach more patients. Keep stock and prices current in seconds.
               </h2>
-              <p className="mt-2 text-primary-foreground/85">
+              <p className="mt-2 text-muted-foreground">
                 Join PharmaLink and let nearby patients find what you have in stock.
               </p>
             </div>
-            <Link
-              href="/signup"
-              className="inline-flex h-12 shrink-0 items-center gap-2 rounded-md bg-white px-5 font-medium text-primary transition-colors hover:bg-white/90"
-            >
+            <Link href="/signup" className={`relative shrink-0 ${buttonVariants({ size: "lg" })}`}>
               List your pharmacy
               <ArrowRight className="size-4" aria-hidden />
             </Link>
@@ -133,10 +139,10 @@ export default function HomePage() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 text-sm text-muted-foreground sm:flex-row">
-          <span>© {new Date().getFullYear()} PharmaLink</span>
+          <span className="font-mono text-xs">© {new Date().getFullYear()} PharmaLink</span>
           <span className="inline-flex items-center gap-1.5">
             <Languages className="size-4" aria-hidden />
-            Amharic & English
+            Amharic &amp; English
           </span>
         </div>
       </footer>
