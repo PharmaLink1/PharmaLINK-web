@@ -41,15 +41,9 @@ export default function HomePage() {
         <section className="relative flex min-h-[calc(100dvh-4rem)] flex-col">
           <div className="flex flex-1 items-center">
             <div className="mx-auto max-w-2xl px-6 text-center">
-              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-primary sm:text-xs">
-                <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
-                Medicine finder · Ethiopia
-              </span>
-              <h1 className="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
                 Find the medicine you need,{" "}
-                <span className="box-decoration-clone rounded-sm bg-primary/15 px-1.5 text-primary">
-                  at a pharmacy near you.
-                </span>
+                <span className="text-muted-foreground">at a pharmacy near you.</span>
               </h1>
               <p className="mt-4 text-base text-muted-foreground sm:text-lg">
                 PharmaLink shows which nearby pharmacies have your medicine in stock, what it
