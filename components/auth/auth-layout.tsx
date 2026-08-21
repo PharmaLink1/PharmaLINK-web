@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CircleCheck, Pill } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { CornerTicks } from "@/components/ui/corner-ticks";
 
 const points = [
   "See which nearby pharmacies have your medicine in stock",
@@ -56,7 +57,12 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           <div className="mb-8 lg:hidden">
             <Logo />
           </div>
-          {children}
+          <div className="relative">
+            <CornerTicks />
+            <div className="rounded-lg border border-border bg-card/40 p-6 sm:p-8">
+              {children}
+            </div>
+          </div>
         </div>
       </main>
     </div>

@@ -12,10 +12,10 @@ export function Logo({
 }) {
   const inner = (
     <span className={cn("inline-flex items-center gap-2 font-semibold tracking-tight", className)}>
-      <span className="inline-flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <Pill className="size-5" aria-hidden />
+      <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground sm:size-8">
+        <Pill className="size-4 sm:size-5" aria-hidden />
       </span>
-      <span className="text-lg">PharmaLink</span>
+      <span className="text-base sm:text-lg">PharmaLink</span>
     </span>
   );
 

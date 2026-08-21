@@ -5,6 +5,7 @@ import { useSession } from "@/lib/auth-context";
 import { AppHeader } from "@/components/layout/app-header";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { CornerTicks } from "@/components/ui/corner-ticks";
 
 export function DashboardContent() {
   const { user } = useSession();
@@ -37,8 +38,9 @@ export function DashboardContent() {
 
         {/* Placeholder shell for features built later. */}
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="p-5">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-primary-subtle text-primary">
+          <Card className="relative p-5">
+            <CornerTicks className="border-border" size="size-2" />
+            <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
               <Search className="size-5" aria-hidden />
             </span>
             <h2 className="mt-4 font-semibold">Find a medicine</h2>
@@ -46,8 +48,9 @@ export function DashboardContent() {
               Medicine search is coming soon.
             </p>
           </Card>
-          <Card className="p-5">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-primary-subtle text-primary">
+          <Card className="relative p-5">
+            <CornerTicks className="border-border" size="size-2" />
+            <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
               <Clock className="size-5" aria-hidden />
             </span>
             <h2 className="mt-4 font-semibold">Recent activity</h2>
@@ -56,8 +59,9 @@ export function DashboardContent() {
             </p>
           </Card>
           {isPharmacist && (
-            <Card className="p-5">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-primary-subtle text-primary">
+            <Card className="relative p-5">
+              <CornerTicks className="border-border" size="size-2" />
+              <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
                 <Store className="size-5" aria-hidden />
               </span>
               <h2 className="mt-4 font-semibold">Your pharmacy</h2>

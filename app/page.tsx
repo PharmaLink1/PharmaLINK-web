@@ -3,6 +3,7 @@ import {
   ArrowRight,
   BadgeCheck,
   Bell,
+  ChevronDown,
   Clock,
   Languages,
   MapPin,
@@ -13,6 +14,7 @@ import {
 import { SiteHeader } from "@/components/layout/site-header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { CornerTicks } from "@/components/ui/corner-ticks";
 
 const features = [
   { icon: Search, title: "Search any medicine", body: "Find a medicine by brand or generic name and see who has it right now." },
@@ -35,53 +37,56 @@ export default function HomePage() {
       <SiteHeader />
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pt-24">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 font-mono text-xs uppercase tracking-widest text-primary">
-              <span className="size-1.5 rounded-full bg-primary" aria-hidden />
-              For patients &amp; pharmacies in Ethiopia
-            </span>
-            <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
-              Find the medicine you need, at a pharmacy near you.
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              PharmaLink shows which nearby pharmacies have your medicine in stock, what it
-              costs, and how to take it — so you stop calling around.
-            </p>
-
-            {/* Mock search affordance → routes to sign up */}
-            <div className="mx-auto mt-8 flex max-w-md items-center gap-2 rounded-lg border border-border bg-card p-2">
-              <span className="flex items-center pl-2 text-muted-foreground">
-                <Search className="size-5" aria-hidden />
+        {/* Hero — fills the first screen; the rest appears on scroll */}
+        <section className="relative flex min-h-[calc(100dvh-4rem)] flex-col">
+          <div className="flex flex-1 items-center">
+            <div className="mx-auto max-w-2xl px-6 text-center">
+              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-primary sm:text-xs">
+                <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                Medicine finder · Ethiopia
               </span>
-              <span className="flex-1 truncate text-left text-muted-foreground">
-                Search a medicine, e.g. Paracetamol
-              </span>
-              <Link href="/signup" className={buttonVariants({ size: "sm" })}>
-                Get started
-              </Link>
+              <h1 className="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+                Find the medicine you need,{" "}
+                <span className="box-decoration-clone rounded-sm bg-primary/15 px-1.5 text-primary">
+                  at a pharmacy near you.
+                </span>
+              </h1>
+              <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+                PharmaLink shows which nearby pharmacies have your medicine in stock, what it
+                costs, and how to take it — so you stop calling around.
+              </p>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link href="/signup" className={`w-full sm:w-44 ${buttonVariants({ size: "md" })}`}>
+                  Create account
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+                <Link href="/signin" className={`w-full sm:w-44 ${buttonVariants({ variant: "outline", size: "md" })}`}>
+                  Sign in
+                </Link>
+              </div>
             </div>
+          </div>
 
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <Link href="/signup" className={buttonVariants({ size: "lg" })}>
-                Create account
-                <ArrowRight className="size-4" aria-hidden />
-              </Link>
-              <Link href="/signin" className={buttonVariants({ variant: "outline", size: "lg" })}>
-                Sign in
-              </Link>
+          {/* farming-labs style bottom strip */}
+          <div className="mx-auto w-full max-w-6xl px-6 pb-6">
+            <div className="flex items-center justify-between border-t border-border/50 pt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span>Amharic &amp; English</span>
+              <span className="hidden items-center gap-1.5 sm:flex">
+                <ChevronDown className="size-3.5 animate-bounce" aria-hidden />
+                Scroll to explore
+              </span>
+              <span>Free to use</span>
             </div>
           </div>
         </section>
 
         {/* How it works */}
-        <section className="border-y border-border bg-card/30">
+        <section id="how" className="border-y border-border bg-card/30">
           <div className="mx-auto max-w-4xl px-6 py-14">
             <p className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
               How it works
             </p>
-            <div className="grid gap-6 sm:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
               {steps.map((step) => (
                 <div key={step.n} className="flex flex-col items-center text-center">
                   <span className="flex size-10 items-center justify-center rounded-md border border-primary/30 bg-primary-subtle font-mono text-sm font-semibold text-primary">
@@ -96,13 +101,14 @@ export default function HomePage() {
         </section>
 
         {/* Features */}
-        <section className="mx-auto max-w-6xl px-6 py-16">
+        <section id="features" className="mx-auto max-w-6xl px-6 py-16">
           <p className="mb-8 font-mono text-xs uppercase tracking-widest text-muted-foreground">
             What you can do
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(({ icon: Icon, title, body }) => (
-              <Card key={title} className="p-5 transition-colors hover:border-primary/40">
+              <Card key={title} className="relative p-5 transition-colors hover:border-primary/40">
+                <CornerTicks className="border-border" size="size-2" />
                 <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
                   <Icon className="size-5" aria-hidden />
                 </span>
@@ -114,8 +120,8 @@ export default function HomePage() {
         </section>
 
         {/* Pharmacy (supply-side) callout */}
-        <section className="mx-auto max-w-6xl px-6 pb-20">
-          <Card className="relative flex flex-col items-start gap-5 overflow-hidden p-8 sm:flex-row sm:items-center sm:justify-between">
+        <section id="pharmacies" className="mx-auto max-w-6xl px-6 pb-20">
+          <Card className="relative flex flex-col items-start gap-5 overflow-hidden p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
             <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-[320px] w-[320px] rounded-full bg-primary/15 blur-[100px]" />
             <div className="relative max-w-xl">
               <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary">
@@ -129,7 +135,7 @@ export default function HomePage() {
                 Join PharmaLink and let nearby patients find what you have in stock.
               </p>
             </div>
-            <Link href="/signup" className={`relative shrink-0 ${buttonVariants({ size: "lg" })}`}>
+            <Link href="/signup" className={`relative w-full shrink-0 sm:w-auto ${buttonVariants({ size: "md" })}`}>
               List your pharmacy
               <ArrowRight className="size-4" aria-hidden />
             </Link>
