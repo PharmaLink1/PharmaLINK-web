@@ -22,6 +22,18 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false);
   const close = () => setOpen(false);
 
+  // Sliding hover/focus highlight for the desktop nav rail.
+  const railRef = React.useRef<HTMLDivElement>(null);
+  const [pill, setPill] = React.useState({ left: 0, width: 0, opacity: 0 });
+  const movePill = (el: HTMLElement) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const r = el.getBoundingClientRect();
+    const base = rail.getBoundingClientRect();
+    setPill({ left: r.left - base.left, width: r.width, opacity: 1 });
+  };
+  const hidePill = () => setPill((p) => ({ ...p, opacity: 0 }));
+
   // Transparent at the top of the page; gains strength as the user scrolls.
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -78,18 +90,29 @@ export function SiteHeader() {
             <Logo />
           </div>
 
-          {/* centered nav (desktop) */}
-          <nav className="hidden items-center gap-7 md:flex">
+          {/* centered nav rail (desktop) with a sliding hover/focus highlight */}
+          <div
+            ref={railRef}
+            onMouseLeave={hidePill}
+            className="relative hidden items-center gap-1 rounded-md border border-border/70 bg-card/40 p-1 backdrop-blur md:flex"
+          >
+            <span
+              aria-hidden
+              style={{ left: pill.left, width: pill.width, opacity: pill.opacity }}
+              className="pointer-events-none absolute inset-y-1 rounded-[3px] bg-muted transition-all duration-200 ease-out"
+            />
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                onMouseEnter={(e) => movePill(e.currentTarget)}
+                onFocus={(e) => movePill(e.currentTarget)}
+                className="relative z-10 rounded-[3px] px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
               >
                 {link.label}
               </Link>
             ))}
-          </nav>
+          </div>
 
           <div className="flex flex-1 items-center justify-end gap-2">
             <div className="hidden items-center gap-2 md:flex">{authButtons(false)}</div>
