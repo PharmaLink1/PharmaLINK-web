@@ -13,6 +13,14 @@ type SessionContextValue = {
   login: (input: { email: string; password: string }) => Promise<void>;
   verifyOtp: (input: { email: string; otp: string }) => Promise<void>;
   signup: (input: { email: string; password: string; full_name: string }) => Promise<void>;
+  applyPharmacist: (input: {
+    email: string;
+    password: string;
+    full_name: string;
+    pharmacy_name: string;
+    license_number: string;
+    address: string;
+  }) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -67,6 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     signup: async (input) => {
       await authApi.register(input);
+    },
+    applyPharmacist: async (input) => {
+      await authApi.applyPharmacist(input);
     },
     logout: async () => {
       await authApi.logout();

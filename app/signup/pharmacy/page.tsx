@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
-export const metadata: Metadata = { title: "Create account — PharmaLink" };
+export const metadata: Metadata = { title: "List your pharmacy — PharmaLink" };
 
-export default function SignUpPage() {
+export default function PharmacistApplyPage() {
   return (
     <AuthLayout>
-      <SignUpForm />
+      <SignUpForm defaultRole="pharmacist" />
     </AuthLayout>
   );
 }

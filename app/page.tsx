@@ -129,7 +129,7 @@ export default function HomePage() {
                 Join PharmaLink and let nearby patients find what you have in stock.
               </p>
             </div>
-            <Link href="/signup" className={`relative w-full shrink-0 sm:w-auto ${buttonVariants({ size: "md" })}`}>
+            <Link href="/signup/pharmacy" className={`relative w-full shrink-0 sm:w-auto ${buttonVariants({ size: "md" })}`}>
               List your pharmacy
               <ArrowRight className="size-4" aria-hidden />
             </Link>

@@ -90,6 +90,22 @@ export const authApi = {
     return raw<null>("/auth/register", { method: "POST", body: input });
   },
 
+  /**
+   * POST /auth/pharmacist/apply — starts the OTP flow carrying pharmacy details.
+   * Like register, no account/tokens yet (202). On OTP verify the backend creates
+   * a normal "user" plus a pending pharmacist application for an admin to review.
+   */
+  applyPharmacist(input: {
+    email: string;
+    password: string;
+    full_name: string;
+    pharmacy_name: string;
+    license_number: string;
+    address: string;
+  }): Promise<null> {
+    return raw<null>("/auth/pharmacist/apply", { method: "POST", body: input });
+  },
+
   /** POST /auth/verify-otp — creates the account and starts a session (201). */
   async verifyOtp(input: { email: string; otp: string }): Promise<AuthResult> {
     const data = await raw<AuthResult>("/auth/verify-otp", { method: "POST", body: input });

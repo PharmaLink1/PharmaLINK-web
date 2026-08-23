@@ -19,6 +19,11 @@ export function validateFullName(value: string): string | undefined {
   if (!value.trim()) return "Full name is required.";
 }
 
+/** Generic required-text check for the pharmacist application fields. */
+export function validateRequired(value: string, label: string): string | undefined {
+  if (!value.trim()) return `${label} is required.`;
+}
+
 export function validateOtp(value: string): string | undefined {
   if (value.length !== OTP_LENGTH) return `Enter the ${OTP_LENGTH}-digit code.`;
   if (!/^\d+$/.test(value)) return "The code is digits only.";
