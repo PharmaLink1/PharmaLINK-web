@@ -21,6 +21,9 @@ type SessionContextValue = {
     license_number: string;
     address: string;
   }) => Promise<void>;
+  forgotPassword: (input: { email: string }) => Promise<void>;
+  resetPassword: (input: { email: string; otp: string; new_password: string }) => Promise<void>;
+  changePassword: (input: { current_password: string; new_password: string }) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -78,6 +81,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     applyPharmacist: async (input) => {
       await authApi.applyPharmacist(input);
+    },
+    forgotPassword: async (input) => {
+      await authApi.forgotPassword(input);
+    },
+    resetPassword: async (input) => {
+      await authApi.resetPassword(input);
+    },
+    changePassword: async (input) => {
+      await authApi.changePassword(input);
     },
     logout: async () => {
       await authApi.logout();

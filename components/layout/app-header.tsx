@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import Link from "next/link";
 import { useSession } from "@/lib/auth-context";
 import { Logo } from "@/components/ui/logo";
 
@@ -79,6 +80,15 @@ export function AppHeader() {
                 <p className="truncate text-sm font-medium">{user?.full_name}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
               </div>
+              <Link
+                href="/settings/security"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+              >
+                <Settings className="size-4 text-muted-foreground" aria-hidden />
+                Change password
+              </Link>
               <button
                 type="button"
                 role="menuitem"

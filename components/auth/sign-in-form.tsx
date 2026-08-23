@@ -99,6 +99,15 @@ export function SignInForm() {
         </div>
       </Field>
 
+      <div className="-mt-1 text-right">
+        <Link
+          href="/forgot-password"
+          className="text-sm font-medium text-primary hover:text-primary-hover"
+        >
+          Forgot password?
+        </Link>
+      </div>
+
       <Button type="submit" size="lg" block loading={submitting}>
         {submitting ? "Signing in" : "Sign in"}
       </Button>

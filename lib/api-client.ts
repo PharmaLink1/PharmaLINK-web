@@ -130,6 +130,24 @@ export const authApi = {
     }
   },
 
+  /** POST /auth/forgot-password — emails a reset OTP. Always 202; never reveals
+   * whether the email is registered. */
+  forgotPassword(input: { email: string }): Promise<null> {
+    return raw<null>("/auth/forgot-password", { method: "POST", body: input });
+  },
+
+  /** POST /auth/reset-password — verifies the OTP and sets a new password (200).
+   * Returns no tokens: the backend revokes all sessions, so the user must sign in. */
+  resetPassword(input: { email: string; otp: string; new_password: string }): Promise<null> {
+    return raw<null>("/auth/reset-password", { method: "POST", body: input });
+  },
+
+  /** POST /auth/change-password — authenticated; verifies the current password and
+   * sets a new one (200). The backend revokes all sessions on success. */
+  changePassword(input: { current_password: string; new_password: string }): Promise<null> {
+    return request<null>("/auth/change-password", { method: "POST", body: input });
+  },
+
   /** GET /auth/me — current user, role/status, and pending-application flag. */
   me(): Promise<Me> {
     return request<Me>("/auth/me", {});
