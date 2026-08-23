@@ -22,17 +22,17 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false);
   const close = () => setOpen(false);
 
-  // Sliding hover/focus highlight for the desktop nav rail.
-  const railRef = React.useRef<HTMLDivElement>(null);
-  const [pill, setPill] = React.useState({ left: 0, width: 0, opacity: 0 });
-  const movePill = (el: HTMLElement) => {
-    const rail = railRef.current;
-    if (!rail) return;
+  // Sliding highlight (lozenge) that follows the hovered/focused desktop nav link.
+  const navRef = React.useRef<HTMLElement>(null);
+  const [indicator, setIndicator] = React.useState({ left: 0, width: 0, opacity: 0 });
+  const moveIndicator = (el: HTMLElement) => {
+    const nav = navRef.current;
+    if (!nav) return;
     const r = el.getBoundingClientRect();
-    const base = rail.getBoundingClientRect();
-    setPill({ left: r.left - base.left, width: r.width, opacity: 1 });
+    const base = nav.getBoundingClientRect();
+    setIndicator({ left: r.left - base.left, width: r.width, opacity: 1 });
   };
-  const hidePill = () => setPill((p) => ({ ...p, opacity: 0 }));
+  const hideIndicator = () => setIndicator((s) => ({ ...s, opacity: 0 }));
 
   // Transparent at the top of the page; gains strength as the user scrolls.
   React.useEffect(() => {
@@ -56,6 +56,8 @@ export function SiteHeader() {
   }, [open]);
 
   const authButtons = (block: boolean) =>
+    // Desktop auth sits beside the nav islands at matching height; both use the
+    // app's default sharp radius. The mobile menu keeps full-width block buttons.
     status === "authenticated" ? (
       <Link href="/dashboard" onClick={close} className={buttonVariants({ block, size: block ? "md" : "sm" })}>
         Dashboard
@@ -65,11 +67,11 @@ export function SiteHeader() {
         <Link
           href="/signin"
           onClick={close}
-          className={buttonVariants({ variant: block ? "outline" : "ghost", block, size: block ? "md" : "sm" })}
+          className={buttonVariants({ variant: block ? "outline" : "ghost", block, size: "md" })}
         >
           Sign in
         </Link>
-        <Link href="/signup" onClick={close} className={buttonVariants({ block, size: block ? "md" : "sm" })}>
+        <Link href="/signup" onClick={close} className={buttonVariants({ block, size: "md" })}>
           Create account
         </Link>
       </>
@@ -80,47 +82,52 @@ export function SiteHeader() {
       <header
         className={cn(
           "sticky top-0 z-40 transition-colors duration-200",
-          scrolled
-            ? "border-b border-border bg-background/80 backdrop-blur-lg"
-            : "border-b border-transparent bg-background/20 backdrop-blur-sm",
+          scrolled && "bg-background/40 backdrop-blur-lg",
         )}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6 pt-3 md:pt-4">
           <div className="flex flex-1 items-center">
             <Logo />
           </div>
 
-          {/* centered nav rail (desktop) with a sliding hover/focus highlight */}
-          <div
-            ref={railRef}
-            onMouseLeave={hidePill}
-            className="relative hidden items-center gap-1 rounded-md border border-border/70 bg-card/40 p-1 backdrop-blur md:flex"
+          {/* centered nav (desktop) — frosted rounded-full pill with a sliding lozenge */}
+          <nav
+            ref={navRef}
+            aria-label="Primary"
+            onMouseLeave={hideIndicator}
+            className={cn(
+              "relative hidden items-center rounded-lg border p-1.5 backdrop-blur-md transition-colors lg:flex",
+              scrolled ? "border-border bg-card/80" : "border-border/70 bg-card/50",
+            )}
           >
             <span
               aria-hidden
-              style={{ left: pill.left, width: pill.width, opacity: pill.opacity }}
-              className="pointer-events-none absolute inset-y-1 rounded-[3px] bg-muted transition-all duration-200 ease-out"
+              style={{ left: indicator.left, width: indicator.width, opacity: indicator.opacity }}
+              className="pointer-events-none absolute inset-y-1.5 rounded-sm bg-muted transition-all duration-200 ease-out"
             />
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                onMouseEnter={(e) => movePill(e.currentTarget)}
-                onFocus={(e) => movePill(e.currentTarget)}
-                className="relative z-10 rounded-[3px] px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
+                onMouseEnter={(e) => moveIndicator(e.currentTarget)}
+                onFocus={(e) => moveIndicator(e.currentTarget)}
+                className="relative z-10 rounded-sm px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
               >
                 {link.label}
               </Link>
             ))}
-          </div>
+          </nav>
 
           <div className="flex flex-1 items-center justify-end gap-2">
-            <div className="hidden items-center gap-2 md:flex">{authButtons(false)}</div>
+            <div className="hidden items-center gap-2 lg:flex">{authButtons(false)}</div>
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
-              className="inline-flex size-9 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted md:hidden"
+              className={cn(
+                "inline-flex size-10 items-center justify-center rounded-lg border text-foreground backdrop-blur-md transition-colors hover:bg-muted lg:hidden",
+                scrolled ? "border-border bg-card/80" : "border-border/70 bg-card/50",
+              )}
             >
               <Menu className="size-5" />
             </button>
@@ -131,7 +138,7 @@ export function SiteHeader() {
       {/* mobile menu — rendered OUTSIDE the blurred header so `fixed` uses the
           viewport as its containing block and truly centers on both axes. */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-6 md:hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-6 lg:hidden">
           {/* blurred backdrop (the page behind) — tap to close */}
           <button
             type="button"

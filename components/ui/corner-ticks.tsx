@@ -3,7 +3,7 @@ import { cn } from "@/lib/cn";
 /**
  * Decorative L-shaped ticks at the four corners of a `relative` container — the
  * "edge style" used across PharmaLink's technical surfaces. Drop inside any
- * position-relative element. Defaults to the green accent; pass `className` to
+ * position-relative element. Defaults to the brand accent; pass `className` to
  * recolor (e.g. "border-border" for a subtle version).
  */
 export function CornerTicks({

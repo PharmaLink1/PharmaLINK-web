@@ -39,7 +39,7 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Hero — fills the first screen; the rest appears on scroll */}
         <section className="relative flex min-h-[calc(100dvh-4rem)] flex-col">
-          <div className="flex flex-1 items-center">
+          <div className="flex flex-1 items-center pt-16 sm:pt-24">
             <div className="mx-auto max-w-2xl px-6 text-center">
               <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
                 Find the medicine you need,{" "}
@@ -116,7 +116,7 @@ export default function HomePage() {
         {/* Pharmacy (supply-side) callout */}
         <section id="pharmacies" className="mx-auto max-w-6xl px-6 pb-20">
           <Card className="relative flex flex-col items-start gap-5 overflow-hidden p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-            <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-[320px] w-[320px] rounded-full bg-primary/15 blur-[100px]" />
+            <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-[320px] w-[320px] rounded-full bg-primary/10 blur-[100px]" />
             <div className="relative max-w-xl">
               <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary">
                 <Store className="size-4" aria-hidden />

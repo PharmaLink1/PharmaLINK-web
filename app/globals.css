@@ -2,29 +2,30 @@
 
 /*
   PharmaLink design tokens — dark, technical direction (inspired by
-  docs.farming-labs.dev): near-black canvas, restrained green accent, 1px
-  structure, tight radius. Change values here; every primitive inherits them.
+  docs.farming-labs.dev): soft off-black canvas, restrained near-white accent,
+  1px structure, tight radius. Green is reserved for status only (see --success),
+  never as the brand. Change values here; every primitive inherits them.
   The mobile team mirrors these tokens.
 */
 :root {
   /* Canvas & text */
-  --background: #0a0a0b;
-  --foreground: #e9ebea;
+  --background: #0b0c0e;
+  --foreground: #ededee;
   --muted: #17181a;
-  --muted-foreground: #9ba39f;
+  --muted-foreground: #9b9ea2;
 
   /* Surfaces */
   --card: #101114;
-  --card-foreground: #e9ebea;
+  --card-foreground: #ededee;
   --border: #26282b;
   --input: #2a2d30;
-  --ring: #22c55e;
+  --ring: #d6d8d8;
 
-  /* Brand — health / marketplace green (pops on dark) */
-  --primary: #22c55e;
-  --primary-hover: #4ade80;
-  --primary-foreground: #04140a;
-  --primary-subtle: #0f241a;
+  /* Brand — neutral near-white (premium, non-"cyber"); green stays in --success */
+  --primary: #f5f6f6;
+  --primary-hover: #e4e6e6;
+  --primary-foreground: #0a0b0d;
+  --primary-subtle: #1b1d20;
 
   /* Semantic states (pair color with text everywhere) */
   --success: #22c55e;
@@ -100,7 +101,7 @@ body {
   border-radius: 2px;
 }
 
-/* Green text selection — a small on-brand touch. */
+/* Text selection — a small on-brand touch. */
 ::selection {
   background: color-mix(in oklch, var(--primary) 30%, transparent);
   color: var(--foreground);
@@ -109,8 +110,8 @@ body {
 /* Technical grid texture used behind hero/auth surfaces (see <Backdrop />). */
 .bg-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklch, var(--muted-foreground) 20%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--muted-foreground) 20%, transparent) 1px, transparent 1px);
   background-size: 3.5rem 3.5rem;
 }
 

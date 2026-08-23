@@ -19,7 +19,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
       <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-border bg-card p-12 lg:flex">
         {/* technical texture + glow, scoped to the panel */}
         <div aria-hidden className="bg-grid pointer-events-none absolute inset-0 opacity-70" />
-        <div aria-hidden className="pointer-events-none absolute -left-24 top-0 h-[420px] w-[420px] rounded-full bg-primary/20 blur-[120px]" />
+        <div aria-hidden className="pointer-events-none absolute -left-24 top-0 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[120px]" />
 
         <div className="relative">
           <Link href="/" className="inline-flex items-center gap-2 font-semibold" aria-label="PharmaLink home">
