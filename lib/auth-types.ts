@@ -24,6 +24,23 @@ export type AuthResult = {
   user: User;
 };
 
+export type ApplicationStatus = "pending" | "approved" | "rejected";
+
+/** A pharmacist application as returned by the admin review endpoints
+ * (mirrors the backend's ApplicationResponse). */
+export type PharmacistApplication = {
+  id: string;
+  user_id: string;
+  pharmacy_name: string;
+  license_number: string;
+  address: string;
+  status: ApplicationStatus;
+  reject_reason?: string;
+  reviewed_by?: string;
+  reviewed_at?: string;
+  created_at: string;
+};
+
 /** Standard success envelope: { success, message?, data }. */
 export type ApiSuccess<T> = {
   success: true;

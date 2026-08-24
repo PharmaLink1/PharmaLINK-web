@@ -2,7 +2,7 @@
 // attaches the access token, and transparently refreshes once on a 401.
 // Contract: /c/Code/development/PharmaLINK-backend (routes at root, no /api/v1).
 
-import { ApiError, type ApiSuccess, type AuthResult, type Me } from "./auth-types";
+import { ApiError, type ApiSuccess, type ApplicationStatus, type AuthResult, type Me, type PharmacistApplication } from "./auth-types";
 import { tokenStorage } from "./token-storage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
@@ -151,6 +151,32 @@ export const authApi = {
   /** GET /auth/me — current user, role/status, and pending-application flag. */
   me(): Promise<Me> {
     return request<Me>("/auth/me", {});
+  },
+};
+
+export const adminApi = {
+  /** GET /admin/pharmacist-applications?status= — review queue, optionally
+   * filtered by status. Admin only. */
+  listApplications(status?: ApplicationStatus): Promise<PharmacistApplication[]> {
+    const query = status ? `?status=${status}` : "";
+    return request<PharmacistApplication[]>(`/admin/pharmacist-applications${query}`, {});
+  },
+
+  /** POST /admin/pharmacist-applications/:id/approve — approves and promotes the
+   * applicant to pharmacist. Admin only. */
+  approveApplication(id: string): Promise<PharmacistApplication> {
+    return request<PharmacistApplication>(`/admin/pharmacist-applications/${id}/approve`, {
+      method: "POST",
+    });
+  },
+
+  /** POST /admin/pharmacist-applications/:id/reject — rejects with a required
+   * reason. Admin only. */
+  rejectApplication(id: string, reason: string): Promise<PharmacistApplication> {
+    return request<PharmacistApplication>(`/admin/pharmacist-applications/${id}/reject`, {
+      method: "POST",
+      body: { reason },
+    });
   },
 };
 
