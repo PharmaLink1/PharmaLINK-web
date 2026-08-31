@@ -19,10 +19,10 @@ export const tokenStorage = {
     return hasWindow() ? window.localStorage.getItem(REFRESH_KEY) : null;
   },
 
-  setTokens(tokens: Pick<AuthResult, "access_token" | "refresh_token">) {
+  setTokens(tokens: Pick<AuthResult, "accessToken" | "refreshToken">) {
     if (!hasWindow()) return;
-    window.localStorage.setItem(ACCESS_KEY, tokens.access_token);
-    window.localStorage.setItem(REFRESH_KEY, tokens.refresh_token);
+    window.localStorage.setItem(ACCESS_KEY, tokens.accessToken);
+    window.localStorage.setItem(REFRESH_KEY, tokens.refreshToken);
     notify();
   },
 

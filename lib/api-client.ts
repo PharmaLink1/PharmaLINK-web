@@ -51,13 +51,13 @@ let refreshing: Promise<boolean> | null = null;
 function refreshTokens(): Promise<boolean> {
   if (!refreshing) {
     refreshing = (async () => {
-      const refresh_token = tokenStorage.getRefreshToken();
-      if (!refresh_token) return false;
+      const refreshToken = tokenStorage.getRefreshToken();
+      if (!refreshToken) return false;
       try {
         // No auth header here, and never retried — avoids a refresh loop.
         const data = await raw<AuthResult>("/auth/refresh", {
           method: "POST",
-          body: { refresh_token },
+          body: { refreshToken },
         });
         tokenStorage.setTokens(data);
         return true;
@@ -86,22 +86,22 @@ async function request<T>(path: string, opts: RequestOptions): Promise<T> {
 
 export const authApi = {
   /** POST /auth/register — starts OTP flow; no account/tokens yet (202). */
-  register(input: { email: string; password: string; full_name: string }): Promise<null> {
+  register(input: { email: string; password: string; firstName: string; lastName: string; phone: string }): Promise<null> {
     return raw<null>("/auth/register", { method: "POST", body: input });
   },
 
   /**
    * POST /auth/pharmacist/apply — starts the OTP flow carrying pharmacy details.
    * Like register, no account/tokens yet (202). On OTP verify the backend creates
-   * a normal "user" plus a pending pharmacist application for an admin to review.
+   * a normal "patient" plus a pending pharmacist application for an admin to review.
    */
   applyPharmacist(input: {
     email: string;
     password: string;
-    full_name: string;
-    pharmacy_name: string;
-    license_number: string;
-    address: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    pharmacistDegreeCertificateUrl: string;
   }): Promise<null> {
     return raw<null>("/auth/pharmacist/apply", { method: "POST", body: input });
   },
@@ -122,9 +122,9 @@ export const authApi = {
 
   /** POST /auth/logout — revokes the refresh token, then clears local session. */
   async logout(): Promise<void> {
-    const refresh_token = tokenStorage.getRefreshToken();
+    const refreshToken = tokenStorage.getRefreshToken();
     try {
-      if (refresh_token) await raw<null>("/auth/logout", { method: "POST", body: { refresh_token } });
+      if (refreshToken) await raw<null>("/auth/logout", { method: "POST", body: { refreshToken } });
     } finally {
       tokenStorage.clear();
     }
@@ -138,13 +138,13 @@ export const authApi = {
 
   /** POST /auth/reset-password — verifies the OTP and sets a new password (200).
    * Returns no tokens: the backend revokes all sessions, so the user must sign in. */
-  resetPassword(input: { email: string; otp: string; new_password: string }): Promise<null> {
+  resetPassword(input: { email: string; otp: string; newPassword: string }): Promise<null> {
     return raw<null>("/auth/reset-password", { method: "POST", body: input });
   },
 
   /** POST /auth/change-password — authenticated; verifies the current password and
    * sets a new one (200). The backend revokes all sessions on success. */
-  changePassword(input: { current_password: string; new_password: string }): Promise<null> {
+  changePassword(input: { currentPassword: string; newPassword: string }): Promise<null> {
     return request<null>("/auth/change-password", { method: "POST", body: input });
   },
 

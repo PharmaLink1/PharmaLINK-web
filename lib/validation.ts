@@ -15,13 +15,30 @@ export function validatePassword(value: string): string | undefined {
   if (value.length < PASSWORD_MIN) return `Password must be at least ${PASSWORD_MIN} characters.`;
 }
 
-export function validateFullName(value: string): string | undefined {
-  if (!value.trim()) return "Full name is required.";
-}
-
-/** Generic required-text check for the pharmacist application fields. */
+/** Generic required-text check for the sign-up name/application fields. */
 export function validateRequired(value: string, label: string): string | undefined {
   if (!value.trim()) return `${label} is required.`;
+}
+
+/** Phone number — loose E.164-style check; the backend remains the final authority. */
+export function validatePhone(value: string): string | undefined {
+  if (!value.trim()) return "Phone number is required.";
+  if (!/^\+?\d{9,15}$/.test(value.trim())) return "Enter a valid phone number, e.g. +251911234567.";
+}
+
+/** Required URL check that mirrors the backend's `required,url` binding. */
+export function validateUrl(value: string, label: string): string | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) return `${label} is required.`;
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    return `Enter a valid URL for ${label.toLowerCase()}.`;
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    return "Enter a URL starting with http:// or https://.";
+  }
 }
 
 export function validateOtp(value: string): string | undefined {

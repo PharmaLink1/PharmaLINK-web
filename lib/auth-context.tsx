@@ -12,18 +12,18 @@ type SessionContextValue = {
   user: Me | null;
   login: (input: { email: string; password: string }) => Promise<void>;
   verifyOtp: (input: { email: string; otp: string }) => Promise<void>;
-  signup: (input: { email: string; password: string; full_name: string }) => Promise<void>;
+  signup: (input: { email: string; password: string; firstName: string; lastName: string; phone: string }) => Promise<void>;
   applyPharmacist: (input: {
     email: string;
     password: string;
-    full_name: string;
-    pharmacy_name: string;
-    license_number: string;
-    address: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    pharmacistDegreeCertificateUrl: string;
   }) => Promise<void>;
   forgotPassword: (input: { email: string }) => Promise<void>;
-  resetPassword: (input: { email: string; otp: string; new_password: string }) => Promise<void>;
-  changePassword: (input: { current_password: string; new_password: string }) => Promise<void>;
+  resetPassword: (input: { email: string; otp: string; newPassword: string }) => Promise<void>;
+  changePassword: (input: { currentPassword: string; newPassword: string }) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };

@@ -7,12 +7,12 @@ import { useSession } from "@/lib/auth-context";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
 import { buttonVariants } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { CornerTicks } from "@/components/ui/corner-ticks";
 
 const navLinks = [
-  { label: "Find medicines", href: "/signup" },
-  { label: "Drug info", href: "/signup" },
-  { label: "Reminders", href: "/signup" },
+  { label: "How it works", href: "#how" },
+  { label: "Compare prices", href: "#compare" },
   { label: "For pharmacies", href: "#pharmacies" },
 ];
 
@@ -22,27 +22,13 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false);
   const close = () => setOpen(false);
 
-  // Sliding highlight (lozenge) that follows the hovered/focused desktop nav link.
-  const navRef = React.useRef<HTMLElement>(null);
-  const [indicator, setIndicator] = React.useState({ left: 0, width: 0, opacity: 0 });
-  const moveIndicator = (el: HTMLElement) => {
-    const nav = navRef.current;
-    if (!nav) return;
-    const r = el.getBoundingClientRect();
-    const base = nav.getBoundingClientRect();
-    setIndicator({ left: r.left - base.left, width: r.width, opacity: 1 });
-  };
-  const hideIndicator = () => setIndicator((s) => ({ ...s, opacity: 0 }));
-
-  // Transparent at the top of the page; gains strength as the user scrolls.
+  // Full-width and transparent at the top; on scroll it floats into a compact,
+  // centered rounded pill (border + blur + shadow).
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    const id = requestAnimationFrame(onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      cancelAnimationFrame(id);
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Close the mobile menu on Escape.
@@ -56,10 +42,12 @@ export function SiteHeader() {
   }, [open]);
 
   const authButtons = (block: boolean) =>
-    // Desktop auth sits beside the nav islands at matching height; both use the
-    // app's default sharp radius. The mobile menu keeps full-width block buttons.
     status === "authenticated" ? (
-      <Link href="/dashboard" onClick={close} className={buttonVariants({ block, size: block ? "md" : "sm" })}>
+      <Link
+        href="/dashboard"
+        onClick={close}
+        className={buttonVariants({ block, size: block ? "md" : "sm" })}
+      >
         Dashboard
       </Link>
     ) : (
@@ -67,67 +55,56 @@ export function SiteHeader() {
         <Link
           href="/signin"
           onClick={close}
-          className={buttonVariants({ variant: block ? "outline" : "ghost", block, size: "md" })}
+          className={buttonVariants({ variant: block ? "outline" : "ghost", block, size: block ? "md" : "sm" })}
         >
-          Sign in
+          Login
         </Link>
-        <Link href="/signup" onClick={close} className={buttonVariants({ block, size: "md" })}>
-          Create account
+        <Link href="/signup" onClick={close} className={buttonVariants({ block, size: block ? "md" : "sm" })}>
+          Sign Up
         </Link>
       </>
     );
 
   return (
     <>
-      <header
-        className={cn(
-          "sticky top-0 z-40 transition-colors duration-200",
-          scrolled && "bg-background/40 backdrop-blur-lg",
-        )}
-      >
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6 pt-3 md:pt-4">
-          <div className="flex flex-1 items-center">
+      <header className="sticky top-0 z-50">
+        <div
+          className={cn(
+            "relative mx-auto flex h-12 items-center gap-2 px-1 transition-all duration-300 ease-out",
+            scrolled
+              ? "max-md:bg-background/60 backdrop-blur-2xl backdrop-saturate-150 md:mt-2 md:h-12 md:max-w-3xl md:rounded-xl md:border md:border-white/60 md:bg-white/40 md:px-1 md:shadow-lg md:shadow-black/5 lg:max-w-5xl dark:md:border-white/10 dark:md:bg-white/5"
+              : "max-w-6xl bg-background/30 backdrop-blur-lg backdrop-saturate-150",
+          )}
+        >
+          <div className="flex items-center">
             <Logo />
           </div>
 
-          {/* centered nav (desktop) — frosted rounded-full pill with a sliding lozenge */}
-          <nav
-            ref={navRef}
-            aria-label="Primary"
-            onMouseLeave={hideIndicator}
-            className={cn(
-              "relative hidden items-center rounded-lg border p-1.5 backdrop-blur-md transition-colors lg:flex",
-              scrolled ? "border-border bg-card/80" : "border-border/70 bg-card/50",
-            )}
-          >
-            <span
-              aria-hidden
-              style={{ left: indicator.left, width: indicator.width, opacity: indicator.opacity }}
-              className="pointer-events-none absolute inset-y-1.5 rounded-sm bg-muted transition-all duration-200 ease-out"
-            />
+          {/* desktop nav */}
+          <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1.5 lg:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                onMouseEnter={(e) => moveIndicator(e.currentTarget)}
-                onFocus={(e) => moveIndicator(e.currentTarget)}
-                className="relative z-10 rounded-sm px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
+                className="rounded-md px-4 py-1 text-sm text-foreground transition-colors hover:bg-muted focus-visible:bg-muted"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex flex-1 items-center justify-end gap-2">
+          <div className="ml-auto flex items-center justify-end">
+            <ThemeToggle
+              variant="blinds"
+              className="size-9 shrink-0 rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+              iconClassName="size-4"
+            />
             <div className="hidden items-center gap-2 lg:flex">{authButtons(false)}</div>
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
-              className={cn(
-                "inline-flex size-10 items-center justify-center rounded-lg border text-foreground backdrop-blur-md transition-colors hover:bg-muted lg:hidden",
-                scrolled ? "border-border bg-card/80" : "border-border/70 bg-card/50",
-              )}
+              className="inline-flex size-9 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-muted lg:hidden"
             >
               <Menu className="size-5" />
             </button>
@@ -135,19 +112,15 @@ export function SiteHeader() {
         </div>
       </header>
 
-      {/* mobile menu — rendered OUTSIDE the blurred header so `fixed` uses the
-          viewport as its containing block and truly centers on both axes. */}
+      {/* mobile menu - rendered outside the header so `fixed` centers on the viewport */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-6 lg:hidden">
-          {/* blurred backdrop (the page behind) — tap to close */}
           <button
             type="button"
             aria-label="Close menu"
             onClick={close}
-            className="absolute inset-0 bg-background/50 backdrop-blur-lg"
+            className="absolute inset-0 bg-background/60 backdrop-blur-lg"
           />
-
-          {/* the menu itself: opaque, bordered, corner-ticked */}
           <div className="relative my-auto w-full max-w-xs">
             <CornerTicks />
             <div className="rounded-lg border border-border bg-card p-6 shadow-2xl">
@@ -169,7 +142,7 @@ export function SiteHeader() {
                     key={link.label}
                     href={link.href}
                     onClick={close}
-                    className="rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="rounded-md px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
                   >
                     {link.label}
                   </Link>

@@ -148,6 +148,17 @@ marketplace — not a dev-tool console. Translate Upwork's patterns into PharmaL
   distance — the marketplace-trust vocabulary Upwork leans on, applied to pharmacy stock.
 - **Onboarding flows** with clear progress, like Upwork's freelancer onboarding, for
   pharmacy application/verification.
+- **Regional reference: v.odit.et.** A light-first Ethiopian SaaS (receipt verification)
+  that nails consumer trust: a tall light hero, one plain-language headline, ETB pricing
+  cards with a "Most popular" badge, and recognizable provider logos. Use it as the
+  regional north star for tone, trust cues, and pricing presentation.
+- **Image-free by default.** No decorative raster images or stock photos - icons, inline
+  SVG, and CSS-only visuals carry the design. The only "image" worth having is a
+  functional demo of the real product (like v.odit.et's receipt drop zone), and only on
+  marketing pages.
+- **Glass nav.** The landing header is a translucent glass bar (logo left, centered
+  links, actions right) that floats into a rounded pill on scroll - backdrop blur +
+  saturation over a translucent background, never a solid fill.
 
 Tone: **friendly, calm, trustworthy, and legible** for low-tech users and stressful
 (urgent-medicine) moments — closer to Upwork/consumer health than to a terminal UI.
@@ -160,17 +171,28 @@ Keep the marketplace warmth, but keep the skill's rigor on states, a11y, and pri
 Encode these as Tailwind theme tokens / CSS variables in `app/globals.css` before
 scattering raw values. This is the PharmaLink direction; align new primitives to it.
 
-- **Canvas:** light-first, clean neutral background; dark mode is a follow-up, not MVP.
+- **Canvas:** light-first by default (near-white `#fdfdfd`); dark mode is implemented via
+  the header toggle (`components/theme-provider.tsx`) with Mint Signal dark tokens in
+  `.dark` - keep both palettes in sync.
 - **Palette:** trustworthy health/marketplace **green** as the primary accent (works for
   both "pharmacy/health" and the Upwork-green marketplace feel), on a near-neutral gray
   scale. Restrained accent use — green for primary actions, focus, and positive stock.
+- **Approved theme: Mint Signal** (21st.dev), light-first by default. Tokens live in
+  `app/globals.css` (`:root` + `.dark`): mint `#51f0a8` primary with black foreground,
+  dark-mint `#0d9f5d` text accents, near-white `#fdfdfd` canvas, soft-minimal ~6px radius
+  (chips/badges keep pill). The shadcn CLI is initialized (`components.json`); registry
+  blocks like `@efferd/hero-2` install cleanly - do not re-run `shadcn init`, it rewrites
+  `components/ui/button.tsx` and globals.css.
 - **Semantic state colors:** in-stock = green, low = amber, out = red/neutral; plus
   success/warning/danger/info. Always pair color with **text** (accessibility + Tesfaye).
-- **Radius:** **soft, consumer-friendly** (`rounded-md`/`rounded-lg`, pill for chips/
-  badges) — this is a deliberate, permitted deviation from the skill's square default,
+- **Radius:** **soft-minimal (~6px)** for surfaces; pill reserved for chips/badges — this is a deliberate, permitted deviation from the skill's square default,
   because the product is consumer health, not a dev tool.
 - **Type:** clean sans for everything; larger base size and generous line-height for
   readability and low-tech users; reserve mono only for IDs/timestamps/codes if useful.
+- **Imagery:** **image-free by default** - lucide icons, inline SVG, and CSS-only
+  surfaces instead of decorative photos (slow 3G, low-end Android, tiny bundles). If a
+  marketing page ever needs a visual, use one real product screenshot, lazy-loaded and
+  compressed.
   Amharic and Latin must both render well — verify Amharic glyphs at every size.
 - **Spacing & density:** comfortable, touch-safe (min 44px targets) on mobile; denser on
   the pharmacy dashboard where staff scan many rows.
@@ -194,6 +216,19 @@ scattering raw values. This is the PharmaLink direction; align new primitives to
 - **Component libraries:** prefer building shadcn/Radix-style primitives with `cn` +
   `class-variance-authority` when we introduce them; don't hand-roll ad-hoc styles for
   reusable pieces. Compose from existing primitives before adding new ones.
+- **shadcn is initialized** (`components.json`, style `base-nova`/Base UI). New shadcn
+  code imports `cn` from `@/lib/utils`; older components use `@/lib/cn` - both exist.
+  Registries: `@efferd` (efferd.com) in `components.json`; `@beui` (beui.dev) also
+  resolves via `npx shadcn@latest add @beui/<block>` without a `components.json` entry.
+  Never re-run `shadcn init` (it rewrites
+  `components/ui/button.tsx` and globals.css).
+- **Theme system:** `components/theme-provider.tsx` (useSyncExternalStore) + an inline
+  init script in `app/layout.tsx` (no flash on load); the toggle is the animated beui
+  control at `components/motion/theme-toggle.tsx` (blinds view-transition reveal, uses
+  `motion`), wired to the custom provider's `useTheme` (`{ theme, toggleTheme }`).
+  `next-themes` (`shadcn add` pulls it in for registry toggles) is **not** used here -
+  it's removed; adapt any registry toggle to the custom provider instead of adding it.
+  Dark mode = `.dark` class on `<html>`; light is the default.
 - **Package manager:** npm (lockfile committed).
 - **Scripts:** `npm run dev`, `npm run build`, `npm run lint`.
 
@@ -206,7 +241,8 @@ scattering raw values. This is the PharmaLink direction; align new primitives to
 - **Amharic + English** on all core patient screens; persistent language toggle; never
   clip Amharic text; verify both languages at every breakpoint.
 - **Low bandwidth:** aggressive caching of catalog/drug-info; graceful degradation showing
-  last-known data with a clear "may be outdated" indicator; minimal images/assets.
+  last-known data with a clear "may be outdated" indicator; image-free UI (icons/SVG/CSS
+  only) and minimal assets.
 - **A11y:** WCAG-minded contrast in both languages, keyboard support, `focus-visible`,
   large touch targets, screen-reader labels. Assume low-tech users under stress.
 
@@ -235,8 +271,7 @@ Note: the PRD's suggested backend stack (NestJS/Supabase/Prisma) is **superseded
 real backend is **Go + Gin + MongoDB + Redis** at `/c/Code/development/PharmaLINK-backend`.
 The frontend integrates over its HTTP API.
 
-Known contract (detailed typed-client wiring is a **later task** — do not build auth
-screens yet):
+Known contract (auth is built and wired through the typed client in `lib/`):
 - **Base URL:** `process.env.NEXT_PUBLIC_API_URL` (local `http://localhost:8080`). Routes
   are at the **root** (no `/api/v1` prefix), e.g. `/auth/login`.
 - **Roles:** `user`, `pharmacist`, `admin`.
@@ -244,7 +279,7 @@ screens yet):
   `POST /auth/verify-otp` → tokens); sign-in is **Email + Password only** (`/auth/login`).
   Pharmacist onboarding: `POST /auth/pharmacist/apply` → OTP → pending → admin approves.
   `GET /auth/me` returns role/status/pending-application (for role-aware UI + banners).
-- **Tokens:** JWT **access + refresh**. Send `Authorization: Bearer <access_token>`.
+- **Tokens:** JWT **access + refresh** (camelCase keys: `accessToken`, `refreshToken`, `user.id`, `pendingPharmacistApplication`). Send `Authorization: Bearer <access_token>`.
 - **Success envelope:** `{ "success": true, "message": "...", "data": {...} }`.
 - **Error envelope:** `{ "error": { "code": "SOME_CODE", "message": "..." } }` — map
   `code` to user-facing (and localized) messages.

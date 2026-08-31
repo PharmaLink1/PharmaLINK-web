@@ -34,8 +34,8 @@ It's an external repo, so you cannot invoke it with the Skill tool. Instead, on 
    - animation/loaders/icons → `references/motion-and-icons.md`
    - reusable primitive/component APIs → `references/implementation-patterns.md`
 3. Apply its **craft + process** (primitives-first, whole-state coverage, a11y, motion
-   discipline, browser QA) with **PharmaLink's own tokens** (soft radius, health-green
-   accent, Amharic-ready type — see `AGENTS.md` §6). Its square/mono house style is a
+   discipline, browser QA) with **PharmaLink's own tokens** (Mint Signal theme:
+   mint #51f0a8 accent, ~6px radius, dark-mode toggle, Amharic-ready type — see `AGENTS.md` §6). Its square/mono house style is a
    fallback we intentionally override for this consumer-health product.
 
 ---
@@ -83,8 +83,11 @@ It's an external repo, so you cannot invoke it with the Skill tool. Instead, on 
   your work so the tree stays clean.
 - Never stage `node_modules`, `.next`, or real `.env*` files (only `.env.example`).
 
-## Scope reminder
+## Current state & next steps
 
-The current phase is **project initialization only**. Do **not** build signup, signin,
-OTP, dashboards, or other features yet. When we move to auth, we will first inspect the
-real backend API (`/c/Code/development/PharmaLINK-backend`) and build against it.
+The landing page and auth (signup/signin/OTP, pharmacist apply, password flows, admin
+review) are built and wired to the backend at `/c/Code/development/PharmaLINK-backend`
+(live on Render). Work proceeds **one page at a time** with human confirmation after
+each - the landing page is done (Mint Signal theme, glass nav, image-free hero), so the
+next candidates are the signup page, then the remaining auth pages, then the dashboards.
+Never auto-commit or auto-continue.

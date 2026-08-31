@@ -1,7 +1,5 @@
-import Link from "next/link";
-import { CircleCheck, Pill } from "lucide-react";
+import { Check } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
-import { CornerTicks } from "@/components/ui/corner-ticks";
 
 const points = [
   "See which nearby pharmacies have your medicine in stock",
@@ -10,44 +8,44 @@ const points = [
 ];
 
 /**
- * Split-screen auth: a technical branded panel on the left (desktop) and the form
- * on the right. On mobile the panel is hidden and just the form (with a logo) shows.
+ * Split-screen auth: a calm branded panel on the left (desktop) and the form on
+ * the right. On mobile the panel is hidden and just the form (with a logo) shows.
+ * Matches the landing page's light Mint Signal tone — faded vertical rules, a soft
+ * mint glow, and primary-strong accents (no dev-tool grid or corner ticks).
  */
 export function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-border bg-card p-12 lg:flex">
-        {/* technical texture + glow, scoped to the panel */}
-        <div aria-hidden className="bg-grid pointer-events-none absolute inset-0 opacity-70" />
-        <div aria-hidden className="pointer-events-none absolute -left-24 top-0 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[120px]" />
+        {/* Faded vertical rules + soft mint glow — image-free, mirrors the hero. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-y-0 left-12 w-px bg-linear-to-b from-transparent via-border to-border" />
+          <div className="absolute inset-y-0 right-12 w-px bg-linear-to-b from-transparent via-border/60 to-border/60" />
+          <div className="absolute -left-24 top-0 size-[420px] rounded-full bg-primary/10 blur-[120px]" />
+        </div>
 
         <div className="relative">
-          <Link href="/" className="inline-flex items-center gap-2 font-semibold" aria-label="PharmaLink home">
-            <span className="inline-flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Pill className="size-5" aria-hidden />
-            </span>
-            <span className="text-lg">PharmaLink</span>
-          </Link>
+          <Logo />
         </div>
 
         <div className="relative max-w-md">
-          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">
-            Medicine, mapped
-          </p>
-          <h2 className="text-3xl font-semibold leading-tight tracking-tight text-foreground">
+          <p className="text-sm font-medium text-primary-strong">Medicine, mapped</p>
+          <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-foreground">
             Find the medicines you need, at pharmacies near you.
           </h2>
           <ul className="mt-8 space-y-4">
             {points.map((point) => (
               <li key={point} className="flex items-start gap-3">
-                <CircleCheck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
+                  <Check className="size-3.5" aria-hidden />
+                </span>
                 <span className="text-muted-foreground">{point}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="relative font-mono text-xs text-muted-foreground">
+        <p className="relative text-sm text-muted-foreground">
           Connecting patients and pharmacies across Ethiopia.
         </p>
       </aside>
@@ -57,11 +55,8 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           <div className="mb-8 lg:hidden">
             <Logo />
           </div>
-          <div className="relative">
-            <CornerTicks />
-            <div className="rounded-lg border border-border bg-card/40 p-6 sm:p-8">
-              {children}
-            </div>
+          <div className="rounded-[var(--radius)] border border-border bg-card p-6 shadow-sm sm:p-8">
+            {children}
           </div>
         </div>
       </main>
