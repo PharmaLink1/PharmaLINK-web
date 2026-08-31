@@ -35,7 +35,11 @@ export function ApplicationsReview() {
     }
   }, []);
 
+  // Re-fetch whenever the status filter changes. `load` sets loading/error state
+  // synchronously so the spinner shows immediately — a legitimate data-fetch
+  // effect, hence the scoped disable.
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load(status);
   }, [status, load]);
 

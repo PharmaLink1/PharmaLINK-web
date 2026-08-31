@@ -44,9 +44,9 @@ export function ApplicationCard({
     <Card className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="truncate font-semibold">{application.pharmacy_name}</h2>
+          <h2 className="truncate font-semibold">Pharmacist application</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Applied {formatDate(application.created_at)}
+            Applied {formatDate(application.createdAt)}
           </p>
         </div>
         <StatusBadge status={application.status} />
@@ -54,18 +54,27 @@ export function ApplicationCard({
 
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-muted-foreground">License number</dt>
-          <dd className="mt-0.5 font-medium">{application.license_number}</dd>
+          <dt className="text-muted-foreground">Degree certificate</dt>
+          <dd className="mt-0.5">
+            <a
+              href={application.pharmacistDegreeCertificateUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-primary underline-offset-2 hover:underline"
+            >
+              View certificate
+            </a>
+          </dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Address</dt>
-          <dd className="mt-0.5 font-medium">{application.address}</dd>
+          <dt className="text-muted-foreground">Applicant ID</dt>
+          <dd className="mt-0.5 font-medium">{application.userId}</dd>
         </div>
       </dl>
 
-      {application.status === "rejected" && application.reject_reason && (
+      {application.status === "rejected" && application.rejectReason && (
         <p className="mt-4 rounded-md border border-danger/30 bg-danger-subtle px-3 py-2 text-sm text-foreground/90">
-          <span className="font-medium">Reason:</span> {application.reject_reason}
+          <span className="font-medium">Reason:</span> {application.rejectReason}
         </p>
       )}
 

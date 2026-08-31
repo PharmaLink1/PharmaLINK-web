@@ -37,7 +37,7 @@ export function ChangePasswordForm() {
 
     setSubmitting(true);
     try {
-      await changePassword({ current_password: current, new_password: next });
+      await changePassword({ currentPassword: current, newPassword: next });
       setDone(true);
     } catch (err) {
       if (err instanceof ApiError && err.code === "INCORRECT_PASSWORD") {
@@ -63,7 +63,7 @@ export function ChangePasswordForm() {
           everywhere — please sign in again with your new password.
         </Alert>
         <Button size="lg" block onClick={finishAndSignIn}>
-          Continue to sign in
+          Continue to login
         </Button>
       </div>
     );

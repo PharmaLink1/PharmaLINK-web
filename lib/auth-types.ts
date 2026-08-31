@@ -2,26 +2,31 @@
 // /c/Code/development/PharmaLINK-backend). Keep field names identical to the API.
 
 export type Role = "user" | "pharmacist" | "admin";
+
+// Account statuses gate whether an account may authenticate.
 export type AccountStatus = "active" | "suspended";
 
 export type User = {
   id: string;
   email: string;
-  full_name: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
   role: Role;
+  status?: AccountStatus; // present on /auth/me, absent on the login/verify user
 };
 
 /** GET /auth/me */
 export type Me = User & {
   status: AccountStatus;
-  pending_pharmacist_application: boolean;
+  pendingPharmacistApplication: boolean;
 };
 
 /** Returned by verify-otp / login / refresh (inside the success envelope's `data`). */
 export type AuthResult = {
-  access_token: string;
-  refresh_token: string;
   user: User;
+  accessToken: string;
+  refreshToken: string;
 };
 
 export type ApplicationStatus = "pending" | "approved" | "rejected";
@@ -30,15 +35,13 @@ export type ApplicationStatus = "pending" | "approved" | "rejected";
  * (mirrors the backend's ApplicationResponse). */
 export type PharmacistApplication = {
   id: string;
-  user_id: string;
-  pharmacy_name: string;
-  license_number: string;
-  address: string;
+  userId: string;
+  pharmacistDegreeCertificateUrl: string;
   status: ApplicationStatus;
-  reject_reason?: string;
-  reviewed_by?: string;
-  reviewed_at?: string;
-  created_at: string;
+  rejectReason?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  createdAt: string;
 };
 
 /** Standard success envelope: { success, message?, data }. */

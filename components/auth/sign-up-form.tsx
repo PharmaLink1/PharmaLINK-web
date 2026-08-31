@@ -8,9 +8,10 @@ import { useSession } from "@/lib/auth-context";
 import { ApiError } from "@/lib/auth-types";
 import {
   validateEmail,
-  validateFullName,
   validatePassword,
+  validatePhone,
   validateRequired,
+  validateUrl,
   PASSWORD_MIN,
 } from "@/lib/validation";
 import { Alert } from "@/components/ui/alert";
@@ -19,25 +20,25 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 
-type Role = "user" | "pharmacist";
+type Role = "patient" | "pharmacist";
 
 type FieldErrors = {
-  full_name?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   password?: string;
-  pharmacy_name?: string;
-  license_number?: string;
-  address?: string;
+  phone?: string;
+  pharmacistDegreeCertificateUrl?: string;
 };
 
 // Heading + button copy per role, so the single form reads correctly whether the
 // visitor is signing up as a patient or applying as a pharmacy.
 const copy: Record<Role, { title: string; description: string; cta: string; loading: string }> = {
-  user: {
+  patient: {
     title: "Create your account",
     description: "Join PharmaLink to find medicines near you.",
-    cta: "Create account",
-    loading: "Creating account",
+    cta: "Sign Up",
+    loading: "Signing up",
   },
   pharmacist: {
     title: "List your pharmacy",
@@ -47,17 +48,17 @@ const copy: Record<Role, { title: string; description: string; cta: string; load
   },
 };
 
-export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
+export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) {
   const { signup, applyPharmacist, status } = useSession();
   const router = useRouter();
 
   const [role, setRole] = React.useState<Role>(defaultRole);
-  const [fullName, setFullName] = React.useState("");
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [pharmacyName, setPharmacyName] = React.useState("");
-  const [licenseNumber, setLicenseNumber] = React.useState("");
-  const [address, setAddress] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [certificateUrl, setCertificateUrl] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [errors, setErrors] = React.useState<FieldErrors>({});
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -81,12 +82,14 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
     setFormError(null);
 
     const nextErrors: FieldErrors = {
-      full_name: validateFullName(fullName),
+      firstName: validateRequired(firstName, "First name"),
+      lastName: validateRequired(lastName, "Last name"),
       email: validateEmail(email),
       password: validatePassword(password),
-      pharmacy_name: isPharmacist ? validateRequired(pharmacyName, "Pharmacy name") : undefined,
-      license_number: isPharmacist ? validateRequired(licenseNumber, "License number") : undefined,
-      address: isPharmacist ? validateRequired(address, "Address") : undefined,
+      phone: validatePhone(phone),
+      pharmacistDegreeCertificateUrl: isPharmacist
+        ? validateUrl(certificateUrl, "Pharmacy degree certificate URL")
+        : undefined,
     };
     setErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean)) return;
@@ -94,17 +97,17 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
     const cleanEmail = email.trim();
     setSubmitting(true);
     try {
+      const base = {
+        email: cleanEmail,
+        password,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phone: phone.trim(),
+      };
       if (isPharmacist) {
-        await applyPharmacist({
-          email: cleanEmail,
-          password,
-          full_name: fullName.trim(),
-          pharmacy_name: pharmacyName.trim(),
-          license_number: licenseNumber.trim(),
-          address: address.trim(),
-        });
+        await applyPharmacist({ ...base, pharmacistDegreeCertificateUrl: certificateUrl.trim() });
       } else {
-        await signup({ email: cleanEmail, password, full_name: fullName.trim() });
+        await signup(base);
       }
       // Account isn't created yet — go verify the OTP, carrying the email along.
       router.push(`/verify-otp?email=${encodeURIComponent(cleanEmail)}`);
@@ -134,7 +137,7 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
         onChange={changeRole}
         disabled={submitting}
         options={[
-          { value: "user", label: "Patient", icon: User },
+          { value: "patient", label: "Patient", icon: User },
           { value: "pharmacist", label: "Pharmacist", icon: Store },
         ]}
       />
@@ -142,16 +145,29 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         {formError && <Alert variant="danger">{formError}</Alert>}
 
-        <Field label="Full name" htmlFor="full_name" error={errors.full_name}>
+        <Field label="First name" htmlFor="first_name" error={errors.firstName}>
           <Input
-            id="full_name"
-            name="full_name"
-            autoComplete="name"
-            placeholder="Selamawit Bekele"
-            value={fullName}
-            invalid={!!errors.full_name}
+            id="first_name"
+            name="firstName"
+            autoComplete="given-name"
+            placeholder="Selamawit"
+            value={firstName}
+            invalid={!!errors.firstName}
             disabled={submitting}
-            onChange={(e) => setFullName(e.target.value)}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </Field>
+
+        <Field label="Last name" htmlFor="last_name" error={errors.lastName}>
+          <Input
+            id="last_name"
+            name="lastName"
+            autoComplete="family-name"
+            placeholder="Bekele"
+            value={lastName}
+            invalid={!!errors.lastName}
+            disabled={submitting}
+            onChange={(e) => setLastName(e.target.value)}
           />
         </Field>
 
@@ -166,6 +182,21 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
             invalid={!!errors.email}
             disabled={submitting}
             onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
+
+        <Field label="Phone number" htmlFor="phone" error={errors.phone}>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="+251911234567"
+            value={phone}
+            invalid={!!errors.phone}
+            disabled={submitting}
+            onChange={(e) => setPhone(e.target.value)}
           />
         </Field>
 
@@ -207,45 +238,26 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
                 Pharmacy details
               </p>
               <p className="text-xs text-muted-foreground">
-                An admin reviews these before your pharmacy goes live.
+                An admin reviews your degree certificate before your pharmacy goes live.
               </p>
             </div>
 
-            <Field label="Pharmacy name" htmlFor="pharmacy_name" error={errors.pharmacy_name}>
+            <Field
+              label="Pharmacy degree certificate URL"
+              htmlFor="pharmacist_degree_certificate_url"
+              error={errors.pharmacistDegreeCertificateUrl}
+            >
               <Input
-                id="pharmacy_name"
-                name="pharmacy_name"
-                autoComplete="organization"
-                placeholder="Bole Pharmacy"
-                value={pharmacyName}
-                invalid={!!errors.pharmacy_name}
+                id="pharmacist_degree_certificate_url"
+                name="pharmacistDegreeCertificateUrl"
+                type="url"
+                inputMode="url"
+                autoComplete="off"
+                placeholder="https://example.com/certificate.pdf"
+                value={certificateUrl}
+                invalid={!!errors.pharmacistDegreeCertificateUrl}
                 disabled={submitting}
-                onChange={(e) => setPharmacyName(e.target.value)}
-              />
-            </Field>
-
-            <Field label="License number" htmlFor="license_number" error={errors.license_number}>
-              <Input
-                id="license_number"
-                name="license_number"
-                placeholder="ETH-PH-000000"
-                value={licenseNumber}
-                invalid={!!errors.license_number}
-                disabled={submitting}
-                onChange={(e) => setLicenseNumber(e.target.value)}
-              />
-            </Field>
-
-            <Field label="Address" htmlFor="address" error={errors.address}>
-              <Input
-                id="address"
-                name="address"
-                autoComplete="street-address"
-                placeholder="Bole Road, Addis Ababa"
-                value={address}
-                invalid={!!errors.address}
-                disabled={submitting}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => setCertificateUrl(e.target.value)}
               />
             </Field>
           </>
@@ -258,7 +270,7 @@ export function SignUpForm({ defaultRole = "user" }: { defaultRole?: Role }) {
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/signin" className="font-medium text-primary hover:text-primary-hover">
-            Sign in
+            Login
           </Link>
         </p>
       </form>

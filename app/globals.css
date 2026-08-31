@@ -1,49 +1,132 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@custom-variant dark (&:is(.dark *));
 
 /*
-  PharmaLink design tokens — dark, technical direction (inspired by
-  docs.farming-labs.dev): soft off-black canvas, restrained near-white accent,
-  1px structure, tight radius. Green is reserved for status only (see --success),
-  never as the brand. Change values here; every primitive inherits them.
+  PharmaLink design tokens - Mint Signal (21st.dev), approved light-first theme.
+  Source: https://21st.dev/community/themes -> "Mint Signal".
+  Cool near-white canvas (#fdfdfd), mint #51f0a8 primary with black foreground,
+  dark-mint #0d9f5d text accents. Semantic stock colors stay paired with text.
   The mobile team mirrors these tokens.
 */
 :root {
-  /* Canvas & text */
-  --background: #0b0c0e;
-  --foreground: #ededee;
-  --muted: #17181a;
-  --muted-foreground: #9b9ea2;
+  /* Canvas & text - cool neutral, no warm tint */
+  --background: #fdfdfd;
+  --foreground: #000000;
+  --muted: #f5f5f5;
+  --muted-foreground: #525252;
 
   /* Surfaces */
-  --card: #101114;
-  --card-foreground: #ededee;
-  --border: #26282b;
-  --input: #2a2d30;
-  --ring: #d6d8d8;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #fcfcfc;
+  --popover-foreground: #000000;
+  --secondary: #fcfdfd;
+  --secondary-foreground: #080808;
+  --accent: #f9fffc;
+  --accent-foreground: #0d9f5d;
+  --border: #e6e8eb;
+  --input: #dcdfe3;
+  --ring: #51f0a8;
 
-  /* Brand — neutral near-white (premium, non-"cyber"); green stays in --success */
-  --primary: #f5f6f6;
-  --primary-hover: #e4e6e6;
-  --primary-foreground: #0a0b0d;
-  --primary-subtle: #1b1d20;
+  /* Brand - Mint Signal mint with black foreground */
+  --primary: #51f0a8;
+  --primary-hover: #2fe49a;
+  --primary-foreground: #000000;
+  --primary-subtle: #e4fef3;
+  --primary-strong: #0d9f5d;
 
   /* Semantic states (pair color with text everywhere) */
-  --success: #22c55e;
-  --success-subtle: #0f241a;
-  --warning: #f59e0b;
-  --warning-subtle: #2a1e08;
+  --success: #047857;
+  --success-subtle: #e4fef3;
+  --warning: #d97706;
+  --warning-subtle: #fff7ed;
+  --danger: #dc2626;
+  --danger-subtle: #fef2f2;
+  --info: #0284c7;
+  --info-subtle: #f0f9ff;
+  --destructive: #f54a88;
+  --destructive-foreground: #ffffff;
+
+  /* Charts - Mint Signal palette */
+  --chart-1: #51f0a8;
+  --chart-2: #7efe8f;
+  --chart-3: #ff4838;
+  --chart-4: #2ebdf6;
+  --chart-5: #ffb188;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #000000;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e4fef3;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #ebebeb;
+  --sidebar-ring: #000000;
+
+  /* Radius - soft-minimal (~6px); chips/badges keep pill */
+  --radius: 0.375rem;
+
+  /* Motion - design skill timing defaults */
+  --duration-fast: 140ms;
+  --duration-normal: 200ms;
+  --duration-slow: 280ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f0f0f0;
+  --card: #0a0a0a;
+  --card-foreground: #f0f0f0;
+  --popover: #1a1b1b;
+  --popover-foreground: #f0f0f0;
+  --secondary: #216a49;
+  --secondary-foreground: #f0f0f0;
+  --accent: #093723;
+  --accent-foreground: #fefefe;
+  --muted: #252527;
+  --muted-foreground: #969696;
+  --border: #2a2a2d;
+  --input: #3b3b3b;
+  --ring: #51f0a8;
+
+  --primary: #51f0a8;
+  --primary-hover: #7efe8f;
+  --primary-foreground: #000000;
+  --primary-subtle: #093723;
+  --primary-strong: #7efe8f;
+
+  --success: #51f0a8;
+  --success-subtle: #093723;
+  --warning: #fbbf24;
+  --warning-subtle: #3a2a08;
   --danger: #f87171;
   --danger-subtle: #2a1215;
-  --info: #38bdf8;
+  --info: #5fd0ff;
   --info-subtle: #0b2233;
+  --destructive: #ff78a5;
+  --destructive-foreground: #ffffff;
 
-  /* Radius — near-square / technical (matches the auth card + corner ticks) */
-  --radius-sm: 0.125rem;
-  --radius-md: 0.1875rem;
-  --radius-lg: 0.25rem;
-  --radius-xl: 0.375rem;
+  --chart-1: #51f0a8;
+  --chart-2: #9effa1;
+  --chart-3: #ffb7cf;
+  --chart-4: #5fd0ff;
+  --chart-5: #ffb188;
 
-  /* Motion — design skill timing defaults */
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #f0f0f0;
+  --sidebar-primary: #51f0a8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #00331b;
+  --sidebar-accent-foreground: #51f0a8;
+  --sidebar-border: #353a3e;
+  --sidebar-ring: #51f0a8;
+
+  --radius: 0.375rem;
+
   --duration-fast: 140ms;
   --duration-normal: 200ms;
   --duration-slow: 280ms;
@@ -65,6 +148,7 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-subtle: var(--primary-subtle);
+  --color-primary-strong: var(--primary-strong);
 
   --color-success: var(--success);
   --color-success-subtle: var(--success-subtle);
@@ -75,13 +159,42 @@
   --color-info: var(--info);
   --color-info-subtle: var(--info-subtle);
 
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.3125rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
 }
 
 body {
@@ -101,7 +214,7 @@ body {
   border-radius: 2px;
 }
 
-/* Text selection — a small on-brand touch. */
+/* Text selection - a small on-brand touch. */
 ::selection {
   background: color-mix(in oklch, var(--primary) 30%, transparent);
   color: var(--foreground);
@@ -123,5 +236,17 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }

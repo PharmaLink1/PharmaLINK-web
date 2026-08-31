@@ -5,11 +5,10 @@ import { useSession } from "@/lib/auth-context";
 import { AppHeader } from "@/components/layout/app-header";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
-import { CornerTicks } from "@/components/ui/corner-ticks";
 
 export function DashboardContent() {
   const { user } = useSession();
-  const firstName = user?.full_name?.split(" ")[0] ?? "there";
+  const displayName = user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : "there";
   const isPharmacist = user?.role === "pharmacist";
 
   return (
@@ -18,7 +17,7 @@ export function DashboardContent() {
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Welcome, {firstName}
+          Welcome, {displayName}
         </h1>
         <p className="mt-1 text-muted-foreground">
           {isPharmacist
@@ -27,7 +26,7 @@ export function DashboardContent() {
         </p>
 
         {/* Pending pharmacist application banner (from /auth/me). */}
-        {user?.pending_pharmacist_application && (
+        {user?.pendingPharmacistApplication && (
           <div className="mt-6">
             <Alert variant="info">
               Your pharmacist application is under review. You currently have normal
@@ -38,9 +37,8 @@ export function DashboardContent() {
 
         {/* Placeholder shell for features built later. */}
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="relative p-5">
-            <CornerTicks className="border-border" size="size-2" />
-            <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
+          <Card className="p-5">
+            <span className="flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
               <Search className="size-5" aria-hidden />
             </span>
             <h2 className="mt-4 font-semibold">Find a medicine</h2>
@@ -48,9 +46,8 @@ export function DashboardContent() {
               Medicine search is coming soon.
             </p>
           </Card>
-          <Card className="relative p-5">
-            <CornerTicks className="border-border" size="size-2" />
-            <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
+          <Card className="p-5">
+            <span className="flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
               <Clock className="size-5" aria-hidden />
             </span>
             <h2 className="mt-4 font-semibold">Recent activity</h2>
@@ -59,9 +56,8 @@ export function DashboardContent() {
             </p>
           </Card>
           {isPharmacist && (
-            <Card className="relative p-5">
-              <CornerTicks className="border-border" size="size-2" />
-              <span className="flex size-10 items-center justify-center rounded-md bg-primary-subtle text-primary">
+            <Card className="p-5">
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
                 <Store className="size-5" aria-hidden />
               </span>
               <h2 className="mt-4 font-semibold">Your pharmacy</h2>

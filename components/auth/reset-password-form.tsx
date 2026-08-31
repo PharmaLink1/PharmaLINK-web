@@ -38,7 +38,7 @@ export function ResetPasswordForm({ email }: { email: string }) {
 
     setSubmitting(true);
     try {
-      await resetPassword({ email, otp, new_password: password });
+      await resetPassword({ email, otp, newPassword: password });
       setDone(true);
     } catch (err) {
       if (err instanceof ApiError && err.code === "INVALID_OTP") {
@@ -74,7 +74,7 @@ export function ResetPasswordForm({ email }: { email: string }) {
           Your password has been reset. Sign in with your new password.
         </Alert>
         <Button size="lg" block onClick={() => router.replace("/signin")}>
-          Continue to sign in
+          Continue to login
         </Button>
       </div>
     );
@@ -133,7 +133,7 @@ export function ResetPasswordForm({ email }: { email: string }) {
       <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
         <ArrowLeft className="size-4" aria-hidden />
         <Link href="/signin" className="font-medium text-primary hover:text-primary-hover">
-          Back to sign in
+          Back to login
         </Link>
       </p>
     </form>

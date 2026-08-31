@@ -19,6 +19,7 @@ export function AppHeader() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
+  const name = user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : "";
 
   React.useEffect(() => {
     if (!open) return;
@@ -71,7 +72,7 @@ export function AppHeader() {
             </span>
             <span className="hidden text-left sm:block">
               <span className="block max-w-[12rem] truncate font-medium leading-tight">
-                {user?.full_name ?? "Account"}
+                {name || "Account"}
               </span>
               {user && (
                 <span className="block text-xs leading-tight text-muted-foreground">
@@ -88,7 +89,7 @@ export function AppHeader() {
               className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-card shadow-md"
             >
               <div className="border-b border-border px-3 py-2.5">
-                <p className="truncate text-sm font-medium">{user?.full_name}</p>
+                <p className="truncate text-sm font-medium">{name || "Account"}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
               </div>
               <Link

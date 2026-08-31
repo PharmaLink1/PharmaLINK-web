@@ -109,13 +109,13 @@ export function SignInForm() {
       </div>
 
       <Button type="submit" size="lg" block loading={submitting}>
-        {submitting ? "Signing in" : "Sign in"}
+        {submitting ? "Logging in" : "Login"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="font-medium text-primary hover:text-primary-hover">
-          Create one
+          Sign up
         </Link>
       </p>
     </form>
