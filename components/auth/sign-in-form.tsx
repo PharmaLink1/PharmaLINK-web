@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useSession } from "@/lib/auth-context";
-import { ApiError } from "@/lib/auth-types";
+import { useLanguage } from "@/lib/i18n";
+import { getErrorMessage } from "@/lib/i18n/errors";
 import { validateEmail, validatePassword } from "@/lib/validation";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 
 export function SignInForm() {
   const { login, status } = useSession();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const [email, setEmail] = React.useState("");
@@ -44,80 +46,81 @@ export function SignInForm() {
       await login({ email: email.trim(), password });
       router.replace("/dashboard");
     } catch (err) {
-      setFormError(
-        err instanceof ApiError && err.code === "INVALID_CREDENTIALS"
-          ? "Incorrect email or password."
-          : err instanceof ApiError
-            ? err.message
-            : "Something went wrong. Please try again.",
-      );
+      setFormError(getErrorMessage(err, t));
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      {formError && <Alert variant="danger">{formError}</Alert>}
-
-      <Field label="Email" htmlFor="email" error={errors.email}>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@example.com"
-          value={email}
-          invalid={!!errors.email}
-          disabled={submitting}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </Field>
-
-      <Field label="Password" htmlFor="password" error={errors.password}>
-        <div className="relative">
-          <Input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            placeholder="Your password"
-            className="pr-11"
-            value={password}
-            invalid={!!errors.password}
-            disabled={submitting}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((s) => !s)}
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-          </button>
-        </div>
-      </Field>
-
-      <div className="-mt-1 text-right">
-        <Link
-          href="/forgot-password"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
-        >
-          Forgot password?
-        </Link>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">{t.auth.welcomeBack}</h1>
+        <p className="mt-1.5 text-muted-foreground">{t.auth.signInSubtitle}</p>
       </div>
 
-      <Button type="submit" size="lg" block loading={submitting}>
-        {submitting ? "Logging in" : "Login"}
-      </Button>
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+        {formError && <Alert variant="danger">{formError}</Alert>}
 
-      <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" className="font-medium text-primary hover:text-primary-hover">
-          Sign up
-        </Link>
-      </p>
-    </form>
+        <Field label={t.forms.email} htmlFor="email" error={errors.email}>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder={t.forms.emailPlaceholder}
+            value={email}
+            invalid={!!errors.email}
+            disabled={submitting}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
+
+        <Field label={t.forms.password} htmlFor="password" error={errors.password}>
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder={t.forms.passwordPlaceholder}
+              className="pr-11"
+              value={password}
+              invalid={!!errors.password}
+              disabled={submitting}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? t.forms.hidePassword : t.forms.showPassword}
+              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
+        </Field>
+
+        <div className="-mt-1 text-right">
+          <Link
+            href="/forgot-password"
+            className="text-sm font-medium text-primary-strong hover:underline"
+          >
+            {t.forms.forgotPassword}
+          </Link>
+        </div>
+
+        <Button type="submit" size="lg" block loading={submitting}>
+          {submitting ? t.forms.loggingIn : t.forms.login}
+        </Button>
+
+        <p className="text-center text-sm text-muted-foreground">
+          {t.forms.noAccount}{" "}
+          <Link href="/signup" className="font-medium text-primary-strong hover:underline">
+            {t.forms.signUp}
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 }

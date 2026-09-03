@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useLanguage, interpolate } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
 type OtpInputProps = {
@@ -27,8 +28,9 @@ export function OtpInput({
   invalid,
   autoFocus,
   onComplete,
-  "aria-label": ariaLabel = "Verification code",
+  "aria-label": ariaLabel,
 }: OtpInputProps) {
+  const { t } = useLanguage();
   const refs = React.useRef<Array<HTMLInputElement | null>>([]);
   const digits = React.useMemo(
     () => Array.from({ length }, (_, i) => value[i] ?? ""),
@@ -86,7 +88,7 @@ export function OtpInput({
   };
 
   return (
-    <div className="flex gap-2" role="group" aria-label={ariaLabel}>
+    <div className="flex gap-2" role="group" aria-label={ariaLabel ?? t.forms.verificationCode}>
       {digits.map((digit, i) => (
         <input
           key={i}
@@ -100,7 +102,7 @@ export function OtpInput({
           value={digit}
           disabled={disabled}
           aria-invalid={invalid || undefined}
-          aria-label={`Digit ${i + 1}`}
+          aria-label={interpolate(t.forms.digitN, { n: i + 1 })}
           autoFocus={autoFocus && i === 0}
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}

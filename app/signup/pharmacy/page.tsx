@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { SignUpForm } from "@/components/auth/sign-up-form";
+import { localizedMetadata } from "@/lib/i18n/metadata";
 
-export const metadata: Metadata = { title: "List your pharmacy — PharmaLink" };
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedMetadata("signupPharmacy");
+}
 
 export default function PharmacistApplyPage() {
   return (

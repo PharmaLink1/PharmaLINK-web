@@ -4,23 +4,26 @@ import Link from "next/link";
 import * as React from "react";
 import { Menu, X } from "lucide-react";
 import { useSession } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { CornerTicks } from "@/components/ui/corner-ticks";
-
-const navLinks = [
-  { label: "How it works", href: "#how" },
-  { label: "Compare prices", href: "#compare" },
-  { label: "For pharmacies", href: "#pharmacies" },
-];
+import { LanguageToggle } from "@/components/layout/language-toggle";
 
 export function SiteHeader() {
   const { status } = useSession();
+  const { t } = useLanguage();
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const close = () => setOpen(false);
+
+  const navLinks = [
+    { label: t.nav.howItWorks, href: "#how" },
+    { label: t.nav.comparePrices, href: "#compare" },
+    { label: t.nav.forPharmacies, href: "#pharmacies" },
+  ];
 
   // Full-width and transparent at the top; on scroll it floats into a compact,
   // centered rounded pill (border + blur + shadow).
@@ -48,7 +51,7 @@ export function SiteHeader() {
         onClick={close}
         className={buttonVariants({ block, size: block ? "md" : "sm" })}
       >
-        Dashboard
+        {t.nav.dashboard}
       </Link>
     ) : (
       <>
@@ -57,10 +60,10 @@ export function SiteHeader() {
           onClick={close}
           className={buttonVariants({ variant: block ? "outline" : "ghost", block, size: block ? "md" : "sm" })}
         >
-          Login
+          {t.nav.login}
         </Link>
         <Link href="/signup" onClick={close} className={buttonVariants({ block, size: block ? "md" : "sm" })}>
-          Sign Up
+          {t.nav.signUp}
         </Link>
       </>
     );
@@ -81,10 +84,10 @@ export function SiteHeader() {
           </div>
 
           {/* desktop nav */}
-          <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1.5 lg:flex">
+          <nav aria-label={t.nav.primary} className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1.5 lg:flex">
             {navLinks.map((link) => (
               <Link
-                key={link.label}
+                key={link.href}
                 href={link.href}
                 className="rounded-md px-4 py-1 text-sm text-foreground transition-colors hover:bg-muted focus-visible:bg-muted"
               >
@@ -94,6 +97,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="ml-auto flex items-center justify-end">
+            <LanguageToggle />
             <ThemeToggle
               variant="blinds"
               className="size-9 shrink-0 rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
@@ -103,7 +107,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              aria-label="Open menu"
+              aria-label={t.nav.openMenu}
               className="inline-flex size-9 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-muted lg:hidden"
             >
               <Menu className="size-5" />
@@ -117,7 +121,7 @@ export function SiteHeader() {
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-6 lg:hidden">
           <button
             type="button"
-            aria-label="Close menu"
+            aria-label={t.nav.closeMenu}
             onClick={close}
             className="absolute inset-0 bg-background/60 backdrop-blur-lg"
           />
@@ -129,7 +133,7 @@ export function SiteHeader() {
                 <button
                   type="button"
                   onClick={close}
-                  aria-label="Close menu"
+                  aria-label={t.nav.closeMenu}
                   className="inline-flex size-9 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-muted"
                 >
                   <X className="size-5" />
@@ -139,7 +143,7 @@ export function SiteHeader() {
               <nav className="flex flex-col gap-1">
                 {navLinks.map((link) => (
                   <Link
-                    key={link.label}
+                    key={link.href}
                     href={link.href}
                     onClick={close}
                     className="rounded-md px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"

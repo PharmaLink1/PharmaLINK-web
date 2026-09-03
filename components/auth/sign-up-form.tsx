@@ -6,12 +6,13 @@ import * as React from "react";
 import { Eye, EyeOff, Store, User } from "lucide-react";
 import { useSession } from "@/lib/auth-context";
 import { ApiError } from "@/lib/auth-types";
+import { useLanguage, interpolate } from "@/lib/i18n";
+import { getErrorMessage } from "@/lib/i18n/errors";
 import {
   validateEmail,
   validatePassword,
   validatePhone,
   validateRequired,
-  validateUrl,
   PASSWORD_MIN,
 } from "@/lib/validation";
 import { Alert } from "@/components/ui/alert";
@@ -19,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { CertificateUploader } from "@/components/auth/certificate-uploader";
+import { isCloudinaryConfigured } from "@/lib/cloudinary";
 
 type Role = "patient" | "pharmacist";
 
@@ -31,25 +34,9 @@ type FieldErrors = {
   pharmacistDegreeCertificateUrl?: string;
 };
 
-// Heading + button copy per role, so the single form reads correctly whether the
-// visitor is signing up as a patient or applying as a pharmacy.
-const copy: Record<Role, { title: string; description: string; cta: string; loading: string }> = {
-  patient: {
-    title: "Create your account",
-    description: "Join PharmaLink to find medicines near you.",
-    cta: "Sign Up",
-    loading: "Signing up",
-  },
-  pharmacist: {
-    title: "List your pharmacy",
-    description: "Apply so nearby patients can find your stock.",
-    cta: "Apply as a pharmacy",
-    loading: "Submitting application",
-  },
-};
-
 export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) {
   const { signup, applyPharmacist, status } = useSession();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const [role, setRole] = React.useState<Role>(defaultRole);
@@ -59,6 +46,7 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
   const [password, setPassword] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [certificateUrl, setCertificateUrl] = React.useState("");
+  const [uploadBusy, setUploadBusy] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [errors, setErrors] = React.useState<FieldErrors>({});
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -69,6 +57,8 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
   }, [status, router]);
 
   const isPharmacist = role === "pharmacist";
+  const c = t.forms.roles[role];
+  const cloudinaryConfigured = isCloudinaryConfigured();
 
   // Switching account type shouldn't leave stale validation from the other mode.
   function changeRole(next: Role) {
@@ -79,16 +69,17 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (uploadBusy) return;
     setFormError(null);
 
     const nextErrors: FieldErrors = {
-      firstName: validateRequired(firstName, "First name"),
-      lastName: validateRequired(lastName, "Last name"),
+      firstName: validateRequired(firstName, t.forms.firstName),
+      lastName: validateRequired(lastName, t.forms.lastName),
       email: validateEmail(email),
       password: validatePassword(password),
       phone: validatePhone(phone),
       pharmacistDegreeCertificateUrl: isPharmacist
-        ? validateUrl(certificateUrl, "Pharmacy degree certificate URL")
+        ? validateRequired(certificateUrl, t.forms.certificateLabel)
         : undefined,
     };
     setErrors(nextErrors);
@@ -109,20 +100,18 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
       } else {
         await signup(base);
       }
-      // Account isn't created yet — go verify the OTP, carrying the email along.
-      router.push(`/verify-otp?email=${encodeURIComponent(cleanEmail)}`);
+      // Account isn't created yet - go verify the OTP, carrying the email along.
+      router.push("/verify-otp?email=" + encodeURIComponent(cleanEmail));
     } catch (err) {
       if (err instanceof ApiError && err.code === "EMAIL_TAKEN") {
-        setErrors((prev) => ({ ...prev, email: "This email is already registered." }));
+        setErrors((prev) => ({ ...prev, email: getErrorMessage(err, t) }));
       } else {
-        setFormError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+        setFormError(getErrorMessage(err, t));
       }
     } finally {
       setSubmitting(false);
     }
   }
-
-  const c = copy[role];
 
   return (
     <div className="flex flex-col gap-6">
@@ -132,20 +121,20 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
       </div>
 
       <SegmentedControl
-        ariaLabel="Account type"
+        ariaLabel={t.forms.accountType}
         value={role}
         onChange={changeRole}
-        disabled={submitting}
+        disabled={submitting || uploadBusy}
         options={[
-          { value: "patient", label: "Patient", icon: User },
-          { value: "pharmacist", label: "Pharmacist", icon: Store },
+          { value: "patient", label: t.forms.roles.patient.label, icon: User },
+          { value: "pharmacist", label: t.forms.roles.pharmacist.label, icon: Store },
         ]}
       />
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         {formError && <Alert variant="danger">{formError}</Alert>}
 
-        <Field label="First name" htmlFor="first_name" error={errors.firstName}>
+        <Field label={t.forms.firstName} htmlFor="first_name" error={errors.firstName}>
           <Input
             id="first_name"
             name="firstName"
@@ -158,7 +147,7 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
           />
         </Field>
 
-        <Field label="Last name" htmlFor="last_name" error={errors.lastName}>
+        <Field label={t.forms.lastName} htmlFor="last_name" error={errors.lastName}>
           <Input
             id="last_name"
             name="lastName"
@@ -171,13 +160,13 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
           />
         </Field>
 
-        <Field label="Email" htmlFor="email" error={errors.email}>
+        <Field label={t.forms.email} htmlFor="email" error={errors.email}>
           <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder={t.forms.emailPlaceholder}
             value={email}
             invalid={!!errors.email}
             disabled={submitting}
@@ -185,7 +174,7 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
           />
         </Field>
 
-        <Field label="Phone number" htmlFor="phone" error={errors.phone}>
+        <Field label={t.forms.phone} htmlFor="phone" error={errors.phone}>
           <Input
             id="phone"
             name="phone"
@@ -201,10 +190,10 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
         </Field>
 
         <Field
-          label="Password"
+          label={t.forms.password}
           htmlFor="password"
           error={errors.password}
-          hint={`At least ${PASSWORD_MIN} characters.`}
+          hint={interpolate(t.forms.passwordHint, { min: PASSWORD_MIN })}
         >
           <div className="relative">
             <Input
@@ -212,7 +201,7 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
               name="password"
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
-              placeholder="Create a password"
+              placeholder={t.forms.passwordPlaceholderCreate}
               className="pr-11"
               value={password}
               invalid={!!errors.password}
@@ -222,7 +211,7 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
             <button
               type="button"
               onClick={() => setShowPassword((s) => !s)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? t.forms.hidePassword : t.forms.showPassword}
               className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
             >
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -230,47 +219,41 @@ export function SignUpForm({ defaultRole = "patient" }: { defaultRole?: Role }) 
           </div>
         </Field>
 
-        {/* Pharmacy details — only for pharmacist applications; reviewed by an admin. */}
+        {/* Pharmacy details - only for pharmacist applications; reviewed by an admin. */}
         {isPharmacist && (
           <>
             <div className="border-t border-border pt-5">
               <p className="mb-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                Pharmacy details
+                {t.forms.pharmacyDetails}
               </p>
-              <p className="text-xs text-muted-foreground">
-                An admin reviews your degree certificate before your pharmacy goes live.
-              </p>
+              <p className="text-xs text-muted-foreground">{t.forms.pharmacyDetailsHint}</p>
             </div>
 
             <Field
-              label="Pharmacy degree certificate URL"
-              htmlFor="pharmacist_degree_certificate_url"
+              label={t.forms.certificateLabel}
+              htmlFor="degree_certificate"
               error={errors.pharmacistDegreeCertificateUrl}
+              hint={cloudinaryConfigured ? t.forms.certificateHint : undefined}
             >
-              <Input
-                id="pharmacist_degree_certificate_url"
-                name="pharmacistDegreeCertificateUrl"
-                type="url"
-                inputMode="url"
-                autoComplete="off"
-                placeholder="https://example.com/certificate.pdf"
-                value={certificateUrl}
-                invalid={!!errors.pharmacistDegreeCertificateUrl}
+              <CertificateUploader
+                id="degree_certificate"
+                url={certificateUrl}
                 disabled={submitting}
-                onChange={(e) => setCertificateUrl(e.target.value)}
+                onUrlChange={setCertificateUrl}
+                onBusyChange={setUploadBusy}
               />
             </Field>
           </>
         )}
 
-        <Button type="submit" size="lg" block loading={submitting}>
+        <Button type="submit" size="lg" block loading={submitting} disabled={uploadBusy}>
           {submitting ? c.loading : c.cta}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link href="/signin" className="font-medium text-primary hover:text-primary-hover">
-            Login
+          {t.forms.hasAccount}{" "}
+          <Link href="/signin" className="font-medium text-primary-strong hover:underline">
+            {t.forms.login}
           </Link>
         </p>
       </form>

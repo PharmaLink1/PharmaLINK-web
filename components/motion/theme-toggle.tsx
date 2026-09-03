@@ -7,6 +7,7 @@ import { useEffect, useState, type ComponentPropsWithoutRef } from "react";
 import { ActionSwapIcon } from "@/components/motion/action-swap";
 import { EASE_OUT_CSS } from "@/lib/ease";
 import { useTheme } from "@/components/theme-provider";
+import { useLanguage } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type ThemeVariant = "rectangle" | "circle" | "circle-blur" | "blinds";
@@ -182,11 +183,12 @@ export function ThemeToggle({
   ...rest
 }: ThemeToggleProps) {
   const { isDark, mounted, toggle } = useThemeToggle({ variant, start });
+  const { t } = useLanguage();
 
   return (
     <button
       type="button"
-      aria-label={mounted && isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={mounted && isDark ? t.common.switchToLightMode : t.common.switchToDarkMode}
       onClick={toggle}
       className={cn("flex items-center justify-center", className)}
       {...rest}

@@ -3,6 +3,8 @@
 import * as React from "react";
 import { adminApi } from "@/lib/api-client";
 import { ApiError } from "@/lib/auth-types";
+import { useLanguage } from "@/lib/i18n";
+import { getErrorMessage } from "@/lib/i18n/errors";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -13,8 +15,8 @@ const STALE_CODES = ["APPLICATION_NOT_PENDING", "APPLICATION_NOT_FOUND"];
 
 /**
  * Approve / reject controls for a pending application. Rejecting reveals an
- * inline reason box (the backend requires a reason). On success — or on a stale
- * item — it calls onResolved so the parent removes the card from the queue.
+ * inline reason box (the backend requires a reason). On success - or on a stale
+ * item - it calls onResolved so the parent removes the card from the queue.
  */
 export function ApplicationActions({
   id,
@@ -23,6 +25,7 @@ export function ApplicationActions({
   id: string;
   onResolved: (id: string) => void;
 }) {
+  const { t } = useLanguage();
   const [rejecting, setRejecting] = React.useState(false);
   const [reason, setReason] = React.useState("");
   const [reasonError, setReasonError] = React.useState<string | undefined>();
@@ -34,7 +37,7 @@ export function ApplicationActions({
       onResolved(id); // someone already decided this one, or it's gone
       return;
     }
-    setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+    setError(err instanceof ApiError ? getErrorMessage(err, t) : t.errors.generic);
     setSubmitting(null);
   }
 
@@ -53,7 +56,7 @@ export function ApplicationActions({
     e.preventDefault();
     setError(null);
     if (!reason.trim()) {
-      setReasonError("Please give a reason for rejecting.");
+      setReasonError(t.validation.rejectReasonRequired);
       return;
     }
     setReasonError(undefined);
@@ -70,11 +73,11 @@ export function ApplicationActions({
     return (
       <form onSubmit={handleReject} noValidate className="w-full flex flex-col gap-3">
         {error && <Alert variant="danger">{error}</Alert>}
-        <Field label="Reason for rejection" htmlFor={`reject-reason-${id}`} error={reasonError}>
+        <Field label={t.admin.rejectReasonLabel} htmlFor={`reject-reason-${id}`} error={reasonError}>
           <textarea
             id={`reject-reason-${id}`}
             rows={3}
-            placeholder="Explain why this application is being rejected."
+            placeholder={t.admin.rejectReasonPlaceholder}
             className="w-full rounded-md border border-input bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-60 aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/30"
             value={reason}
             aria-invalid={reasonError ? true : undefined}
@@ -84,7 +87,7 @@ export function ApplicationActions({
         </Field>
         <div className="flex items-center gap-3">
           <Button type="submit" variant="destructive" size="sm" loading={submitting === "reject"}>
-            {submitting === "reject" ? "Rejecting" : "Confirm rejection"}
+            {submitting === "reject" ? t.admin.rejecting : t.admin.confirmRejection}
           </Button>
           <Button
             type="button"
@@ -98,7 +101,7 @@ export function ApplicationActions({
               setError(null);
             }}
           >
-            Cancel
+            {t.common.cancel}
           </Button>
         </div>
       </form>
@@ -110,7 +113,7 @@ export function ApplicationActions({
       {error && <Alert variant="danger">{error}</Alert>}
       <div className="flex items-center gap-3">
         <Button size="sm" loading={submitting === "approve"} onClick={handleApprove}>
-          {submitting === "approve" ? "Approving" : "Approve"}
+          {submitting === "approve" ? t.admin.approving : t.admin.approve}
         </Button>
         <Button
           variant="outline"
@@ -118,7 +121,7 @@ export function ApplicationActions({
           disabled={submitting !== null}
           onClick={() => setRejecting(true)}
         >
-          Reject
+          {t.admin.reject}
         </Button>
       </div>
     </div>

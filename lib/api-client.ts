@@ -1,9 +1,11 @@
 // The one place that talks to the backend. Handles the success/error envelopes,
-// attaches the access token, and transparently refreshes once on a 401.
+// attaches the access token, sends the current language, and transparently
+// refreshes once on a 401.
 // Contract: /c/Code/development/PharmaLINK-backend (routes at root, no /api/v1).
 
 import { ApiError, type ApiSuccess, type ApplicationStatus, type AuthResult, type Me, type PharmacistApplication } from "./auth-types";
 import { tokenStorage } from "./token-storage";
+import { getCurrentLocale } from "./i18n/config";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
@@ -15,7 +17,12 @@ type RequestOptions = {
 
 /** Low-level fetch: sends/parses JSON envelopes and throws ApiError on failure. */
 async function raw<T>(path: string, { method = "GET", body, auth }: RequestOptions): Promise<T> {
-  const headers: Record<string, string> = { Accept: "application/json" };
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    // The backend localizes content (e.g. drug-info summaries) via this header;
+    // the current language is always sent so every endpoint sees it.
+    "Accept-Language": getCurrentLocale(),
+  };
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (auth) {
     const token = tokenStorage.getAccessToken();

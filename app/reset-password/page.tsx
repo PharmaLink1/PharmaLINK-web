@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
+import { localizedMetadata } from "@/lib/i18n/metadata";
 
-export const metadata: Metadata = { title: "Reset password — PharmaLink" };
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedMetadata("resetPassword");
+}
 
 export default async function ResetPasswordPage({
   searchParams,
@@ -13,12 +16,6 @@ export default async function ResetPasswordPage({
 
   return (
     <AuthLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Reset your password</h1>
-        <p className="mt-1.5 text-muted-foreground">
-          Enter the code we emailed you and choose a new password.
-        </p>
-      </div>
       <ResetPasswordForm email={email ?? ""} />
     </AuthLayout>
   );

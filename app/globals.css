@@ -35,14 +35,14 @@
   --primary-hover: #2fe49a;
   --primary-foreground: #000000;
   --primary-subtle: #e4fef3;
-  --primary-strong: #0d9f5d;
+  --primary-strong: #0b7a4a;
 
   /* Semantic states (pair color with text everywhere) */
   --success: #047857;
   --success-subtle: #e4fef3;
-  --warning: #d97706;
+  --warning: #b45309;
   --warning-subtle: #fff7ed;
-  --danger: #dc2626;
+  --danger: #b91c1c;
   --danger-subtle: #fef2f2;
   --info: #0284c7;
   --info-subtle: #f0f9ff;
@@ -192,15 +192,16 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans), var(--font-ethiopic), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  --font-heading: var(--font-geist-sans), var(--font-ethiopic), system-ui, sans-serif;
+
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-geist-sans), var(--font-ethiopic), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -250,3 +251,4 @@ body {
     @apply font-sans;
   }
 }
+
