@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { VerifyOtpForm } from "@/components/auth/verify-otp-form";
+import { localizedMetadata } from "@/lib/i18n/metadata";
 
-export const metadata: Metadata = { title: "Verify your email — PharmaLink" };
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedMetadata("verifyOtp");
+}
 
 export default async function VerifyOtpPage({
   searchParams,
@@ -13,12 +16,6 @@ export default async function VerifyOtpPage({
 
   return (
     <AuthLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Check your email</h1>
-        <p className="mt-1.5 text-muted-foreground">
-          We sent you a verification code to finish creating your account.
-        </p>
-      </div>
       <VerifyOtpForm email={email ?? ""} />
     </AuthLayout>
   );

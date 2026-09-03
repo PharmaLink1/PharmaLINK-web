@@ -5,21 +5,25 @@ import * as React from "react";
 import { ChevronDown, ClipboardList, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/i18n";
+import type { Role } from "@/lib/auth-types";
 import { Logo } from "@/components/ui/logo";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 
-const roleLabels: Record<string, string> = {
-  user: "Patient",
-  pharmacist: "Pharmacist",
-  admin: "Admin",
-};
-
-/** Authenticated app header with a user menu (name + role + logout). */
+/** Authenticated app header with a language switch and user menu (name + role + logout). */
 export function AppHeader() {
   const { user, logout } = useSession();
+  const { t } = useLanguage();
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
   const name = user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : "";
+
+  const roleLabels: Record<Role, string> = {
+    user: t.nav.roles.user,
+    pharmacist: t.nav.roles.pharmacist,
+    admin: t.nav.roles.admin,
+  };
 
   React.useEffect(() => {
     if (!open) return;
@@ -55,9 +59,11 @@ export function AppHeader() {
               className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               <ClipboardList className="size-4 text-muted-foreground" aria-hidden />
-              <span className="hidden sm:inline">Applications</span>
+              <span className="hidden sm:inline">{t.nav.applications}</span>
             </Link>
           )}
+
+          <LanguageToggle />
 
           <div ref={menuRef} className="relative">
           <button
@@ -67,12 +73,12 @@ export function AppHeader() {
             aria-expanded={open}
             className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
           >
-            <span className="flex size-8 items-center justify-center rounded-full bg-primary-subtle text-primary">
+            <span className="flex size-8 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
               <User className="size-4" aria-hidden />
             </span>
             <span className="hidden text-left sm:block">
               <span className="block max-w-[12rem] truncate font-medium leading-tight">
-                {name || "Account"}
+                {name || t.nav.account}
               </span>
               {user && (
                 <span className="block text-xs leading-tight text-muted-foreground">
@@ -89,7 +95,7 @@ export function AppHeader() {
               className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-card shadow-md"
             >
               <div className="border-b border-border px-3 py-2.5">
-                <p className="truncate text-sm font-medium">{name || "Account"}</p>
+                <p className="truncate text-sm font-medium">{name || t.nav.account}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
               </div>
               <Link
@@ -99,7 +105,7 @@ export function AppHeader() {
                 className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
               >
                 <Settings className="size-4 text-muted-foreground" aria-hidden />
-                Change password
+                {t.nav.changePassword}
               </Link>
               <button
                 type="button"
@@ -108,7 +114,7 @@ export function AppHeader() {
                 className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
               >
                 <LogOut className="size-4 text-muted-foreground" aria-hidden />
-                Log out
+                {t.nav.logOut}
               </button>
             </div>
           )}

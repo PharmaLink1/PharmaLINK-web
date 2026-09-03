@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { AdminGuard } from "@/components/auth/admin-guard";
 import { ApplicationsReview } from "@/components/admin/applications-review";
+import { localizedMetadata } from "@/lib/i18n/metadata";
 
-export const metadata: Metadata = { title: "Pharmacist applications — PharmaLink" };
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedMetadata("applications");
+}
 
 export default function PharmacistApplicationsPage() {
   return (
