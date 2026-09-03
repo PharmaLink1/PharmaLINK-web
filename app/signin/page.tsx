@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { SignInForm } from "@/components/auth/sign-in-form";
+import { localizedMetadata } from "@/lib/i18n/metadata";
 
-export const metadata: Metadata = { title: "Login — PharmaLink" };
+export async function generateMetadata(): Promise<Metadata> {
+  return localizedMetadata("signin");
+}
 
 export default function SignInPage() {
   return (
     <AuthLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-        <p className="mt-1.5 text-muted-foreground">Log in to continue to PharmaLink.</p>
-      </div>
       <SignInForm />
     </AuthLayout>
   );

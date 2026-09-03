@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/auth-context";
-import { ApiError } from "@/lib/auth-types";
+import { useLanguage } from "@/lib/i18n";
+import { getErrorMessage } from "@/lib/i18n/errors";
 import { validateEmail } from "@/lib/validation";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 
 export function ForgotPasswordForm() {
   const { forgotPassword } = useSession();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const [email, setEmail] = React.useState("");
@@ -34,41 +36,48 @@ export function ForgotPasswordForm() {
       // The backend always returns 202 (no account enumeration), so on success we
       // go straight to the reset step carrying the email.
       await forgotPassword({ email: email.trim() });
-      router.push(`/reset-password?email=${encodeURIComponent(email.trim())}`);
+      router.push("/reset-password?email=" + encodeURIComponent(email.trim()));
     } catch (err) {
-      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      setFormError(getErrorMessage(err, t));
       setSubmitting(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      {formError && <Alert variant="danger">{formError}</Alert>}
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">{t.auth.forgotTitle}</h1>
+        <p className="mt-1.5 text-muted-foreground">{t.auth.forgotSubtitle}</p>
+      </div>
 
-      <Field label="Email" htmlFor="email" error={error}>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@example.com"
-          value={email}
-          invalid={!!error}
-          disabled={submitting}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </Field>
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+        {formError && <Alert variant="danger">{formError}</Alert>}
 
-      <Button type="submit" size="lg" block loading={submitting}>
-        {submitting ? "Sending" : "Send reset code"}
-      </Button>
+        <Field label={t.forms.email} htmlFor="email" error={error}>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder={t.forms.emailPlaceholder}
+            value={email}
+            invalid={!!error}
+            disabled={submitting}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
 
-      <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-        <ArrowLeft className="size-4" aria-hidden />
-        <Link href="/signin" className="font-medium text-primary hover:text-primary-hover">
-          Back to login
-        </Link>
-      </p>
-    </form>
+        <Button type="submit" size="lg" block loading={submitting}>
+          {submitting ? t.forms.sending : t.forms.sendResetCode}
+        </Button>
+
+        <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+          <ArrowLeft className="size-4" aria-hidden />
+          <Link href="/signin" className="font-medium text-primary-strong hover:underline">
+            {t.forms.backToLogin}
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 }

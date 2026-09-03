@@ -1,11 +1,9 @@
-import { Check } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
+"use client";
 
-const points = [
-  "See which nearby pharmacies have your medicine in stock",
-  "Compare prices in ETB before you travel",
-  "Plain-language drug information in Amharic and English",
-];
+import { Check } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
+import { Logo } from "@/components/ui/logo";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 
 /**
  * Split-screen auth: a calm branded panel on the left (desktop) and the form on
@@ -14,6 +12,8 @@ const points = [
  * mint glow, and primary-strong accents (no dev-tool grid or corner ticks).
  */
 export function AuthLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useLanguage();
+
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-border bg-card p-12 lg:flex">
@@ -29,12 +29,12 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="relative max-w-md">
-          <p className="text-sm font-medium text-primary-strong">Medicine, mapped</p>
+          <p className="text-sm font-medium text-primary-strong">{t.auth.medicineMapped}</p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-foreground">
-            Find the medicines you need, at pharmacies near you.
+            {t.auth.headline}
           </h2>
           <ul className="mt-8 space-y-4">
-            {points.map((point) => (
+            {t.auth.points.map((point) => (
               <li key={point} className="flex items-start gap-3">
                 <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
                   <Check className="size-3.5" aria-hidden />
@@ -45,12 +45,13 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           </ul>
         </div>
 
-        <p className="relative text-sm text-muted-foreground">
-          Connecting patients and pharmacies across Ethiopia.
-        </p>
+        <p className="relative text-sm text-muted-foreground">{t.auth.footer}</p>
       </aside>
 
-      <main className="flex flex-col items-center justify-center px-6 py-12">
+      <main className="relative flex flex-col items-center justify-center px-6 py-12">
+        <div className="absolute right-4 top-4">
+          <LanguageToggle />
+        </div>
         <div className="w-full max-w-sm">
           <div className="mb-8 lg:hidden">
             <Logo />
