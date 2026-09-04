@@ -4,6 +4,14 @@
 // Contract: /c/Code/development/PharmaLINK-backend (routes at root, no /api/v1).
 
 import { ApiError, type ApiSuccess, type ApplicationStatus, type AuthResult, type Me, type PharmacistApplication } from "./auth-types";
+import type {
+  MedicineSearchParams,
+  MedicineSearchResponse,
+  MedicineSuggestion,
+  NearbyPharmacy,
+  NotifySubscribeRequest,
+  NotifySubscribeResponse,
+} from "./search-types";
 import { tokenStorage } from "./token-storage";
 import { getCurrentLocale } from "./i18n/config";
 
@@ -187,4 +195,61 @@ export const adminApi = {
   },
 };
 
+export const searchApi = {
+  /** GET /medicines/autocomplete "—" lightweight as-you-type medicine-name suggestions. */
+  autocomplete(query: string, limit = 8): Promise<MedicineSuggestion[]> {
+    return raw<MedicineSuggestion[]>("/medicines/autocomplete?q=" + encodeURIComponent(query) + "&limit=" + limit, {});
+  },
+
+  /** GET /medicines/search "—" ranked stock results for a medicine query. Location
+   * is only sent when the patient opted in; page is 1-based. radius_km rides along
+   * only with a location, since it means nothing without one. */
+  search(params: MedicineSearchParams): Promise<MedicineSearchResponse> {
+    const query = new URLSearchParams();
+    query.set("q", params.q);
+    const hasLocation = params.lat !== undefined && params.lng !== undefined;
+    if (hasLocation) {
+      query.set("lat", String(params.lat));
+      query.set("lng", String(params.lng));
+      if (params.radius_km !== undefined) query.set("radius_km", String(params.radius_km));
+    }
+    if (params.dosage_form) query.set("dosage_form", params.dosage_form);
+    if (params.status) query.set("status", params.status);
+    if (params.page !== undefined) query.set("page", String(params.page));
+    if (params.limit !== undefined) query.set("limit", String(params.limit));
+    return raw<MedicineSearchResponse>("/medicines/search?" + query.toString(), {});
+  },
+
+  /** GET /medicines/search/nearby-fallback "—" verified pharmacies to call when a
+   * search finds no stock. Requires a location. */
+  nearbyFallback(lat: number, lng: number, limit = 8): Promise<NearbyPharmacy[]> {
+    const query = new URLSearchParams();
+    query.set("lat", String(lat));
+    query.set("lng", String(lng));
+    query.set("limit", String(limit));
+    return raw<NearbyPharmacy[]>("/medicines/search/nearby-fallback?" + query.toString(), {});
+  },
+};
+
+export const notifyApi = {
+  /** POST /medicines/{medicine_id}/notify-me "—" subscribe the patient to a back-in-stock
+   * alert near a location. Authenticated; the backend upserts, so re-subscribing is safe.
+   * Omitting radiusKm takes the server default. */
+  subscribe(medicineId: string, input: NotifySubscribeRequest): Promise<NotifySubscribeResponse> {
+    const body: { lat: number; lng: number; radius_km?: number } = { lat: input.lat, lng: input.lng };
+    if (input.radiusKm !== undefined) body.radius_km = input.radiusKm;
+    return request<NotifySubscribeResponse>(
+      "/medicines/" + encodeURIComponent(medicineId) + "/notify-me",
+      { method: "POST", body },
+    );
+  },
+
+  /** DELETE /medicines/notify-me/{subscription_id} "—" cancel an alert. Owner only;
+   * returns 204 (raw resolves the empty body to null). */
+  unsubscribe(subscriptionId: string): Promise<null> {
+    return request<null>("/medicines/notify-me/" + encodeURIComponent(subscriptionId), {
+      method: "DELETE",
+    });
+  },
+};
 export type { ApiSuccess };

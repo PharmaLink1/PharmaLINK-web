@@ -12,6 +12,11 @@ const CODE_MESSAGES: Record<string, (t: Dictionary) => string> = {
   NO_PENDING_SIGNUP: (t) => t.errors.noPendingSignup,
   NO_PASSWORD_RESET: (t) => t.errors.noPasswordReset,
   INCORRECT_PASSWORD: (t) => t.errors.incorrectPassword,
+  EMPTY_QUERY: (t) => t.errors.emptySearch,
+  INVALID_LOCATION: (t) => t.errors.locationInvalid,
+  INVALID_RADIUS: (t) => t.errors.radiusInvalid,
+  SUBSCRIPTION_NOT_FOUND: (t) => t.errors.subscriptionMissing,
+  FORBIDDEN: (t) => t.errors.notifyForbidden,
 };
 
 /** Human message for a thrown error in the current language. */
