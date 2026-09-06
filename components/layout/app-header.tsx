@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { ChevronDown, ClipboardList, LogOut, Settings, User } from "lucide-react";
+import { ChevronDown, ClipboardList, LogOut, Pill, Settings, Store, User } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/i18n";
@@ -54,13 +54,29 @@ export function AppHeader() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           {user?.role === "admin" && (
-            <Link
-              href="/admin/pharmacist-applications"
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-            >
-              <ClipboardList className="size-4 text-muted-foreground" aria-hidden />
-              <span className="hidden sm:inline">{t.nav.applications}</span>
-            </Link>
+            <>
+              <Link
+                href="/admin/pharmacist-applications"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <ClipboardList className="size-4 text-muted-foreground" aria-hidden />
+                <span className="hidden sm:inline">{t.nav.applications}</span>
+              </Link>
+              <Link
+                href="/admin/pharmacies"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <Store className="size-4 text-muted-foreground" aria-hidden />
+                <span className="hidden sm:inline">{t.nav.adminPharmacies}</span>
+              </Link>
+              <Link
+                href="/admin/medicines"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <Pill className="size-4 text-muted-foreground" aria-hidden />
+                <span className="hidden sm:inline">{t.nav.adminMedicines}</span>
+              </Link>
+            </>
           )}
 
           <LanguageToggle />

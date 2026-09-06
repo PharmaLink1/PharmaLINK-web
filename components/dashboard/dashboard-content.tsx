@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, Search, Store } from "lucide-react";
+import { Boxes, Clock, Search, Store } from "lucide-react";
+import Link from "next/link";
 import { useSession } from "@/lib/auth-context";
 import { useLanguage, interpolate } from "@/lib/i18n";
 import { AppHeader } from "@/components/layout/app-header";
@@ -55,6 +56,36 @@ export function DashboardContent() {
                 </p>
               </Card>
             )}
+            {isPharmacist && (
+              <>
+                {/* Pharmacy first: stock can't reach patients until it's registered
+                    and verified. */}
+                <Link
+                  href={"/dashboard/pharmacy"}
+                  className={"rounded-lg border border-border bg-card p-5 text-card-foreground shadow-sm transition-colors hover:bg-muted"}
+                >
+                  <span className={"flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
+                    <Store className={"size-5"} aria-hidden />
+                  </span>
+                  <h2 className={"mt-4 font-semibold"}>{t.dashboard.pharmacy.title}</h2>
+                  <p className={"mt-1 text-sm text-muted-foreground"}>
+                    {t.dashboard.pharmacy.subtitle}
+                  </p>
+                </Link>
+                <Link
+                  href={"/dashboard/inventory"}
+                  className={"rounded-lg border border-border bg-card p-5 text-card-foreground shadow-sm transition-colors hover:bg-muted"}
+                >
+                  <span className={"flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
+                    <Boxes className={"size-5"} aria-hidden />
+                  </span>
+                  <h2 className={"mt-4 font-semibold"}>{t.dashboard.inventory.title}</h2>
+                  <p className={"mt-1 text-sm text-muted-foreground"}>
+                    {t.dashboard.inventory.manageHint}
+                  </p>
+                </Link>
+              </>
+            )}
             <Card className={"p-5"}>
               <span className={"flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
                 <Clock className={"size-5"} aria-hidden />
@@ -64,17 +95,6 @@ export function DashboardContent() {
                 {t.dashboard.activitySoon}
               </p>
             </Card>
-            {isPharmacist && (
-              <Card className={"p-5"}>
-                <span className={"flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
-                  <Store className={"size-5"} aria-hidden />
-                </span>
-                <h2 className={"mt-4 font-semibold"}>{t.dashboard.yourPharmacy}</h2>
-                <p className={"mt-1 text-sm text-muted-foreground"}>
-                  {t.dashboard.pharmacySoon}
-                </p>
-              </Card>
-            )}
           </div>
         )}
       </main>

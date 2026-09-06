@@ -12,6 +12,18 @@ import type {
   NotifySubscribeRequest,
   NotifySubscribeResponse,
 } from "./search-types";
+import type {
+  AdminPharmacy,
+  CatalogMedicine,
+  CreateMedicineRequest,
+  InventoryListing,
+  MyPharmacy,
+  RegisterPharmacyRequest,
+  RegisterPharmacyResponse,
+  ReviewAction,
+  SetListingRequest,
+  VerifiedStatus,
+} from "./pharmacy-types";
 import { tokenStorage } from "./token-storage";
 import { getCurrentLocale } from "./i18n/config";
 
@@ -250,6 +262,83 @@ export const notifyApi = {
     return request<null>("/medicines/notify-me/" + encodeURIComponent(subscriptionId), {
       method: "DELETE",
     });
+  },
+};
+
+export const pharmacyApi = {
+  /** GET /pharmacies/mine "—" the caller's own pharmacies with verification status. */
+  listMine(): Promise<MyPharmacy[]> {
+    return request<MyPharmacy[]>("/pharmacies/mine", {});
+  },
+
+  /** POST /pharmacies "—" register a pharmacy. It starts pending until an admin verifies
+   * it. This endpoint's body is camelCase (businessLicenseUrl), unlike the read side. */
+  register(body: RegisterPharmacyRequest): Promise<RegisterPharmacyResponse> {
+    return request<RegisterPharmacyResponse>("/pharmacies", { method: "POST", body });
+  },
+};
+
+export const pharmacyAdminApi = {
+  /** GET /admin/pharmacies?status= "—" the review queue. Admin only. */
+  list(status?: VerifiedStatus): Promise<AdminPharmacy[]> {
+    const query = status ? "?status=" + status : "";
+    return request<AdminPharmacy[]>("/admin/pharmacies" + query, {});
+  },
+
+  /** POST /admin/pharmacies/{pharmacy_id}/review "—" verify or reject a pending pharmacy.
+   * notes is the rejection reason on a reject. Admin only. */
+  review(pharmacyID: string, action: ReviewAction, notes?: string): Promise<AdminPharmacy> {
+    const body: { action: ReviewAction; notes?: string } = { action };
+    if (notes !== undefined) body.notes = notes;
+    return request<AdminPharmacy>(
+      "/admin/pharmacies/" + encodeURIComponent(pharmacyID) + "/review",
+      { method: "POST", body },
+    );
+  },
+};
+
+export const medicineAdminApi = {
+  /** GET /admin/medicines?q= "—" catalogue medicines matching a name term. Admin only. */
+  list(term = "", limit = 20): Promise<CatalogMedicine[]> {
+    const query = new URLSearchParams();
+    if (term) query.set("q", term);
+    query.set("limit", String(limit));
+    return request<CatalogMedicine[]>("/admin/medicines?" + query.toString(), {});
+  },
+
+  /** POST /admin/medicines "—" add a medicine to the catalogue. Admin only. */
+  create(body: CreateMedicineRequest): Promise<CatalogMedicine> {
+    return request<CatalogMedicine>("/admin/medicines", { method: "POST", body });
+  },
+};
+
+export const inventoryApi = {
+  /** GET /pharmacies/{id}/inventory "—" a pharmacy's stock listings. Owner only. */
+  list(pharmacyID: string): Promise<InventoryListing[]> {
+    return request<InventoryListing[]>(
+      "/pharmacies/" + encodeURIComponent(pharmacyID) + "/inventory",
+      {},
+    );
+  },
+
+  /** PUT /pharmacies/{id}/inventory "—" create or update a stock listing (upsert on
+   * pharmacy + medicine). Owner only. */
+  set(pharmacyID: string, body: SetListingRequest): Promise<InventoryListing> {
+    return request<InventoryListing>(
+      "/pharmacies/" + encodeURIComponent(pharmacyID) + "/inventory",
+      { method: "PUT", body },
+    );
+  },
+
+  /** DELETE /pharmacies/{id}/inventory/{medicine_id} "—" remove a listing. Owner only. */
+  remove(pharmacyID: string, medicineID: string): Promise<null> {
+    return request<null>(
+      "/pharmacies/" +
+        encodeURIComponent(pharmacyID) +
+        "/inventory/" +
+        encodeURIComponent(medicineID),
+      { method: "DELETE" },
+    );
   },
 };
 export type { ApiSuccess };
