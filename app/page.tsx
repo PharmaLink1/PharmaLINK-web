@@ -62,7 +62,7 @@ export default function HomePage() {
          {/* Mobile: stacked price cards, table on sm+ */}
 
           {/* Mobile: minimal rows - name + price on one line, quiet meta below */}
-          <ul className="mx-auto mt-10 max-w-3xl divide-y divide-border overflow-hidden rounded-[var(--radius)] border border-border bg-card shadow-sm sm:hidden">
+          <ul className="mx-auto mt-10 max-w-3xl divide-y divide-border overflow-hidden rounded-(--radius) border border-border bg-card shadow-sm sm:hidden">
             {compareRows.map((row) => (
               <li key={row.id} className={cn("px-4 py-3.5", row.best && "bg-primary-subtle/40")}>
                 <div className="flex items-center justify-between gap-3">
@@ -87,7 +87,7 @@ export default function HomePage() {
             ))}
           </ul>
 
-          <div className="mx-auto mt-10 hidden max-w-3xl overflow-hidden rounded-[var(--radius)] border border-border bg-card shadow-sm sm:block">
+          <div className="mx-auto mt-10 hidden max-w-3xl overflow-hidden rounded-(--radius) border border-border bg-card shadow-sm sm:block">
             <table className="w-full text-left text-sm">
               <caption className="sr-only">{t.home.compareCaption}</caption>
               <thead>
@@ -155,7 +155,7 @@ export default function HomePage() {
             body={t.home.audiences.body}
           />
           <div className="mt-12 grid gap-4 lg:grid-cols-2">
-            <div className="flex flex-col rounded-[var(--radius)] border border-border bg-card p-8">
+            <div className="flex flex-col rounded-(--radius) border border-border bg-card p-8">
               <span className="flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
                 <UserRound className="size-5" aria-hidden />
               </span>
@@ -180,7 +180,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div id="pharmacies" className="flex flex-col rounded-[var(--radius)] border border-border bg-card p-8">
+            <div id="pharmacies" className="flex flex-col rounded-(--radius) border border-border bg-card p-8">
               <span className="flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
                 <Store className="size-5" aria-hidden />
               </span>

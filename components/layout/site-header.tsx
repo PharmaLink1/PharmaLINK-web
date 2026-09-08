@@ -198,7 +198,7 @@ export function SiteHeader() {
                     {/* Subtle top hairline highlight in Mint Signal accent */}
                     <div
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+                      className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent"
                     />
 
                     <div className="mb-5 flex items-center justify-between">
@@ -219,7 +219,7 @@ export function SiteHeader() {
                         <Link
                           href="/dashboard"
                           onClick={close}
-                          className="group flex min-h-[44px] items-center justify-between rounded-lg border-l-2 border-primary bg-primary-subtle py-2.5 pl-3 pr-3.5 text-sm font-medium text-primary-strong shadow-xs shadow-primary/10 transition-all active:scale-[0.99]"
+                          className="group flex min-h-11 items-center justify-between rounded-lg border-l-2 border-primary bg-primary-subtle py-2.5 pl-3 pr-3.5 text-sm font-medium text-primary-strong shadow-xs shadow-primary/10 transition-all active:scale-[0.99]"
                         >
                           <span className="flex items-center gap-2.5">
                             <LayoutDashboard className="size-4 shrink-0 text-primary-strong" aria-hidden />
@@ -234,7 +234,7 @@ export function SiteHeader() {
                           key={link.href}
                           href={link.href}
                           onClick={close}
-                          className="group flex min-h-[44px] items-center justify-between rounded-lg py-2.5 pl-3 pr-3.5 text-sm text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground active:bg-muted active:scale-[0.99]"
+                          className="group flex min-h-11 items-center justify-between rounded-lg py-2.5 pl-3 pr-3.5 text-sm text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground active:bg-muted active:scale-[0.99]"
                         >
                           <span className="flex items-center gap-2.5">
                             <link.icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
@@ -270,7 +270,7 @@ export function SiteHeader() {
                           <Link
                             href="/dashboard"
                             onClick={close}
-                            className={cn(buttonVariants({ block: true }), "min-h-[44px] justify-start font-medium")}
+                            className={cn(buttonVariants({ block: true }), "min-h-11 justify-start font-medium")}
                           >
                             <LayoutDashboard className="size-4" aria-hidden />
                             {t.nav.dashboard}
@@ -280,7 +280,7 @@ export function SiteHeader() {
                             onClick={handleLogout}
                             className={cn(
                               buttonVariants({ variant: "ghost", block: true }),
-                              "min-h-[44px] justify-start text-muted-foreground hover:text-foreground",
+                              "min-h-11 justify-start text-muted-foreground hover:text-foreground",
                             )}
                           >
                             <LogOut className="size-4 text-muted-foreground" aria-hidden />
@@ -293,7 +293,7 @@ export function SiteHeader() {
                         <Link
                           href="/signin"
                           onClick={close}
-                          className={cn(buttonVariants({ variant: "outline", block: true }), "min-h-[44px] justify-start")}
+                          className={cn(buttonVariants({ variant: "outline", block: true }), "min-h-11 justify-start")}
                         >
                           <LogIn className="size-4 text-muted-foreground" aria-hidden />
                           {t.nav.login}
@@ -301,7 +301,7 @@ export function SiteHeader() {
                         <Link
                           href="/signup"
                           onClick={close}
-                          className={cn(buttonVariants({ block: true }), "min-h-[44px] justify-start font-medium")}
+                          className={cn(buttonVariants({ block: true }), "min-h-11 justify-start font-medium")}
                         >
                           <UserPlus className="size-4" aria-hidden />
                           {t.nav.signUp}
