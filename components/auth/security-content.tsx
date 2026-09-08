@@ -16,7 +16,7 @@ export function SecurityContent() {
         <h1 className="text-2xl font-semibold tracking-tight">{t.settings.security}</h1>
         <p className="mt-1 text-muted-foreground">{t.settings.subtitle}</p>
 
-        <Card className="mt-8">
+        <Card variant="elevated" className="mt-8">
           <CardHeader>
             <CardTitle>{t.settings.changePassword}</CardTitle>
             <CardDescription>{t.settings.changePasswordDescription}</CardDescription>

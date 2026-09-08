@@ -131,7 +131,7 @@ export function HeroSection() {
         <DecorIcon className="hidden size-4 xl:block" position="bottom-right" />
 
         <FullWidthDivider className="-top-px" />
-        <div className="overflow-hidden rounded-[var(--radius)] border border-border bg-card shadow-sm">
+        <div className="overflow-hidden rounded-(--radius) border border-border bg-card shadow-sm">
           {/* Preview header: sample search context */}
           <div className="flex items-center gap-2 border-b border-border px-4 py-3">
             <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />

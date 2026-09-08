@@ -26,6 +26,7 @@ import type { Role } from "@/lib/auth-types";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
 import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { SPRING_PANEL } from "@/lib/ease";
@@ -174,7 +175,7 @@ export function AppHeader() {
                 <User className="size-4" aria-hidden />
               </span>
               <span className="hidden text-left sm:block">
-                <span className="block max-w-[12rem] truncate font-medium leading-tight">
+                <span className="block max-w-48 truncate font-medium leading-tight">
                   {name || t.nav.account}
                 </span>
                 {user && (
@@ -255,17 +256,12 @@ export function AppHeader() {
                   transition={SPRING_PANEL}
                   className="relative my-auto w-full max-w-xs"
                 >
-                  <div
+                  <Card
+                    variant="modal"
                     role="dialog"
                     aria-modal="true"
-                    className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/95 p-6 shadow-2xl shadow-primary/5 backdrop-blur-2xl dark:border-white/10 dark:shadow-black/60"
+                    className="p-6"
                   >
-                    {/* Subtle top hairline highlight in Mint Signal accent */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
-                    />
-
                     <div className="mb-5 flex items-center justify-between">
                       <Logo />
                       <button
@@ -284,7 +280,7 @@ export function AppHeader() {
                         href="/dashboard"
                         onClick={closeMenu}
                         className={cn(
-                          "group flex min-h-[44px] items-center justify-between rounded-lg py-2.5 text-sm transition-all active:scale-[0.99]",
+                          "group flex min-h-11 items-center justify-between rounded-lg py-2.5 text-sm transition-all active:scale-[0.99]",
                           pathname === "/dashboard"
                             ? "border-l-2 border-primary bg-primary-subtle pl-3 pr-3.5 font-medium text-primary-strong shadow-xs shadow-primary/10"
                             : "pl-3 pr-3.5 text-muted-foreground hover:bg-muted/80 hover:text-foreground active:bg-muted",
@@ -316,7 +312,7 @@ export function AppHeader() {
                             href={link.href}
                             onClick={closeMenu}
                             className={cn(
-                              "group flex min-h-[44px] items-center justify-between rounded-lg py-2.5 text-sm transition-all active:scale-[0.99]",
+                              "group flex min-h-11 items-center justify-between rounded-lg py-2.5 text-sm transition-all active:scale-[0.99]",
                               active
                                 ? "border-l-2 border-primary bg-primary-subtle pl-3 pr-3.5 font-medium text-primary-strong shadow-xs shadow-primary/10"
                                 : "pl-3 pr-3.5 text-muted-foreground hover:bg-muted/80 hover:text-foreground active:bg-muted",
@@ -369,7 +365,7 @@ export function AppHeader() {
                           onClick={closeMenu}
                           className={cn(
                             buttonVariants({ variant: "outline", block: true }),
-                            "min-h-[44px] justify-start",
+                            "min-h-11 justify-start",
                           )}
                         >
                           <Settings className="size-4 text-muted-foreground" aria-hidden />
@@ -380,7 +376,7 @@ export function AppHeader() {
                           onClick={handleLogout}
                           className={cn(
                             buttonVariants({ variant: "ghost", block: true }),
-                            "min-h-[44px] justify-start text-muted-foreground hover:text-foreground",
+                            "min-h-11 justify-start text-muted-foreground hover:text-foreground",
                           )}
                         >
                           <LogOut className="size-4 text-muted-foreground" aria-hidden />
@@ -388,7 +384,7 @@ export function AppHeader() {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 </motion.div>
               </div>
             )}
