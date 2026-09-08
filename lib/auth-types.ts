@@ -29,6 +29,15 @@ export type AuthResult = {
   refreshToken: string;
 };
 
+/** Body for POST /admin/admins — an admin creating another admin. camelCase to match
+ * the auth endpoints; the response is a User. */
+export type CreateAdminRequest = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
 export type ApplicationStatus = "pending" | "approved" | "rejected";
 
 /** A pharmacist application as returned by the admin review endpoints

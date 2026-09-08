@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { medicineAdminApi } from "@/lib/pharmacy-api";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { medicineApi } from "@/lib/pharmacy-api";
 import type { CatalogMedicine } from "@/lib/pharmacy-types";
 import { getErrorMessage } from "@/lib/i18n/errors";
 import { interpolate, useLanguage } from "@/lib/i18n";
@@ -13,11 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { AppHeader } from "@/components/layout/app-header";
 
-/** Admin medicine catalogue: create medicines and browse the catalogue. Seeding this
- * is what lets pharmacists list stock and patients search — the start of the chain. */
-export function MedicineCatalog() {
+/** Pharmacist medicine catalogue: pharmacists (the clinical professionals) add
+ * medicines to the shared catalogue and browse it. Seeding this is what lets any
+ * pharmacist list stock and patients search — the start of the chain. */
+export function MedicinesContent() {
   const { t } = useLanguage();
-  const m = t.admin.medicines;
+  const m = t.dashboard.medicines;
   const f = m.form;
 
   const [medicines, setMedicines] = React.useState<CatalogMedicine[] | null>(null);
@@ -36,7 +39,7 @@ export function MedicineCatalog() {
   const load = React.useCallback(async () => {
     setError("");
     try {
-      setMedicines(await medicineAdminApi.list("", 100));
+      setMedicines(await medicineApi.list("", 100));
     } catch (err) {
       setError(getErrorMessage(err, t));
       setMedicines([]);
@@ -61,7 +64,7 @@ export function MedicineCatalog() {
     setGenericError(undefined);
     setSubmitting(true);
     try {
-      const created = await medicineAdminApi.create({
+      const created = await medicineApi.create({
         generic_name: generic.trim(),
         brand_name: brand.trim() || undefined,
         amharic_name: amharic.trim() || undefined,
@@ -97,7 +100,15 @@ export function MedicineCatalog() {
       <AppHeader />
 
       <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <h1 className={"text-2xl font-semibold tracking-tight"}>{m.title}</h1>
+        <Link
+          href={"/dashboard"}
+          className={"inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"}
+        >
+          <ArrowLeft className={"size-4"} aria-hidden />
+          {t.nav.dashboard}
+        </Link>
+
+        <h1 className={"mt-4 text-2xl font-semibold tracking-tight"}>{m.title}</h1>
         <p className={"mt-1 text-muted-foreground"}>{m.subtitle}</p>
 
         <div className={"mt-6 space-y-4"}>

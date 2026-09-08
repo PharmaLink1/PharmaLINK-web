@@ -1,0 +1,2 @@
+Hello 'single' double $dollar `tick and more
+line two with quotes

@@ -4,4 +4,4 @@
 // import site while the real endpoints live alongside auth/search/notify. The former
 // in-memory mock has been removed now that the backend is wired.
 
-export { pharmacyApi, pharmacyAdminApi, medicineAdminApi, inventoryApi } from "./api-client";
+export { pharmacyApi, pharmacyAdminApi, medicineApi, inventoryApi } from "./api-client";

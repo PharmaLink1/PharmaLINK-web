@@ -3,7 +3,7 @@
 // refreshes once on a 401.
 // Contract: /c/Code/development/PharmaLINK-backend (routes at root, no /api/v1).
 
-import { ApiError, type ApiSuccess, type ApplicationStatus, type AuthResult, type Me, type PharmacistApplication } from "./auth-types";
+import { ApiError, type ApiSuccess, type ApplicationStatus, type AuthResult, type CreateAdminRequest, type Me, type PharmacistApplication, type User } from "./auth-types";
 import type {
   MedicineSearchParams,
   MedicineSearchResponse,
@@ -205,6 +205,12 @@ export const adminApi = {
       body: { reason },
     });
   },
+
+  /** POST /admin/admins — create another admin account. Admin only. Body is camelCase
+   * (matches the auth endpoints); returns the created user. */
+  createAdmin(body: CreateAdminRequest): Promise<User> {
+    return request<User>("/admin/admins", { method: "POST", body });
+  },
 };
 
 export const searchApi = {
@@ -297,18 +303,18 @@ export const pharmacyAdminApi = {
   },
 };
 
-export const medicineAdminApi = {
-  /** GET /admin/medicines?q= "—" catalogue medicines matching a name term. Admin only. */
+export const medicineApi = {
+  /** GET /medicines?q= "—" catalogue medicines matching a name term. Pharmacist only. */
   list(term = "", limit = 20): Promise<CatalogMedicine[]> {
     const query = new URLSearchParams();
     if (term) query.set("q", term);
     query.set("limit", String(limit));
-    return request<CatalogMedicine[]>("/admin/medicines?" + query.toString(), {});
+    return request<CatalogMedicine[]>("/medicines?" + query.toString(), {});
   },
 
-  /** POST /admin/medicines "—" add a medicine to the catalogue. Admin only. */
+  /** POST /medicines "—" add a medicine to the shared catalogue. Pharmacist only. */
   create(body: CreateMedicineRequest): Promise<CatalogMedicine> {
-    return request<CatalogMedicine>("/admin/medicines", { method: "POST", body });
+    return request<CatalogMedicine>("/medicines", { method: "POST", body });
   },
 };
 
