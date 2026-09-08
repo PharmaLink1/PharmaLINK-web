@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/ui/logo";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
@@ -68,9 +69,9 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
         <div className="flex flex-1 flex-col items-center justify-center py-6">
           <div className="w-full max-w-sm">
-            <div className="rounded-[var(--radius)] border border-border bg-card p-6 shadow-sm sm:p-8">
+            <Card variant="elevated" className="p-6 sm:p-8">
               {children}
-            </div>
+            </Card>
           </div>
         </div>
       </main>
