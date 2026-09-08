@@ -24,6 +24,7 @@ import type { Role } from "@/lib/auth-types";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
 import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { SPRING_PANEL } from "@/lib/ease";
@@ -190,17 +191,12 @@ export function SiteHeader() {
                   transition={SPRING_PANEL}
                   className="relative my-auto w-full max-w-xs"
                 >
-                  <div
+                  <Card
+                    variant="modal"
                     role="dialog"
                     aria-modal="true"
-                    className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/95 p-6 shadow-2xl shadow-primary/5 backdrop-blur-2xl dark:border-white/10 dark:shadow-black/60"
+                    className="p-6"
                   >
-                    {/* Subtle top hairline highlight in Mint Signal accent */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent"
-                    />
-
                     <div className="mb-5 flex items-center justify-between">
                       <Logo />
                       <button
@@ -308,7 +304,7 @@ export function SiteHeader() {
                         </Link>
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </motion.div>
               </div>
             )}
