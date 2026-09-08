@@ -10,37 +10,49 @@ import { interpolate, useLanguage } from "@/lib/i18n";
 import { Alert } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { AppHeader } from "@/components/layout/app-header";
 import { ListingForm } from "@/components/dashboard/inventory/listing-form";
 import { ListingRow } from "@/components/dashboard/inventory/listing-row";
 import { cn } from "@/lib/cn";
 
-/** Pharmacist inventory manager: lists the current stock for the pharmacist's
- * pharmacy and lets them add/update/remove listings. Requires a registered pharmacy;
- * stock only reaches patients once that pharmacy is verified. */
+/** Pharmacist inventory manager: lists the current stock for the selected pharmacy
+ * and lets them add/update/remove listings. A pharmacist may own several pharmacies,
+ * so when there's more than one they pick which to manage (deep-linkable from a
+ * pharmacy card via ?pharmacy=<id>). Stock only reaches patients once that pharmacy
+ * is verified. */
 export function InventoryContent() {
   const { t } = useLanguage();
   const inv = t.dashboard.inventory;
 
-  const [pharmacy, setPharmacy] = React.useState<MyPharmacy | null>(null);
+  const [pharmacies, setPharmacies] = React.useState<MyPharmacy[]>([]);
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [ready, setReady] = React.useState(false);
   const [listings, setListings] = React.useState<InventoryListing[]>([]);
   const [error, setError] = React.useState("");
   const [notice, setNotice] = React.useState("");
   const [removing, setRemoving] = React.useState<string | null>(null);
 
-  // Load the pharmacist's pharmacy, then its inventory. A pharmacist manages the first
-  // pharmacy they own (the register flow creates one).
+  const selected = React.useMemo(
+    () => pharmacies.find((p) => p.pharmacy_id === selectedId) ?? null,
+    [pharmacies, selectedId],
+  );
+
+  // Load the pharmacist's pharmacies, then the inventory for the chosen one. The
+  // initial pharmacy comes from ?pharmacy=<id> (deep link from a pharmacy card) when
+  // it matches one they own, otherwise the first pharmacy.
   React.useEffect(() => {
     let active = true;
     (async () => {
       try {
         const mine = await pharmacyApi.listMine();
         if (!active) return;
-        const first = mine[0] ?? null;
-        setPharmacy(first);
-        if (first) setListings(await inventoryApi.list(first.pharmacy_id));
+        setPharmacies(mine);
+        const wanted = new URLSearchParams(window.location.search).get("pharmacy");
+        const initial = mine.find((p) => p.pharmacy_id === wanted) ?? mine[0] ?? null;
+        setSelectedId(initial?.pharmacy_id ?? null);
+        if (initial) setListings(await inventoryApi.list(initial.pharmacy_id));
       } catch (err) {
         if (active) setError(getErrorMessage(err, t));
       } finally {
@@ -52,6 +64,18 @@ export function InventoryContent() {
     };
   }, [t]);
 
+  async function handleSelectPharmacy(id: string) {
+    setSelectedId(id);
+    setNotice("");
+    setError("");
+    setListings([]);
+    try {
+      setListings(await inventoryApi.list(id));
+    } catch (err) {
+      setError(getErrorMessage(err, t));
+    }
+  }
+
   function handleSaved(saved: InventoryListing) {
     setNotice(inv.add.saved);
     setError("");
@@ -62,11 +86,11 @@ export function InventoryContent() {
   }
 
   async function handleRemove(medicineID: string) {
-    if (!pharmacy) return;
+    if (!selected) return;
     setRemoving(medicineID);
     setError("");
     try {
-      await inventoryApi.remove(pharmacy.pharmacy_id, medicineID);
+      await inventoryApi.remove(selected.pharmacy_id, medicineID);
       setListings((prev) => prev.filter((l) => l.medicine_id !== medicineID));
       setNotice(inv.row.removed);
     } catch (err) {
@@ -96,7 +120,7 @@ export function InventoryContent() {
           <div className={"mt-8 flex justify-center py-10"}>
             <Spinner label={inv.loading} />
           </div>
-        ) : !pharmacy ? (
+        ) : !selected ? (
           <Card className={"mt-8 p-5"}>
             <p className={"text-sm text-muted-foreground"}>{inv.noPharmacy}</p>
             <div className={"mt-4"}>
@@ -110,13 +134,41 @@ export function InventoryContent() {
           </Card>
         ) : (
           <div className={"mt-6 space-y-4"}>
-            {pharmacy.verified_status !== "verified" && (
+            {pharmacies.length > 1 && (
+              <Field
+                label={inv.pharmacyLabel}
+                htmlFor={"inventory-pharmacy"}
+                hint={inv.selectPharmacyHint}
+              >
+                <select
+                  id={"inventory-pharmacy"}
+                  value={selected.pharmacy_id}
+                  onChange={(e) => void handleSelectPharmacy(e.target.value)}
+                  className={cn(
+                    "h-11 w-full rounded-md border border-input bg-card px-3.5 text-sm text-foreground",
+                    "transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+                  )}
+                >
+                  {pharmacies.map((ph) => (
+                    <option key={ph.pharmacy_id} value={ph.pharmacy_id}>
+                      {ph.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
+
+            {selected.verified_status !== "verified" && (
               <Alert variant={"warning"}>{inv.pendingNotice}</Alert>
             )}
             {notice && <Alert variant={"success"}>{notice}</Alert>}
             {error && <Alert variant={"danger"}>{error}</Alert>}
 
-            <ListingForm pharmacyID={pharmacy.pharmacy_id} onSaved={handleSaved} />
+            <ListingForm
+              key={selected.pharmacy_id}
+              pharmacyID={selected.pharmacy_id}
+              onSaved={handleSaved}
+            />
 
             {listings.length > 0 ? (
               <div className={"space-y-2"}>

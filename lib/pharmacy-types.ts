@@ -70,7 +70,7 @@ export type ReviewPharmacyRequest = {
   notes?: string;
 };
 
-/** Body for POST /admin/medicines. */
+/** Body for POST /medicines. */
 export type CreateMedicineRequest = {
   generic_name: string;
   brand_name?: string;

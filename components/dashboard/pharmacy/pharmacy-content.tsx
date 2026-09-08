@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft, Boxes } from "lucide-react";
+import { ArrowLeft, Boxes, Plus } from "lucide-react";
 import { pharmacyApi } from "@/lib/pharmacy-api";
 import type { MyPharmacy } from "@/lib/pharmacy-types";
 import { getErrorMessage } from "@/lib/i18n/errors";
@@ -25,6 +25,7 @@ export function PharmacyContent() {
   const [pharmacies, setPharmacies] = React.useState<MyPharmacy[] | null>(null);
   const [error, setError] = React.useState("");
   const [justRegistered, setJustRegistered] = React.useState(false);
+  const [showForm, setShowForm] = React.useState(false);
 
   const load = React.useCallback(async () => {
     setError("");
@@ -75,7 +76,7 @@ export function PharmacyContent() {
             <div className={"flex justify-center py-10"}>
               <Spinner label={p.loading} />
             </div>
-          ) : pharmacies.length > 0 ? (
+          ) : (
             <div className={"space-y-3"}>
               {pharmacies.map((pharmacy) => (
                 <Card key={pharmacy.pharmacy_id} className={"p-5"}>
@@ -95,7 +96,7 @@ export function PharmacyContent() {
                   </div>
                   <div className={"mt-4"}>
                     <Link
-                      href={"/dashboard/inventory"}
+                      href={`/dashboard/inventory?pharmacy=${pharmacy.pharmacy_id}`}
                       className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
                     >
                       <Boxes className={"size-4"} aria-hidden />
@@ -104,14 +105,40 @@ export function PharmacyContent() {
                   </div>
                 </Card>
               ))}
+
+              {showForm || pharmacies.length === 0 ? (
+                <div className={"space-y-3"}>
+                  {pharmacies.length > 0 && (
+                    <button
+                      type={"button"}
+                      onClick={() => setShowForm(false)}
+                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+                    >
+                      {t.common.cancel}
+                    </button>
+                  )}
+                  <PharmacyForm
+                    onRegistered={() => {
+                      setJustRegistered(true);
+                      setShowForm(false);
+                      void load();
+                    }}
+                  />
+                </div>
+              ) : (
+                <button
+                  type={"button"}
+                  onClick={() => {
+                    setJustRegistered(false);
+                    setShowForm(true);
+                  }}
+                  className={cn(buttonVariants({ variant: "outline" }))}
+                >
+                  <Plus className={"size-4"} aria-hidden />
+                  {p.addAnother}
+                </button>
+              )}
             </div>
-          ) : (
-            <PharmacyForm
-              onRegistered={() => {
-                setJustRegistered(true);
-                void load();
-              }}
-            />
           )}
         </div>
       </main>

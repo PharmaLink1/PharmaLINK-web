@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { AdminGuard } from "@/components/auth/admin-guard";
-import { MedicineCatalog } from "@/components/admin/medicine-catalog";
+import { AdminCreate } from "@/components/admin/admin-create";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return localizedMetadata("adminMedicines");
+  return localizedMetadata("adminAdmins");
 }
 
-export default function AdminMedicinesPage() {
+export default function AdminAdminsPage() {
   return (
     <AdminGuard>
-      <MedicineCatalog />
+      <AdminCreate />
     </AdminGuard>
   );
 }

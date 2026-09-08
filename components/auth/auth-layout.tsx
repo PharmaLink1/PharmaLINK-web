@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import { Logo } from "@/components/ui/logo";
 import { LanguageToggle } from "@/components/layout/language-toggle";
+import { ThemeToggle } from "@/components/motion/theme-toggle";
 
 /**
  * Split-screen auth: a calm branded panel on the left (desktop) and the form on
@@ -48,16 +49,28 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         <p className="relative text-sm text-muted-foreground">{t.auth.footer}</p>
       </aside>
 
-      <main className="relative flex flex-col items-center justify-center px-6 py-12">
-        <div className="absolute right-4 top-4">
-          <LanguageToggle />
-        </div>
-        <div className="w-full max-w-sm">
-          <div className="mb-8 lg:hidden">
+      <main className="relative flex flex-col px-6 py-6">
+        {/* Top bar: home link (left) + language & theme controls (right). The logo
+            is hidden on desktop where the aside already shows it. */}
+        <div className="flex items-center justify-between">
+          <div className="lg:invisible">
             <Logo />
           </div>
-          <div className="rounded-[var(--radius)] border border-border bg-card p-6 shadow-sm sm:p-8">
-            {children}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <ThemeToggle
+              variant="blinds"
+              className="size-9 shrink-0 rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+              iconClassName="size-4"
+            />
+            <LanguageToggle />
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col items-center justify-center py-6">
+          <div className="w-full max-w-sm">
+            <div className="rounded-[var(--radius)] border border-border bg-card p-6 shadow-sm sm:p-8">
+              {children}
+            </div>
           </div>
         </div>
       </main>

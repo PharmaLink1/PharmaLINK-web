@@ -3,7 +3,7 @@
 import * as React from "react";
 import { LocateFixed } from "lucide-react";
 import { pharmacyApi } from "@/lib/pharmacy-api";
-import type { RegisterPharmacyRequest } from "@/lib/pharmacy-types";
+import type { Hours, RegisterPharmacyRequest } from "@/lib/pharmacy-types";
 import { getErrorMessage } from "@/lib/i18n/errors";
 import { useLanguage } from "@/lib/i18n";
 import { Alert } from "@/components/ui/alert";
@@ -13,7 +13,9 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { CertificateUploader } from "@/components/auth/certificate-uploader";
 
-type Errors = Partial<Record<"name" | "address" | "phone" | "location" | "license", string>>;
+type Errors = Partial<
+  Record<"name" | "address" | "phone" | "location" | "license" | "hours", string>
+>;
 
 /** Registration form for a pharmacist's own pharmacy. The pharmacy starts pending
  * until an admin verifies it, which the caller surfaces after a successful submit. */
@@ -28,6 +30,8 @@ export function PharmacyForm({ onRegistered }: { onRegistered: () => void }) {
   const [lng, setLng] = React.useState("");
   const [licenseUrl, setLicenseUrl] = React.useState("");
   const [is24h, setIs24h] = React.useState(false);
+  const [opens, setOpens] = React.useState("08:00");
+  const [closes, setCloses] = React.useState("20:00");
 
   const [errors, setErrors] = React.useState<Errors>({});
   const [formError, setFormError] = React.useState("");
@@ -66,6 +70,11 @@ export function PharmacyForm({ onRegistered }: { onRegistered: () => void }) {
     const validLng = lng.trim() !== "" && Number.isFinite(lngNum) && lngNum >= -180 && lngNum <= 180;
     if (!validLat || !validLng) next.location = t.errors.locationInvalid;
 
+    if (!is24h) {
+      if (!opens || !closes) next.hours = f.hoursRequired;
+      else if (opens === closes) next.hours = f.hoursInvalid;
+    }
+
     setErrors(next);
     return { ok: Object.keys(next).length === 0, latNum, lngNum };
   }
@@ -76,13 +85,20 @@ export function PharmacyForm({ onRegistered }: { onRegistered: () => void }) {
     const { ok, latNum, lngNum } = validate();
     if (!ok) return;
 
+    // Backend stores per-day "HH:MM-HH:MM" strings; the form applies one schedule to
+    // every day, or marks the pharmacy open around the clock.
+    const span = `${opens}-${closes}`;
+    const hours: Hours = is24h
+      ? { is24h: true }
+      : { mon: span, tue: span, wed: span, thu: span, fri: span, sat: span, sun: span, is24h: false };
+
     const body: RegisterPharmacyRequest = {
       name: name.trim(),
       address: address.trim(),
       lat: latNum,
       lng: lngNum,
       phone: phone.trim(),
-      hours: { is24h },
+      hours,
       businessLicenseUrl: licenseUrl.trim(),
     };
 
@@ -212,6 +228,45 @@ export function PharmacyForm({ onRegistered }: { onRegistered: () => void }) {
             />
             {f.open24}
           </label>
+
+          {!is24h && (
+            <>
+              <div className={"grid grid-cols-1 gap-3 sm:grid-cols-2"}>
+                <Field label={f.opens} htmlFor={"pharmacy-opens"}>
+                  <Input
+                    id={"pharmacy-opens"}
+                    type={"time"}
+                    value={opens}
+                    onChange={(e) => {
+                      setOpens(e.target.value);
+                      setErrors((er) => ({ ...er, hours: undefined }));
+                    }}
+                    invalid={Boolean(errors.hours)}
+                    disabled={submitting}
+                  />
+                </Field>
+                <Field label={f.closes} htmlFor={"pharmacy-closes"}>
+                  <Input
+                    id={"pharmacy-closes"}
+                    type={"time"}
+                    value={closes}
+                    onChange={(e) => {
+                      setCloses(e.target.value);
+                      setErrors((er) => ({ ...er, hours: undefined }));
+                    }}
+                    invalid={Boolean(errors.hours)}
+                    disabled={submitting}
+                  />
+                </Field>
+              </div>
+              <p className={"text-xs text-muted-foreground"}>{f.hoursEveryDay}</p>
+              {errors.hours && (
+                <p role={"alert"} className={"text-xs font-medium text-danger"}>
+                  {errors.hours}
+                </p>
+              )}
+            </>
+          )}
         </div>
 
         <div>
