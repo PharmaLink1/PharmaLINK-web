@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import { Geist, Geist_Mono, Noto_Sans_Ethiopic } from "next/font/google";
-import { AuthProvider } from "@/lib/auth-context";
-import { ThemeProvider } from "@/components/theme-provider";
-import { LanguageProvider } from "@/lib/i18n";
-import { Backdrop } from "@/components/layout/backdrop";
-import { getLocaleFromRequest } from "@/lib/i18n/server";
-import { dictionaries } from "@/lib/i18n/dictionaries";
-import type { Locale } from "@/lib/i18n/config";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,57 +14,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Ethiopic glyphs (Geist has none). Latin text still renders in Geist - this
-// font sits after it in the stack and only supplies Amharic coverage.
-const notoEthiopic = Noto_Sans_Ethiopic({
-  variable: "--font-ethiopic",
-  subsets: ["ethiopic"],
-});
+export const metadata: Metadata = {
+  title: "PharmaLink",
+  description: "Medicine availability & pharmacy companion for Ethiopia",
+};
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocaleFromRequest();
-  const t = dictionaries[locale];
-  return {
-    title: t.meta.homeTitle,
-    description: t.meta.homeDescription,
-  };
-}
+// Runs before hydration so the correct theme applies on first paint — avoids
+// a light-mode flash for users whose stored/system preference is dark.
+const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('pharmalink_theme');var t=s==='light'||s==='dark'?s:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t;}catch(e){}})();`;
 
-// Applied before first paint so an Amharic visitor never sees English <html lang>.
-const themeInitScript = `(function(){try{var t=localStorage.getItem("pharmalink-theme");var d=t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})();`;
-
-// Injects the server-rendered locale (request cookie) so the first client
-// render matches SSR and the <html lang> attribute is correct before paint.
-function localeInitScript(locale: Locale): string {
-  return `(function(){try{var l=${JSON.stringify(locale)};if(l==="am"||l==="en"){window.__PHARMALINK_LOCALE__=l;document.documentElement.lang=l}}catch(e){}})();`;
-}
-
-export default async function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const locale = await getLocaleFromRequest();
-
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang={locale}
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // The theme-init script below sets data-theme on this element before
+      // React hydrates, so its attributes will legitimately differ from what
+      // was server-rendered — this is the standard, safe way to tell React
+      // that specific, expected mismatch is intentional.
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${notoEthiopic.variable} h-full antialiased`}
     >
-      <head>
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
-        <Script id="locale-init" strategy="beforeInteractive">
-          {localeInitScript(locale)}
-        </Script>
-      </head>
-      <body className="min-h-full">
-        <Backdrop />
-        <ThemeProvider>
-          <LanguageProvider initialLocale={locale}>
-            <AuthProvider>{children}</AuthProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+      {/*
+        suppressHydrationWarning here too: browser extensions like Grammarly
+        inject attributes (data-new-gr-c-s-check-loaded, data-gr-ext-installed)
+        onto <body> before React hydrates. That's an external, harmless
+        mismatch outside our control — not a bug in this app's code.
+      */}
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <Script
+          id="pharmalink-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -1,254 +1,186 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@custom-variant dark (&:is(.dark *));
 
-/*
-  PharmaLink design tokens - Mint Signal (21st.dev), approved light-first theme.
-  Source: https://21st.dev/community/themes -> "Mint Signal".
-  Cool near-white canvas (#fdfdfd), mint #51f0a8 primary with black foreground,
-  dark-mint #0d9f5d text accents. Semantic stock colors stay paired with text.
-  The mobile team mirrors these tokens.
-*/
 :root {
-  /* Canvas & text - cool neutral, no warm tint */
-  --background: #fdfdfd;
-  --foreground: #000000;
-  --muted: #f5f5f5;
-  --muted-foreground: #525252;
+  --background: #f7f5f1;
+  --foreground: #1a1d1b;
 
-  /* Surfaces */
-  --card: #ffffff;
-  --card-foreground: #000000;
-  --popover: #fcfcfc;
-  --popover-foreground: #000000;
-  --secondary: #fcfdfd;
-  --secondary-foreground: #080808;
-  --accent: #f9fffc;
-  --accent-foreground: #0d9f5d;
-  --border: #e6e8eb;
-  --input: #dcdfe3;
-  --ring: #51f0a8;
+  /*
+   * PharmaLink design tokens — locked in from Page 1 (Login) Figma + PRD.
+   * These are the canonical light-mode tokens; every later page reuses them,
+   * so changes here ripple across the whole product's design system.
+   */
+  --color-brand: #2e6b5e;
+  --color-brand-hover: #245549;
+  --color-canvas: #f7f5f1;
+  --color-surface: #ffffff;
+  --color-border: #e7e3dc;
+  --color-text-primary: #1a1d1b;
+  --color-text-secondary: #6b726e;
+  --color-text-placeholder: #9aa09c;
+  --color-error: #c4433a;
+  --color-error-bg: #fbeae8;
+  --color-focus: #3e8b79;
 
-  /* Brand - Mint Signal mint with black foreground */
-  --primary: #51f0a8;
-  --primary-hover: #2fe49a;
-  --primary-foreground: #000000;
-  --primary-subtle: #e4fef3;
-  --primary-strong: #0b7a4a;
+  --radius-input: 8px;
+  --radius-button: 10px;
+  --radius-card: 16px;
 
-  /* Semantic states (pair color with text everywhere) */
-  --success: #047857;
-  --success-subtle: #e4fef3;
-  --warning: #b45309;
-  --warning-subtle: #fff7ed;
-  --danger: #b91c1c;
-  --danger-subtle: #fef2f2;
-  --info: #0284c7;
-  --info-subtle: #f0f9ff;
-  --destructive: #f54a88;
-  --destructive-foreground: #ffffff;
+  /* Stock-status colors, extracted from Page 7's actual Figma frame (node
+   * 6:519) — supersedes earlier approximations from the PRD text and the
+   * landing page's illustrative card. Red is reserved for errors only. */
+  --color-stock-in: #2e6b5e;
+  --color-stock-low: #d97706;
+  --color-stock-out: #707976;
+  --color-status-error: var(--color-error);
+  /* Bordered-pill badge treatment (bg + border + text/icon), Page 7's exact spec. */
+  --color-stock-in-bg: #e6f4ea;
+  --color-stock-in-border: #a8dab5;
+  --color-stock-low-bg: #fef3c7;
+  --color-stock-low-border: #fde68a;
+  --color-stock-out-bg: #e7e9e5;
+  --color-stock-out-border: #bfc9c4;
 
-  /* Charts - Mint Signal palette */
-  --chart-1: #51f0a8;
-  --chart-2: #7efe8f;
-  --chart-3: #ff4838;
-  --chart-4: #2ebdf6;
-  --chart-5: #ffb188;
+  /* A muted alt-surface for full-width bands (footer, tinted sections) that
+   * need to read as distinct from both the canvas and white cards. */
+  --color-surface-muted: #eef0ec;
 
-  /* Sidebar */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #000000;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e4fef3;
-  --sidebar-accent-foreground: #000000;
-  --sidebar-border: #ebebeb;
-  --sidebar-ring: #000000;
+  /* Read-only input fill (Page 5 — Forgot Password §3): a light muted gray,
+   * distinct from both the white active-input fill and the canvas, so a
+   * "done, can't edit" field (e.g. the email field after a code is sent)
+   * is visually obvious without needing the disabled/opacity treatment. */
+  --color-surface-readonly: #f3f4f0;
 
-  /* Radius - soft-minimal (~6px); chips/badges keep pill */
-  --radius: 0.375rem;
-
-  /* Motion - design skill timing defaults */
-  --duration-fast: 140ms;
-  --duration-normal: 200ms;
-  --duration-slow: 280ms;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.dark {
-  --background: #000000;
-  --foreground: #f0f0f0;
-  --card: #0a0a0a;
-  --card-foreground: #f0f0f0;
-  --popover: #1a1b1b;
-  --popover-foreground: #f0f0f0;
-  --secondary: #216a49;
-  --secondary-foreground: #f0f0f0;
-  --accent: #093723;
-  --accent-foreground: #fefefe;
-  --muted: #252527;
-  --muted-foreground: #969696;
-  --border: #2a2a2d;
-  --input: #3b3b3b;
-  --ring: #51f0a8;
-
-  --primary: #51f0a8;
-  --primary-hover: #7efe8f;
-  --primary-foreground: #000000;
-  --primary-subtle: #093723;
-  --primary-strong: #7efe8f;
-
-  --success: #51f0a8;
-  --success-subtle: #093723;
-  --warning: #fbbf24;
-  --warning-subtle: #3a2a08;
-  --danger: #f87171;
-  --danger-subtle: #2a1215;
-  --info: #5fd0ff;
-  --info-subtle: #0b2233;
-  --destructive: #ff78a5;
-  --destructive-foreground: #ffffff;
-
-  --chart-1: #51f0a8;
-  --chart-2: #9effa1;
-  --chart-3: #ffb7cf;
-  --chart-4: #5fd0ff;
-  --chart-5: #ffb188;
-
-  --sidebar: #0a0a0a;
-  --sidebar-foreground: #f0f0f0;
-  --sidebar-primary: #51f0a8;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #00331b;
-  --sidebar-accent-foreground: #51f0a8;
-  --sidebar-border: #353a3e;
-  --sidebar-ring: #51f0a8;
-
-  --radius: 0.375rem;
-
-  --duration-fast: 140ms;
-  --duration-normal: 200ms;
-  --duration-slow: 280ms;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Two small accent hues added for Page 12 (Reminders) — deliberately new,
+   * not a reuse of brand/error/amber, so the row-action buttons and the two
+   * channel pills read as distinct at a glance rather than everything being
+   * teal or gray. Neither is used for anything status/semantic elsewhere
+   * (amber stays reserved for overdue/low-stock, red stays reserved for
+   * errors), so this doesn't dilute either of those meanings. */
+  --color-accent-info: #3e6fa8; /* SMS channel pill */
+  --color-accent-info-bg: #e8f0fa;
+  --color-accent-info-border: #c7d9ef;
+  --color-accent-violet: #6b4fa0; /* Snooze action button */
+  --color-accent-violet-bg: #efeaf7;
+  --color-accent-violet-border: #d9cceb;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-subtle: var(--primary-subtle);
-  --color-primary-strong: var(--primary-strong);
-
-  --color-success: var(--success);
-  --color-success-subtle: var(--success-subtle);
-  --color-warning: var(--warning);
-  --color-warning-subtle: var(--warning-subtle);
-  --color-danger: var(--danger);
-  --color-danger-subtle: var(--danger-subtle);
-  --color-info: var(--info);
-  --color-info-subtle: var(--info-subtle);
-
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
-  --radius-xs: 0.25rem;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.3125rem;
-  --radius-lg: 0.375rem;
-  --radius-xl: 0.5rem;
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-
-  --font-sans: var(--font-geist-sans), var(--font-ethiopic), system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans), var(--font-ethiopic), system-ui, sans-serif;
 
+  --color-brand-primary: var(--color-brand);
+  --color-brand-primary-hover: var(--color-brand-hover);
+  --color-stock-in: var(--color-stock-in);
+  --color-stock-low: var(--color-stock-low);
+  --color-stock-out: var(--color-stock-out);
+  --color-status-error: var(--color-status-error);
+}
+
+/*
+ * Dark-mode equivalents. Applied two ways, both pointing at the same values:
+ *  1. System preference (prefers-color-scheme), for users who haven't made
+ *     an explicit in-app choice yet — skipped if they've explicitly picked
+ *     light via the ThemeToggle (:not([data-theme="light"])).
+ *  2. Explicit [data-theme="dark"] attribute, set by ThemeToggle/ThemeContext,
+ *     so a manual choice always wins regardless of system preference.
+ * Not a blind inversion: brand green, error red, and focus teal are all
+ * re-tuned to stay legible and keep the same brand feel on dark surfaces.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #14171a;
+    --foreground: #f1efea;
+
+    --color-brand: #3e9c86;
+    --color-brand-hover: #368873;
+    --color-canvas: #14171a;
+    --color-surface: #1d2120;
+    --color-border: #2b302d;
+    --color-text-primary: #f1efea;
+    --color-text-secondary: #a6aca7;
+    --color-text-placeholder: #6e756f;
+    --color-error: #e5776c;
+    --color-error-bg: #3a211e;
+    --color-focus: #4fb49c;
+    --color-stock-in: #4ade80;
+    --color-stock-in-bg: #16321f;
+    --color-stock-in-border: #2d5a45;
+    --color-stock-low: #fbbf24;
+    --color-stock-low-bg: #3a2a14;
+    --color-stock-low-border: #6b4a1a;
+    --color-stock-out: #9ca3a0;
+    --color-stock-out-bg: #2a2f2d;
+    --color-stock-out-border: #454b48;
+    --color-surface-muted: #202423;
+    --color-surface-readonly: #262b29;
+    --color-accent-info: #7ba9de;
+    --color-accent-info-bg: #1b2a3d;
+    --color-accent-info-border: #2c4159;
+    --color-accent-violet: #b79ee0;
+    --color-accent-violet-bg: #2a2138;
+    --color-accent-violet-border: #3d3050;
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: #14171a;
+  --foreground: #f1efea;
+
+  --color-brand: #3e9c86;
+  --color-brand-hover: #368873;
+  --color-canvas: #14171a;
+  --color-surface: #1d2120;
+  --color-border: #2b302d;
+  --color-text-primary: #f1efea;
+  --color-text-secondary: #a6aca7;
+  --color-text-placeholder: #6e756f;
+  --color-error: #e5776c;
+  --color-error-bg: #3a211e;
+  --color-focus: #4fb49c;
+  --color-stock-in: #4ade80;
+  --color-stock-in-bg: #16321f;
+  --color-stock-in-border: #2d5a45;
+  --color-stock-low: #fbbf24;
+  --color-stock-low-bg: #3a2a14;
+  --color-stock-low-border: #6b4a1a;
+  --color-stock-out: #9ca3a0;
+  --color-stock-out-bg: #2a2f2d;
+  --color-stock-out-border: #454b48;
+  --color-surface-muted: #202423;
+  --color-surface-readonly: #262b29;
+  --color-accent-info: #7ba9de;
+  --color-accent-info-bg: #1b2a3d;
+  --color-accent-info-border: #2c4159;
+  --color-accent-violet: #b79ee0;
+  --color-accent-violet-bg: #2a2138;
+  --color-accent-violet-border: #3d3050;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), var(--font-ethiopic), system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Consistent, visible keyboard focus that matches the accent. */
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-  border-radius: 2px;
+/*
+ * ThemeToggle renders both icons and lets CSS pick one, so the server and
+ * client render identical markup (no hydration mismatch) while the correct
+ * icon still shows on first paint.
+ */
+.theme-icon-light {
+  display: block;
 }
 
-/* Text selection - a small on-brand touch. */
-::selection {
-  background: color-mix(in oklch, var(--primary) 30%, transparent);
-  color: var(--foreground);
+.theme-icon-dark {
+  display: none;
 }
 
-/* Technical grid texture used behind hero/auth surfaces (see <Backdrop />). */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, color-mix(in oklch, var(--muted-foreground) 20%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklch, var(--muted-foreground) 20%, transparent) 1px, transparent 1px);
-  background-size: 3.5rem 3.5rem;
+:root[data-theme="dark"] .theme-icon-light {
+  display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+:root[data-theme="dark"] .theme-icon-dark {
+  display: block;
 }
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-}
-
