@@ -30,9 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (secrets stay local; commit only the example)
+# env files (can opt-in for committing if needed)
 .env*
-!.env.example
 
 # vercel
 .vercel
@@ -41,9 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# OS / editor
-Thumbs.db
-.idea/
-.vscode/
-*.swp
-*~
+# design reference screenshots (local-only, not part of the app)
+/reference/
