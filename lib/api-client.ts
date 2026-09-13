@@ -21,6 +21,7 @@ import type {
   RegisterPharmacyRequest,
   RegisterPharmacyResponse,
   ReviewAction,
+  SavedListing,
   SetListingRequest,
   VerifiedStatus,
 } from "./pharmacy-types";
@@ -319,31 +320,25 @@ export const medicineApi = {
 };
 
 export const inventoryApi = {
-  /** GET /pharmacies/{id}/inventory "—" a pharmacy's stock listings. Owner only. */
+  /** GET /dashboard/{pharmacyId}/listings "—" a pharmacy's stock listings, each named
+   * with its medicine. Pharmacist + owner only. */
   list(pharmacyID: string): Promise<InventoryListing[]> {
     return request<InventoryListing[]>(
-      "/pharmacies/" + encodeURIComponent(pharmacyID) + "/inventory",
+      "/dashboard/" + encodeURIComponent(pharmacyID) + "/listings",
       {},
     );
   },
 
-  /** PUT /pharmacies/{id}/inventory "—" create or update a stock listing (upsert on
-   * pharmacy + medicine). Owner only. */
-  set(pharmacyID: string, body: SetListingRequest): Promise<InventoryListing> {
-    return request<InventoryListing>(
-      "/pharmacies/" + encodeURIComponent(pharmacyID) + "/inventory",
-      { method: "PUT", body },
-    );
-  },
-
-  /** DELETE /pharmacies/{id}/inventory/{medicine_id} "—" remove a listing. Owner only. */
-  remove(pharmacyID: string, medicineID: string): Promise<null> {
-    return request<null>(
-      "/pharmacies/" +
+  /** PUT /dashboard/{pharmacyId}/listings/{medicineId} "—" create or update a stock
+   * listing (upsert on pharmacy + medicine). There is no delete: a pharmacy retires a
+   * listing by marking it out of stock. Pharmacist + owner only. */
+  set(pharmacyID: string, medicineID: string, body: SetListingRequest): Promise<SavedListing> {
+    return request<SavedListing>(
+      "/dashboard/" +
         encodeURIComponent(pharmacyID) +
-        "/inventory/" +
+        "/listings/" +
         encodeURIComponent(medicineID),
-      { method: "DELETE" },
+      { method: "PUT", body },
     );
   },
 };

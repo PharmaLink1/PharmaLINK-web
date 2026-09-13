@@ -343,10 +343,10 @@ export const am = {
       row: {
         updated: "ከ{time} በፊት ተዘምኗል",
         noPrice: "ዋጋ አልተጻፈም",
-        remove: "አስወግድ",
-        removing: "በማስወገድ ላይ…",
-        removeAria: "{name} ከክምችትዎ ያስወግዱ",
-        removed: "ዝርዝሩ ተወግዷል።",
+        markOutOfStock: "ከክምችት ውጪ ምልክት አድርግ",
+        marking: "ምልክት በማድረግ ላይ…",
+        markOutOfStockAria: "{name}ን ከክምችት ውጪ እንደሆነ ምልክት አድርግ",
+        markedOutOfStock: "ከክምችት ውጪ ምልክት ተደርጓል።",
       },
     },
     medicines: {

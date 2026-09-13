@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
-import { MedicinePicker } from "@/components/dashboard/inventory/medicine-picker";
+import { MedicinePicker, medicineLabel } from "@/components/dashboard/inventory/medicine-picker";
 
 type StockStatus = "in_stock" | "low_stock" | "out_of_stock";
 
@@ -62,12 +62,21 @@ export function ListingForm({
 
     setSaving(true);
     try {
-      const saved = await inventoryApi.set(pharmacyID, {
-        medicine_id: medicine.medicine_id,
-        stock_status: stockStatus,
+      const saved = await inventoryApi.set(pharmacyID, medicine.medicine_id, {
+        stockStatus,
         price: priceValue,
       });
-      onSaved(saved);
+      // The PUT response carries no medicine name; reuse the picked medicine's label
+      // so the new row reads the same as rows loaded from the listings endpoint.
+      onSaved({
+        id: saved.id,
+        medicineId: saved.medicineId,
+        medicineName: medicineLabel(medicine),
+        stockStatus: saved.stockStatus,
+        price: saved.price,
+        currency: saved.currency,
+        updatedAt: saved.updatedAt,
+      });
       setMedicine(null);
       setPrice("");
       setStockStatus("in_stock");

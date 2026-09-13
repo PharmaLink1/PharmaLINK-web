@@ -341,10 +341,10 @@ export const en = {
       row: {
         updated: "Updated {time} ago",
         noPrice: "No price listed",
-        remove: "Remove",
-        removing: "Removing…",
-        removeAria: "Remove {name} from your inventory",
-        removed: "Listing removed.",
+        markOutOfStock: "Mark out of stock",
+        marking: "Marking…",
+        markOutOfStockAria: "Mark {name} as out of stock",
+        markedOutOfStock: "Marked out of stock.",
       },
     },
     medicines: {

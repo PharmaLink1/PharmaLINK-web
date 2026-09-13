@@ -93,34 +93,41 @@ export type CatalogMedicine = {
   strength?: string;
 };
 
-/** Stock status a listing can carry. Mirrors the search read-side values. */
+/** Stock status a listing can carry. The dashboard endpoints also accept "unknown"
+ * (the schema default), but the pharmacist UI only ever sets in/low/out. */
 export type StockStatusValue = "in_stock" | "low_stock" | "out_of_stock";
 
-/** Body for PUT /pharmacies/{id}/inventory. */
+/** Body for PUT /dashboard/{pharmacyId}/listings/{medicineId}. The pharmacy and
+ * medicine are in the path, so only the reported stock/price go in the body. Unlike
+ * the read-side modules above, the dashboard API is camelCase. */
 export type SetListingRequest = {
-  medicine_id: string;
-  stock_status: string;
-  /** null or omitted when the pharmacy lists no price. */
+  stockStatus: string;
+  /** null or omitted when the pharmacy lists no price. Omitting it keeps the
+   * listing's existing price — the backend never clears one. */
   price?: number | null;
   currency?: string;
 };
 
-/** One stored inventory listing. The backend attaches the medicine display fields
- * from the catalogue, so rows render a name without a second lookup. They are empty
- * only if the medicine was removed from the catalogue after the listing was made. */
+/** One row of GET /dashboard/{pharmacyId}/listings. The backend names the medicine,
+ * so the table renders without a per-row lookup. camelCase, matching the dashboard API. */
 export type InventoryListing = {
-  listing_id: string;
-  pharmacy_id: string;
-  medicine_id: string;
-  stock_status: string;
+  id: string;
+  medicineId: string;
+  medicineName: string;
+  stockStatus: string;
   price: number | null;
   currency: string;
-  updated_at: string;
-  generic_name?: string;
-  brand_name?: string;
-  amharic_name?: string;
-  dosage_form?: string;
-  strength?: string;
-  /** Ready-to-render label, e.g. "Paracetamol 500mg (Panadol)". Falls back to the id. */
-  display_name: string;
+  updatedAt: string;
+};
+
+/** Data from PUT /dashboard/{pharmacyId}/listings/{medicineId}. It carries no
+ * medicineName, so after an upsert the UI reuses the picked medicine's label. */
+export type SavedListing = {
+  id: string;
+  medicineId: string;
+  stockStatus: string;
+  price: number | null;
+  currency: string;
+  updatedBy: string;
+  updatedAt: string;
 };

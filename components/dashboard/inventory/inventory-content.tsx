@@ -32,7 +32,7 @@ export function InventoryContent() {
   const [listings, setListings] = React.useState<InventoryListing[]>([]);
   const [error, setError] = React.useState("");
   const [notice, setNotice] = React.useState("");
-  const [removing, setRemoving] = React.useState<string | null>(null);
+  const [marking, setMarking] = React.useState<string | null>(null);
 
   const selected = React.useMemo(
     () => pharmacies.find((p) => p.pharmacy_id === selectedId) ?? null,
@@ -80,23 +80,38 @@ export function InventoryContent() {
     setNotice(inv.add.saved);
     setError("");
     setListings((prev) => {
-      const rest = prev.filter((l) => l.medicine_id !== saved.medicine_id);
+      const rest = prev.filter((l) => l.medicineId !== saved.medicineId);
       return [saved, ...rest];
     });
   }
 
-  async function handleRemove(medicineID: string) {
+  async function handleMarkOutOfStock(medicineID: string) {
     if (!selected) return;
-    setRemoving(medicineID);
+    setMarking(medicineID);
     setError("");
     try {
-      await inventoryApi.remove(selected.pharmacy_id, medicineID);
-      setListings((prev) => prev.filter((l) => l.medicine_id !== medicineID));
-      setNotice(inv.row.removed);
+      const saved = await inventoryApi.set(selected.pharmacy_id, medicineID, {
+        stockStatus: "out_of_stock",
+      });
+      // Keep the row — just reflect the status/price/time the backend saved.
+      setListings((prev) =>
+        prev.map((l) =>
+          l.medicineId === medicineID
+            ? {
+                ...l,
+                stockStatus: saved.stockStatus,
+                price: saved.price,
+                currency: saved.currency,
+                updatedAt: saved.updatedAt,
+              }
+            : l,
+        ),
+      );
+      setNotice(inv.row.markedOutOfStock);
     } catch (err) {
       setError(getErrorMessage(err, t));
     } finally {
-      setRemoving(null);
+      setMarking(null);
     }
   }
 
@@ -179,11 +194,11 @@ export function InventoryContent() {
                   <ul className={"divide-y divide-border"}>
                     {listings.map((listing) => (
                       <ListingRow
-                        key={listing.medicine_id}
+                        key={listing.medicineId}
                         listing={listing}
-                        name={listing.display_name || listing.medicine_id}
-                        removing={removing === listing.medicine_id}
-                        onRemove={handleRemove}
+                        name={listing.medicineName || listing.medicineId}
+                        marking={marking === listing.medicineId}
+                        onMarkOutOfStock={handleMarkOutOfStock}
                         t={t}
                       />
                     ))}
