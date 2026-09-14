@@ -10,6 +10,7 @@ import {
   ClipboardList,
   LayoutDashboard,
   LogOut,
+  MapPin,
   Menu,
   Pill,
   Settings,
@@ -77,6 +78,9 @@ export function AppHeader() {
         { href: "/dashboard/inventory", label: t.meta.inventory, icon: Boxes },
         { href: "/dashboard/medicines", label: t.meta.medicines, icon: Pill },
       ];
+    }
+    if (user?.role === "user") {
+      return [{ href: "/dashboard/pharmacies", label: t.nav.pharmacies, icon: MapPin }];
     }
     return [];
   }, [user?.role, t]);

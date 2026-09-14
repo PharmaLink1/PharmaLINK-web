@@ -19,6 +19,7 @@ import type {
   InventoryListing,
   MyPharmacy,
   PharmacyDetail,
+  PharmacyListItem,
   RegisterPharmacyRequest,
   RegisterPharmacyResponse,
   ReviewAction,
@@ -285,6 +286,19 @@ export const notifyApi = {
 };
 
 export const pharmacyApi = {
+  /** GET /pharmacies?lat=&lng=&radius_km= "—" verified pharmacies near a point, sorted by
+   * distance (radius defaults to 10km server-side). Public (no auth), so it uses `raw`.
+   * "Open now" is filtered client-side on each item's server-computed is_open_now, so no
+   * refetch is needed to toggle it. Throws ApiError INVALID_REQUEST/INVALID_COORDINATES
+   * (400) if coordinates are missing or unparseable. */
+  listNearby(params: { lat: number; lng: number; radiusKm?: number }): Promise<PharmacyListItem[]> {
+    const query = new URLSearchParams();
+    query.set("lat", String(params.lat));
+    query.set("lng", String(params.lng));
+    if (params.radiusKm !== undefined) query.set("radius_km", String(params.radiusKm));
+    return raw<PharmacyListItem[]>("/pharmacies?" + query.toString(), {});
+  },
+
   /** GET /pharmacies/{id} "—" full public details for one pharmacy (hours, open-now,
    * location, phone, verification). Public (no auth), so it uses `raw`. Throws
    * ApiError PHARMACY_NOT_FOUND (404) for an unknown id. */

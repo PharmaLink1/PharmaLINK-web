@@ -68,6 +68,24 @@ export type PharmacyDetail = {
   created_at: string;
 };
 
+/** One pharmacy in the nearby locator results, from GET /pharmacies (no auth). A lighter
+ * read model than PharmacyDetail — the map/list essentials plus the server-computed
+ * distance. `hours_today` is an English label (localize like the detail page), and
+ * `is_open_now` is computed server-side in East Africa Time. */
+export type PharmacyListItem = {
+  pharmacy_id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  address: string;
+  phone: string;
+  profile_url?: string;
+  is_open_now: boolean;
+  hours_today: string;
+  verified_status: VerifiedStatus;
+  distance_m: number;
+};
+
 /** A pharmacy in the admin review queue, from GET /admin/pharmacies. */
 export type AdminPharmacy = {
   pharmacy_id: string;
