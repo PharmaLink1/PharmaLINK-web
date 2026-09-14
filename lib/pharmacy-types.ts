@@ -46,6 +46,28 @@ export type MyPharmacy = {
   rejection_reason?: string;
 };
 
+/** Full public details of one pharmacy, from GET /pharmacies/{id} (no auth). The
+ * business license URL is intentionally excluded from public output. `is_open_now`
+ * and `hours_today` are computed server-side in East Africa Time; `hours_today` is
+ * an English label ("Closed" / "24 Hours" / a span), so the UI renders the weekly
+ * `hours` map itself to stay localized. */
+export type PharmacyDetail = {
+  pharmacy_id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  phone: string;
+  hours: Hours;
+  is_open_now: boolean;
+  hours_today: string;
+  verified_status: VerifiedStatus;
+  rejection_reason?: string;
+  profile_url?: string;
+  banner_url?: string;
+  created_at: string;
+};
+
 /** A pharmacy in the admin review queue, from GET /admin/pharmacies. */
 export type AdminPharmacy = {
   pharmacy_id: string;

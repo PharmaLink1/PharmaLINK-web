@@ -18,6 +18,7 @@ import type {
   CreateMedicineRequest,
   InventoryListing,
   MyPharmacy,
+  PharmacyDetail,
   RegisterPharmacyRequest,
   RegisterPharmacyResponse,
   ReviewAction,
@@ -284,6 +285,13 @@ export const notifyApi = {
 };
 
 export const pharmacyApi = {
+  /** GET /pharmacies/{id} "—" full public details for one pharmacy (hours, open-now,
+   * location, phone, verification). Public (no auth), so it uses `raw`. Throws
+   * ApiError PHARMACY_NOT_FOUND (404) for an unknown id. */
+  get(pharmacyID: string): Promise<PharmacyDetail> {
+    return raw<PharmacyDetail>("/pharmacies/" + encodeURIComponent(pharmacyID), {});
+  },
+
   /** GET /pharmacies/mine "—" the caller's own pharmacies with verification status. */
   listMine(): Promise<MyPharmacy[]> {
     return request<MyPharmacy[]>("/pharmacies/mine", {});

@@ -23,6 +23,7 @@ export const am = {
     adminPharmacies: "ፋርማሲዎች",
     medicines: "መድሀኒቶች",
     adminAdmins: "አስተዳዳሪዎች",
+    pharmacyDetail: "የፋርማሲ ዝርዝሮች",
   },
 
   common: {
@@ -482,6 +483,34 @@ export const am = {
       },
       error: "የመድሀኒት መረጃ መጫን አልተቻለም።",
       retry: "እንደገና ይሞክሩ",
+    },
+    pharmacyDetail: {
+      loading: "ፋርማሲ በመጫን ላይ",
+      error: "ይህን ፋርማሲ መጫን አልተቻለም።",
+      retry: "እንደገና ይሞክሩ",
+      openNow: "አሁን ክፍት ነው",
+      closedNow: "አሁን ዝግ ነው",
+      hoursHeading: "የመክፈቻ ሰዓቶች",
+      open24: "24 ሰዓት ክፍት",
+      closedDay: "ዝግ",
+      today: "ዛሬ",
+      directions: "አቅጣጫ ያግኙ",
+      call: "ደውል",
+      noPhone: "ስልክ አልተጻፈም",
+      listedOn: "የተመዘገበ {date}",
+      notFound: {
+        title: "ፋርማሲ አልተገኘም",
+        body: "ይህን ፋርማሲ ማግኘት አልቻልንም። ተወግዶ ሊሆን ይችላል።",
+      },
+      days: {
+        mon: "ሰኞ",
+        tue: "ማክሰኞ",
+        wed: "ረቡዕ",
+        thu: "ሐሙስ",
+        fri: "ዓርብ",
+        sat: "ቅዳሜ",
+        sun: "እሁድ",
+      },
     },
   },
 

@@ -21,6 +21,7 @@ export const en = {
     adminPharmacies: "Pharmacies",
     medicines: "Medicines",
     adminAdmins: "Admins",
+    pharmacyDetail: "Pharmacy details",
   },
 
   common: {
@@ -480,6 +481,34 @@ export const en = {
       },
       error: "Couldn't load drug information.",
       retry: "Try again",
+    },
+    pharmacyDetail: {
+      loading: "Loading pharmacy",
+      error: "Couldn't load this pharmacy.",
+      retry: "Try again",
+      openNow: "Open now",
+      closedNow: "Closed now",
+      hoursHeading: "Opening hours",
+      open24: "Open 24 hours",
+      closedDay: "Closed",
+      today: "Today",
+      directions: "Get directions",
+      call: "Call",
+      noPhone: "No phone listed",
+      listedOn: "Listed {date}",
+      notFound: {
+        title: "Pharmacy not found",
+        body: "We couldn't find this pharmacy. It may have been removed.",
+      },
+      days: {
+        mon: "Monday",
+        tue: "Tuesday",
+        wed: "Wednesday",
+        thu: "Thursday",
+        fri: "Friday",
+        sat: "Saturday",
+        sun: "Sunday",
+      },
     },
   },
 
