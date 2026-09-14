@@ -455,6 +455,32 @@ export const en = {
         needLocation: "Turn on location so we know where to look.",
       },
     },
+    drugInfo: {
+      open: "How to take it",
+      hide: "Hide details",
+      loading: "Loading drug information",
+      sideEffects: "Side effects",
+      interactions: "Interactions",
+      severity: {
+        minor: "Minor",
+        moderate: "Moderate",
+        severe: "Severe",
+      },
+      source: {
+        official: "Official source",
+        userSubmitted: "Community-submitted",
+      },
+      updated: "Updated {time} ago",
+      updatedJustNow: "Updated just now",
+      disclaimer:
+        "This information is for educational purposes and is not a substitute for professional medical advice.",
+      unavailable: {
+        title: "No drug info yet",
+        body: "We don't have drug information for this medicine yet.",
+      },
+      error: "Couldn't load drug information.",
+      retry: "Try again",
+    },
   },
 
   admin: {

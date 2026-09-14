@@ -25,6 +25,7 @@ import type {
   SetListingRequest,
   VerifiedStatus,
 } from "./pharmacy-types";
+import type { DrugInfo } from "./drug-info-types";
 import { tokenStorage } from "./token-storage";
 import { getCurrentLocale } from "./i18n/config";
 
@@ -247,6 +248,16 @@ export const searchApi = {
     query.set("lng", String(lng));
     query.set("limit", String(limit));
     return raw<NearbyPharmacy[]>("/medicines/search/nearby-fallback?" + query.toString(), {});
+  },
+};
+
+export const drugInfoApi = {
+  /** GET /medicines/{medicine_id}/info "—" plain-language drug information and
+   * interaction warnings for a medicine, localized via the Accept-Language header
+   * `raw` already sends. Public (no auth). Throws ApiError DRUG_INFO_NOT_FOUND (404)
+   * when a medicine has no info yet — an expected case the UI shows as an empty state. */
+  get(medicineID: string): Promise<DrugInfo> {
+    return raw<DrugInfo>("/medicines/" + encodeURIComponent(medicineID) + "/info", {});
   },
 };
 

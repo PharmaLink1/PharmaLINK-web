@@ -1,9 +1,13 @@
 "use client";
 
+import * as React from "react";
+import { ChevronDown, Pill } from "lucide-react";
 import type { MedicineGroup } from "@/lib/search-types";
 import { interpolate } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
+import { DrugInfoPanel } from "./drug-info-panel";
 import { ListingRow } from "./listing-row";
 import { NotifyButton } from "./notify-button";
 
@@ -28,6 +32,10 @@ export function MedicineGroupCard({
   notifyError?: string;
   onToggleNotify: (medicineId: string) => void;
 }) {
+  const di = t.dashboard.drugInfo;
+  const [infoOpen, setInfoOpen] = React.useState(false);
+  const panelId = "drug-info-" + group.medicine_id;
+
   const title = group.matched_name || group.generic_name || group.brand_name || "";
   const count =
     group.listings.length === 1
@@ -63,6 +71,29 @@ export function MedicineGroupCard({
           <ListingRow key={listing.listing_id} result={listing} time={time} t={t} />
         ))}
       </ul>
+      <div className={"border-t border-border"}>
+        <button
+          type={"button"}
+          onClick={() => setInfoOpen((open) => !open)}
+          aria-expanded={infoOpen}
+          aria-controls={panelId}
+          className={"flex w-full items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:px-5"}
+        >
+          <span className={"inline-flex items-center gap-2"}>
+            <Pill className={"size-4 text-primary-strong"} aria-hidden />
+            {infoOpen ? di.hide : di.open}
+          </span>
+          <ChevronDown
+            className={cn("size-4 text-muted-foreground transition-transform", infoOpen && "rotate-180")}
+            aria-hidden
+          />
+        </button>
+        {infoOpen && (
+          <div id={panelId} className={"border-t border-border"}>
+            <DrugInfoPanel medicineId={group.medicine_id} t={t} />
+          </div>
+        )}
+      </div>
     </Card>
   );
 }

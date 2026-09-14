@@ -457,6 +457,32 @@ export const am = {
         needLocation: "የት እንደምንፈልግ እንድናውቅ አካባቢዎን ያብሩ።",
       },
     },
+    drugInfo: {
+      open: "እንዴት እንደሚወሰድ",
+      hide: "ዝርዝሮችን ደብቅ",
+      loading: "የመድሀኒት መረጃ በመጫን ላይ",
+      sideEffects: "የጎንዮሽ ጉዳቶች",
+      interactions: "የመድሀኒት መስተጋብሮች",
+      severity: {
+        minor: "ቀላል",
+        moderate: "መካከለኛ",
+        severe: "ከባድ",
+      },
+      source: {
+        official: "ይፋዊ ምንጭ",
+        userSubmitted: "በተጠቃሚ የቀረበ",
+      },
+      updated: "ከ{time} በፊት ተዘምኗል",
+      updatedJustNow: "አሁን ተዘምኗል",
+      disclaimer:
+        "ይህ መረጃ ለትምህርታዊ ዓላማ ብቻ ነው እና የባለሙያ የሕክምና ምክርን አይተካም።",
+      unavailable: {
+        title: "እስካሁን የመድሀኒት መረጃ የለም",
+        body: "ለዚህ መድሀኒት እስካሁን የመድሀኒት መረጃ የለንም።",
+      },
+      error: "የመድሀኒት መረጃ መጫን አልተቻለም።",
+      retry: "እንደገና ይሞክሩ",
+    },
   },
 
   admin: {
