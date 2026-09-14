@@ -18,12 +18,16 @@ import type {
   CreateMedicineRequest,
   InventoryListing,
   MyPharmacy,
+  PharmacyDetail,
+  PharmacyListItem,
   RegisterPharmacyRequest,
   RegisterPharmacyResponse,
   ReviewAction,
+  SavedListing,
   SetListingRequest,
   VerifiedStatus,
 } from "./pharmacy-types";
+import type { DrugInfo } from "./drug-info-types";
 import { tokenStorage } from "./token-storage";
 import { getCurrentLocale } from "./i18n/config";
 
@@ -249,6 +253,16 @@ export const searchApi = {
   },
 };
 
+export const drugInfoApi = {
+  /** GET /medicines/{medicine_id}/info "—" plain-language drug information and
+   * interaction warnings for a medicine, localized via the Accept-Language header
+   * `raw` already sends. Public (no auth). Throws ApiError DRUG_INFO_NOT_FOUND (404)
+   * when a medicine has no info yet — an expected case the UI shows as an empty state. */
+  get(medicineID: string): Promise<DrugInfo> {
+    return raw<DrugInfo>("/medicines/" + encodeURIComponent(medicineID) + "/info", {});
+  },
+};
+
 export const notifyApi = {
   /** POST /medicines/{medicine_id}/notify-me "—" subscribe the patient to a back-in-stock
    * alert near a location. Authenticated; the backend upserts, so re-subscribing is safe.
@@ -272,6 +286,26 @@ export const notifyApi = {
 };
 
 export const pharmacyApi = {
+  /** GET /pharmacies?lat=&lng=&radius_km= "—" verified pharmacies near a point, sorted by
+   * distance (radius defaults to 10km server-side). Public (no auth), so it uses `raw`.
+   * "Open now" is filtered client-side on each item's server-computed is_open_now, so no
+   * refetch is needed to toggle it. Throws ApiError INVALID_REQUEST/INVALID_COORDINATES
+   * (400) if coordinates are missing or unparseable. */
+  listNearby(params: { lat: number; lng: number; radiusKm?: number }): Promise<PharmacyListItem[]> {
+    const query = new URLSearchParams();
+    query.set("lat", String(params.lat));
+    query.set("lng", String(params.lng));
+    if (params.radiusKm !== undefined) query.set("radius_km", String(params.radiusKm));
+    return raw<PharmacyListItem[]>("/pharmacies?" + query.toString(), {});
+  },
+
+  /** GET /pharmacies/{id} "—" full public details for one pharmacy (hours, open-now,
+   * location, phone, verification). Public (no auth), so it uses `raw`. Throws
+   * ApiError PHARMACY_NOT_FOUND (404) for an unknown id. */
+  get(pharmacyID: string): Promise<PharmacyDetail> {
+    return raw<PharmacyDetail>("/pharmacies/" + encodeURIComponent(pharmacyID), {});
+  },
+
   /** GET /pharmacies/mine "—" the caller's own pharmacies with verification status. */
   listMine(): Promise<MyPharmacy[]> {
     return request<MyPharmacy[]>("/pharmacies/mine", {});
@@ -319,31 +353,25 @@ export const medicineApi = {
 };
 
 export const inventoryApi = {
-  /** GET /pharmacies/{id}/inventory "—" a pharmacy's stock listings. Owner only. */
+  /** GET /dashboard/{pharmacyId}/listings "—" a pharmacy's stock listings, each named
+   * with its medicine. Pharmacist + owner only. */
   list(pharmacyID: string): Promise<InventoryListing[]> {
     return request<InventoryListing[]>(
-      "/pharmacies/" + encodeURIComponent(pharmacyID) + "/inventory",
+      "/dashboard/" + encodeURIComponent(pharmacyID) + "/listings",
       {},
     );
   },
 
-  /** PUT /pharmacies/{id}/inventory "—" create or update a stock listing (upsert on
-   * pharmacy + medicine). Owner only. */
-  set(pharmacyID: string, body: SetListingRequest): Promise<InventoryListing> {
-    return request<InventoryListing>(
-      "/pharmacies/" + encodeURIComponent(pharmacyID) + "/inventory",
-      { method: "PUT", body },
-    );
-  },
-
-  /** DELETE /pharmacies/{id}/inventory/{medicine_id} "—" remove a listing. Owner only. */
-  remove(pharmacyID: string, medicineID: string): Promise<null> {
-    return request<null>(
-      "/pharmacies/" +
+  /** PUT /dashboard/{pharmacyId}/listings/{medicineId} "—" create or update a stock
+   * listing (upsert on pharmacy + medicine). There is no delete: a pharmacy retires a
+   * listing by marking it out of stock. Pharmacist + owner only. */
+  set(pharmacyID: string, medicineID: string, body: SetListingRequest): Promise<SavedListing> {
+    return request<SavedListing>(
+      "/dashboard/" +
         encodeURIComponent(pharmacyID) +
-        "/inventory/" +
+        "/listings/" +
         encodeURIComponent(medicineID),
-      { method: "DELETE" },
+      { method: "PUT", body },
     );
   },
 };

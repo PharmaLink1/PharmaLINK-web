@@ -46,6 +46,46 @@ export type MyPharmacy = {
   rejection_reason?: string;
 };
 
+/** Full public details of one pharmacy, from GET /pharmacies/{id} (no auth). The
+ * business license URL is intentionally excluded from public output. `is_open_now`
+ * and `hours_today` are computed server-side in East Africa Time; `hours_today` is
+ * an English label ("Closed" / "24 Hours" / a span), so the UI renders the weekly
+ * `hours` map itself to stay localized. */
+export type PharmacyDetail = {
+  pharmacy_id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  phone: string;
+  hours: Hours;
+  is_open_now: boolean;
+  hours_today: string;
+  verified_status: VerifiedStatus;
+  rejection_reason?: string;
+  profile_url?: string;
+  banner_url?: string;
+  created_at: string;
+};
+
+/** One pharmacy in the nearby locator results, from GET /pharmacies (no auth). A lighter
+ * read model than PharmacyDetail — the map/list essentials plus the server-computed
+ * distance. `hours_today` is an English label (localize like the detail page), and
+ * `is_open_now` is computed server-side in East Africa Time. */
+export type PharmacyListItem = {
+  pharmacy_id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  address: string;
+  phone: string;
+  profile_url?: string;
+  is_open_now: boolean;
+  hours_today: string;
+  verified_status: VerifiedStatus;
+  distance_m: number;
+};
+
 /** A pharmacy in the admin review queue, from GET /admin/pharmacies. */
 export type AdminPharmacy = {
   pharmacy_id: string;
@@ -93,34 +133,41 @@ export type CatalogMedicine = {
   strength?: string;
 };
 
-/** Stock status a listing can carry. Mirrors the search read-side values. */
+/** Stock status a listing can carry. The dashboard endpoints also accept "unknown"
+ * (the schema default), but the pharmacist UI only ever sets in/low/out. */
 export type StockStatusValue = "in_stock" | "low_stock" | "out_of_stock";
 
-/** Body for PUT /pharmacies/{id}/inventory. */
+/** Body for PUT /dashboard/{pharmacyId}/listings/{medicineId}. The pharmacy and
+ * medicine are in the path, so only the reported stock/price go in the body. Unlike
+ * the read-side modules above, the dashboard API is camelCase. */
 export type SetListingRequest = {
-  medicine_id: string;
-  stock_status: string;
-  /** null or omitted when the pharmacy lists no price. */
+  stockStatus: string;
+  /** null or omitted when the pharmacy lists no price. Omitting it keeps the
+   * listing's existing price — the backend never clears one. */
   price?: number | null;
   currency?: string;
 };
 
-/** One stored inventory listing. The backend attaches the medicine display fields
- * from the catalogue, so rows render a name without a second lookup. They are empty
- * only if the medicine was removed from the catalogue after the listing was made. */
+/** One row of GET /dashboard/{pharmacyId}/listings. The backend names the medicine,
+ * so the table renders without a per-row lookup. camelCase, matching the dashboard API. */
 export type InventoryListing = {
-  listing_id: string;
-  pharmacy_id: string;
-  medicine_id: string;
-  stock_status: string;
+  id: string;
+  medicineId: string;
+  medicineName: string;
+  stockStatus: string;
   price: number | null;
   currency: string;
-  updated_at: string;
-  generic_name?: string;
-  brand_name?: string;
-  amharic_name?: string;
-  dosage_form?: string;
-  strength?: string;
-  /** Ready-to-render label, e.g. "Paracetamol 500mg (Panadol)". Falls back to the id. */
-  display_name: string;
+  updatedAt: string;
+};
+
+/** Data from PUT /dashboard/{pharmacyId}/listings/{medicineId}. It carries no
+ * medicineName, so after an upsert the UI reuses the picked medicine's label. */
+export type SavedListing = {
+  id: string;
+  medicineId: string;
+  stockStatus: string;
+  price: number | null;
+  currency: string;
+  updatedBy: string;
+  updatedAt: string;
 };

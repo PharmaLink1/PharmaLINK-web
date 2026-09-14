@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Phone } from "lucide-react";
 import type { NearbyPharmacy } from "@/lib/search-types";
 import { interpolate } from "@/lib/i18n";
@@ -22,7 +23,12 @@ export function NearbyList({ pharmacies, t }: { pharmacies: NearbyPharmacy[]; t:
           >
             <div className={"min-w-0"}>
               <p className={"truncate text-sm font-medium text-foreground"}>
-                {pharmacy.pharmacy_name}
+                <Link
+                  href={"/dashboard/pharmacies/" + pharmacy.pharmacy_id}
+                  className={"rounded hover:underline"}
+                >
+                  {pharmacy.pharmacy_name}
+                </Link>
               </p>
               <p className={"mt-0.5 text-xs text-muted-foreground"}>
                 {formatDistanceMeters(pharmacy.distance_m)}

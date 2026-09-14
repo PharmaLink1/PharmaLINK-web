@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CheckCircle2, MapPin, Phone } from "lucide-react";
 import type { MedicineSearchResult } from "@/lib/search-types";
 import { interpolate } from "@/lib/i18n";
@@ -36,7 +37,12 @@ export function ListingRow({
     <li className={"flex items-start justify-between gap-4 px-4 py-4 sm:px-5"}>
       <div className={"min-w-0"}>
         <p className={"truncate text-sm font-medium text-foreground"}>
-          {result.pharmacy_name}
+          <Link
+            href={"/dashboard/pharmacies/" + result.pharmacy_id}
+            className={"rounded hover:underline"}
+          >
+            {result.pharmacy_name}
+          </Link>
           {result.distance_label ? (
             <span className={"font-normal text-muted-foreground"}>{" · " + result.distance_label}</span>
           ) : null}
