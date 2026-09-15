@@ -457,6 +457,22 @@ export const en = {
         emptyPrompt: "Want to know when this is back in stock near you?",
         needLocation: "Turn on location so we know where to look.",
       },
+      compare: {
+        label: "Compare prices",
+        hide: "Hide prices",
+        sortLabel: "Sort prices by",
+        sortPrice: "Lowest price",
+        sortDistance: "Nearest",
+        loading: "Comparing prices nearby",
+        bestPrice: "Best price",
+        note: "Prices are set by pharmacies - pay at the counter.",
+        needLocation: "Turn on your location to compare prices nearby.",
+        empty: {
+          title: "No prices to compare",
+          body: "No verified pharmacy nearby lists this medicine yet.",
+          action: "Browse pharmacies",
+        },
+      },
     },
     drugInfo: {
       open: "How to take it",
@@ -535,6 +551,32 @@ export const en = {
         body: "We couldn't find verified pharmacies near you right now.",
       },
       emptyOpenNow: "No nearby pharmacies are open right now.",
+    },
+    notifications: {
+      title: "Notifications",
+      subtitle:
+        "Turn on notifications on this device so PharmaLink can reach you about the medicines you're watching and your reminders.",
+      checking: "Checking this device",
+      enable: "Turn on notifications",
+      enabling: "Turning on",
+      disable: "Turn off this device",
+      disabling: "Turning off",
+      onTitle: "Notifications are on",
+      onBody:
+        "This device is registered. Alerts about medicines you're watching and your reminders will arrive here.",
+      unsupportedTitle: "Notifications aren't supported here",
+      unsupportedBody:
+        "Your browser can't show push notifications. Try the latest Chrome, Edge, or Safari on a phone or a computer.",
+      insecureBody:
+        "Notifications need a secure connection. Open PharmaLink over HTTPS, or on localhost, to turn them on.",
+      installTitle: "Add PharmaLink to your Home Screen",
+      installBody:
+        "On iPhone and iPad, notifications only work after you add this site to your Home Screen and open it from there.",
+      deniedTitle: "Notifications are blocked",
+      deniedBody:
+        "You blocked notifications for PharmaLink. Allow them in your browser's site settings, then try again.",
+      enableFailed: "We couldn't turn on notifications. Please try again.",
+      disableFailed: "We couldn't turn off notifications. Please try again.",
     },
   },
 

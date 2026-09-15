@@ -28,6 +28,8 @@ import type {
   VerifiedStatus,
 } from "./pharmacy-types";
 import type { DrugInfo } from "./drug-info-types";
+import type { PriceComparisonItem, PriceSort } from "./price-types";
+import type { DeviceRegistration, RegisterDeviceRequest } from "./device-types";
 import { tokenStorage } from "./token-storage";
 import { getCurrentLocale } from "./i18n/config";
 
@@ -263,6 +265,26 @@ export const drugInfoApi = {
   },
 };
 
+export const priceApi = {
+  /** GET /medicines/{medicine_id}/prices - nearby verified pharmacies that carry a
+   * medicine, cheapest first by default. Location is required by the backend and
+   * radius_km defaults to 15 server-side. Public (no auth), so it uses `raw`. */
+  compare(
+    medicineID: string,
+    params: { lat: number; lng: number; radiusKm?: number; sort?: PriceSort },
+  ): Promise<PriceComparisonItem[]> {
+    const query = new URLSearchParams();
+    query.set("lat", String(params.lat));
+    query.set("lng", String(params.lng));
+    if (params.radiusKm !== undefined) query.set("radius_km", String(params.radiusKm));
+    if (params.sort !== undefined) query.set("sort", params.sort);
+    return raw<PriceComparisonItem[]>(
+      "/medicines/" + encodeURIComponent(medicineID) + "/prices?" + query.toString(),
+      {},
+    );
+  },
+};
+
 export const notifyApi = {
   /** POST /medicines/{medicine_id}/notify-me "—" subscribe the patient to a back-in-stock
    * alert near a location. Authenticated; the backend upserts, so re-subscribing is safe.
@@ -373,6 +395,21 @@ export const inventoryApi = {
         encodeURIComponent(medicineID),
       { method: "PUT", body },
     );
+  },
+};
+
+export const deviceApi = {
+  /** POST /devices/register - store this browser's push credential so reminders and
+   * availability notices can reach it. Authenticated, patients only. Registering the
+   * same deviceId again refreshes one row (and moves it to the current user). */
+  register(body: RegisterDeviceRequest): Promise<DeviceRegistration> {
+    return request<DeviceRegistration>("/devices/register", { method: "POST", body });
+  },
+
+  /** DELETE /devices/{deviceId} - remove this browser so it stops receiving pushes.
+   * Idempotent, so an unknown id is not an error; the 204 carries no data. */
+  unregister(deviceId: string): Promise<null> {
+    return request<null>("/devices/" + encodeURIComponent(deviceId), { method: "DELETE" });
   },
 };
 export type { ApiSuccess };

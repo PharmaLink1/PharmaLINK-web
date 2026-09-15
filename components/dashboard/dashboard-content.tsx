@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/layout/app-header";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { MedicineSearch } from "@/components/dashboard/medicine-search";
+import { NotificationsCard } from "@/components/dashboard/notifications-card";
 
 export function DashboardContent() {
   const { user } = useSession();
@@ -42,6 +43,7 @@ export function DashboardContent() {
           /* Patient dashboard: search-first workspace. */
           <div className={"mt-8 max-w-3xl"}>
             <MedicineSearch />
+            <NotificationsCard />
           </div>
         ) : (
           <div className={"mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"}>

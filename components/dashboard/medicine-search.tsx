@@ -563,6 +563,8 @@ export function MedicineSearch() {
                 notifyPending={notifyPending.has(group.medicine_id)}
                 notifyError={notifyError.get(group.medicine_id)}
                 onToggleNotify={toggleNotify}
+                location={location}
+                ensureLocation={acquireLocation}
               />
             ))}
           </div>

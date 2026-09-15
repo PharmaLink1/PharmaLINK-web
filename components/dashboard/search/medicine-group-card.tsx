@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, Pill } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Pill } from "lucide-react";
 import type { MedicineGroup } from "@/lib/search-types";
 import { interpolate } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/cn";
 import { DrugInfoPanel } from "./drug-info-panel";
 import { ListingRow } from "./listing-row";
 import { NotifyButton } from "./notify-button";
+import { PriceComparePanel, type PriceCompareLocation } from "./price-compare-panel";
 
 type SearchTime = Dictionary["dashboard"]["search"]["time"];
 
@@ -23,6 +24,8 @@ export function MedicineGroupCard({
   notifyPending,
   notifyError,
   onToggleNotify,
+  location,
+  ensureLocation,
 }: {
   group: MedicineGroup;
   time: SearchTime;
@@ -31,10 +34,14 @@ export function MedicineGroupCard({
   notifyPending: boolean;
   notifyError?: string;
   onToggleNotify: (medicineId: string) => void;
+  location: PriceCompareLocation | null;
+  ensureLocation: () => Promise<PriceCompareLocation | null>;
 }) {
   const di = t.dashboard.drugInfo;
   const [infoOpen, setInfoOpen] = React.useState(false);
+  const [compareOpen, setCompareOpen] = React.useState(false);
   const panelId = "drug-info-" + group.medicine_id;
+  const comparePanelId = "price-compare-" + group.medicine_id;
 
   const title = group.matched_name || group.generic_name || group.brand_name || "";
   const count =
@@ -71,6 +78,34 @@ export function MedicineGroupCard({
           <ListingRow key={listing.listing_id} result={listing} time={time} t={t} />
         ))}
       </ul>
+      <div className={"border-t border-border"}>
+        <button
+          type={"button"}
+          onClick={() => setCompareOpen((open) => !open)}
+          aria-expanded={compareOpen}
+          aria-controls={comparePanelId}
+          className={"flex w-full items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:px-5"}
+        >
+          <span className={"inline-flex items-center gap-2"}>
+            <ArrowUpDown className={"size-4 text-primary-strong"} aria-hidden />
+            {compareOpen ? t.dashboard.search.compare.hide : t.dashboard.search.compare.label}
+          </span>
+          <ChevronDown
+            className={cn("size-4 text-muted-foreground transition-transform", compareOpen && "rotate-180")}
+            aria-hidden
+          />
+        </button>
+        {compareOpen && (
+          <div id={comparePanelId} className={"border-t border-border"}>
+            <PriceComparePanel
+              medicineId={group.medicine_id}
+              location={location}
+              ensureLocation={ensureLocation}
+              t={t}
+            />
+          </div>
+        )}
+      </div>
       <div className={"border-t border-border"}>
         <button
           type={"button"}

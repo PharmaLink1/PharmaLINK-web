@@ -59,7 +59,7 @@ export function SiteHeader() {
 
   const navLinks = [
     { label: t.nav.howItWorks, href: "#how", icon: HelpCircle },
-    { label: t.nav.comparePrices, href: "#compare", icon: ArrowUpDown },
+    { label: t.nav.comparePrices, href: "/dashboard", icon: ArrowUpDown },
     { label: t.nav.forPharmacies, href: "#pharmacies", icon: Store },
   ];
 
