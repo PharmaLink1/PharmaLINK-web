@@ -206,6 +206,15 @@ export const adminApi = {
     return request<PharmacistApplication[]>(`/admin/pharmacist-applications${query}`, {});
   },
 
+  /** GET /admin/pharmacist-applications/:id — one application for the admin
+   * detail view. Same ApplicationResponse shape as the list. */
+  getApplication(id: string): Promise<PharmacistApplication> {
+    return request<PharmacistApplication>(
+      `/admin/pharmacist-applications/${encodeURIComponent(id)}`,
+      {},
+    );
+  },
+
   /** POST /admin/pharmacist-applications/:id/approve — approves and promotes the
    * applicant to pharmacist. Admin only. */
   approveApplication(id: string): Promise<PharmacistApplication> {

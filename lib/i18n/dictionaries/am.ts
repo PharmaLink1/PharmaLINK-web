@@ -27,6 +27,7 @@ export const am = {
     nearbyPharmacies: "በአቅራቢያዎ ያሉ ፋርማሲዎች",
     reminders: "ማስታወሻዎች",
     analytics: "ትንታኔ",
+    applicationDetail: "የማመልከቻ ዝርዝሮች",
   },
 
   common: {
@@ -728,6 +729,22 @@ export const am = {
     approving: "በማጽደቅ ላይ",
     approve: "አጽድቅ",
     reject: "ውድቅ አድርግ",
+    detail: {
+      back: "ወደ ማመልከቻዎች ተመለስ",
+      loading: "ማመልከቻን በመጫን ላይ",
+      error: "ይህን ማመልከቻ መጫን አልተቻለም።",
+      retry: "እንደገና ይሞክሩ",
+      viewDetails: "ዝርዝር ይመልከቱ",
+      applicationId: "የማመልከቻ መለያ",
+      reviewedBy: "የገመገመ",
+      reviewedAt: "የተገመገመበት",
+      approved: "ማመልከቻው ጸድቋል።",
+      rejected: "ማመልከቻው ውድቅ ተደርጓል።",
+      notFound: {
+        title: "ማመልከቻ አልተገኘም",
+        body: "ይህ ማመልከቻ ተወግዶ ወይም አገናኙ ልክ ያልሆነ ሊሆን ይችላል።",
+      },
+    },
     pharmacies: {
       title: "ፋርማሲዎች",
       subtitle: "ክምችታቸው በሕመምተኞች ፍለጋ እንዲታይ ፋርማሲዎችን ያረጋግጡ።",

@@ -25,6 +25,7 @@ export const en = {
     nearbyPharmacies: "Pharmacies near you",
     reminders: "Reminders",
     analytics: "Analytics",
+    applicationDetail: "Application details",
   },
 
   common: {
@@ -728,6 +729,22 @@ export const en = {
     approving: "Approving",
     approve: "Approve",
     reject: "Reject",
+    detail: {
+      back: "Back to applications",
+      loading: "Loading application",
+      error: "Couldn't load this application.",
+      retry: "Try again",
+      viewDetails: "View details",
+      applicationId: "Application ID",
+      reviewedBy: "Reviewed by",
+      reviewedAt: "Reviewed at",
+      approved: "Application approved.",
+      rejected: "Application rejected.",
+      notFound: {
+        title: "Application not found",
+        body: "This application may have been removed, or the link is no longer valid.",
+      },
+    },
     pharmacies: {
       title: "Pharmacies",
       subtitle: "Verify pharmacies so their stock appears in patient search.",
