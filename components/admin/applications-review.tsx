@@ -89,6 +89,7 @@ export function ApplicationsReview() {
                 <ApplicationCard
                   key={application.id}
                   application={application}
+                  detailsHref={"/admin/pharmacist-applications/" + application.id}
                   actions={
                     application.status === "pending" ? (
                       <ApplicationActions id={application.id} onResolved={handleResolved} />
