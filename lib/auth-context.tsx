@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { authApi } from "@/lib/api-client";
+import { authApi, deviceApi } from "@/lib/api-client";
 import { tokenStorage } from "@/lib/token-storage";
 import type { Me } from "@/lib/auth-types";
+import { getDeviceId } from "@/lib/device-storage";
+import { getPermission } from "@/lib/push-client";
 
 type Status = "loading" | "authenticated" | "unauthenticated";
 
@@ -92,6 +94,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await authApi.changePassword(input);
     },
     logout: async () => {
+      // Forget this browser's push registration before the session goes away, so a
+      // different account signing in on a shared device does not inherit it. Best
+      // effort: signing out has to succeed even if this call fails.
+      try {
+        const deviceId = getDeviceId();
+        if (deviceId && getPermission() === "granted") await deviceApi.unregister(deviceId);
+      } catch {
+        // Ignore - the tokens are dropped below either way.
+      }
       await authApi.logout();
       setUser(null);
       setStatus("unauthenticated");
