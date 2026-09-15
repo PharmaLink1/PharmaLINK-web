@@ -17,6 +17,11 @@ const CODE_MESSAGES: Record<string, (t: Dictionary) => string> = {
   INVALID_RADIUS: (t) => t.errors.radiusInvalid,
   SUBSCRIPTION_NOT_FOUND: (t) => t.errors.subscriptionMissing,
   FORBIDDEN: (t) => t.errors.notifyForbidden,
+  INVALID_CADENCE: (t) => t.errors.invalidCadence,
+  INVALID_MEDICINE: (t) => t.errors.invalidMedicine,
+  INVALID_CHANNEL: (t) => t.errors.invalidChannel,
+  REMINDER_NOT_FOUND: (t) => t.errors.reminderMissing,
+  REMINDER_CANCELLED: (t) => t.errors.reminderCancelled,
 };
 
 /** Human message for a thrown error in the current language. */

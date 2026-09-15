@@ -27,11 +27,13 @@ self.addEventListener("push", (event) => {
 });
 
 // Tapping a notification focuses a tab that is already open rather than stacking up
-// duplicates. The payload's ids have no deep-link route yet, so every push lands on
-// the dashboard for now.
+// duplicates. A reminder push names the reminder it is about, so it opens the
+// reminders screen; a medicine has no deep-link route yet, so anything else lands on
+// the dashboard.
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = "/dashboard";
+  const data = event.notification.data || {};
+  const url = data.reminderId ? "/dashboard/reminders" : "/dashboard";
 
   event.waitUntil(
     (async () => {
