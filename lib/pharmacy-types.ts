@@ -171,3 +171,22 @@ export type SavedListing = {
   updatedBy: string;
   updatedAt: string;
 };
+
+/** Look-back window accepted by GET /dashboard/{pharmacyId}/analytics. An omitted
+ * window is read as 30d, and the response echoes the canonical label back. */
+export type AnalyticsPeriod = "7d" | "30d" | "90d";
+
+/** One medicine patients searched for near the pharmacy that it cannot sell today. */
+export type UnmetDemandItem = {
+  medicineId: string;
+  medicineName: string;
+  searchCount: number;
+};
+
+/** Data from GET /dashboard/{pharmacyId}/analytics. unmetDemand is [] (never null)
+ * when the pharmacy is missing nothing, and is capped by the backend, busiest first. */
+export type PharmacyAnalytics = {
+  period: string;
+  unmetDemand: UnmetDemandItem[];
+};
+

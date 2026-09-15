@@ -1,6 +1,6 @@
 "use client";
 
-import { Boxes, Clock, Pill, Search, Store } from "lucide-react";
+import { Boxes, Clock, Pill, Search, Store, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-context";
 import { useLanguage, interpolate } from "@/lib/i18n";
@@ -96,6 +96,18 @@ export function DashboardContent() {
                   <h2 className={"mt-4 font-semibold"}>{t.dashboard.medicines.title}</h2>
                   <p className={"mt-1 text-sm text-muted-foreground"}>
                     {t.dashboard.medicines.manageHint}
+                  </p>
+                </Link>
+                <Link
+                  href={"/dashboard/analytics"}
+                  className={"rounded-lg border border-border bg-card p-5 text-card-foreground shadow-sm transition-colors hover:bg-muted"}
+                >
+                  <span className={"flex size-10 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
+                    <TrendingUp className={"size-5"} aria-hidden />
+                  </span>
+                  <h2 className={"mt-4 font-semibold"}>{t.dashboard.analytics.title}</h2>
+                  <p className={"mt-1 text-sm text-muted-foreground"}>
+                    {t.dashboard.analytics.manageHint}
                   </p>
                 </Link>
               </>

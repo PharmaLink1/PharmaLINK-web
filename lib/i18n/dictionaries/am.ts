@@ -26,6 +26,7 @@ export const am = {
     pharmacyDetail: "የፋርማሲ ዝርዝሮች",
     nearbyPharmacies: "በአቅራቢያዎ ያሉ ፋርማሲዎች",
     reminders: "ማስታወሻዎች",
+    analytics: "ትንታኔ",
   },
 
   common: {
@@ -353,6 +354,28 @@ export const am = {
         markOutOfStockAria: "{name}ን ከክምችት ውጪ እንደሆነ ምልክት አድርግ",
         markedOutOfStock: "ከክምችት ውጪ ምልክት ተደርጓል።",
       },
+    },
+    analytics: {
+      title: "የፍላጎት ትንታኔ",
+      subtitle: "በአቅራቢያዎ ያሉ ሕመምተኞች ፋርማሲዎ ማቅረብ የማይችላቸውን ምን እንደፈለጉ ይመልከቱ።",
+      manageHint: "በአቅራቢያ ያሉ ሕመምተኞች ምን እንደፈለጉ ይመልከቱ።",
+      loading: "የፍላጎት ትንታኔን በመጫን ላይ",
+      retry: "እንደገና ይሞክሩ",
+      noPharmacy: "በመጀመሪያ ፋርማሲዎን ይመዝግቡ፤ ከዚያ በአቅራቢያው ያለውን ፍላጎት ማየት ይችላሉ።",
+      pharmacyLabel: "ፋርማሲ",
+      selectPharmacyHint: "ፍላጎቱን የሚመለከቱበትን ፋርማሲ ይምረጡ።",
+      periodLabel: "የጊዜ ልክ",
+      period7d: "7 ቀናት",
+      period30d: "30 ቀናት",
+      period90d: "90 ቀናት",
+      listHeader: "በአቅራቢያ ተፈልጎ እዚህ የሌለ",
+      listHint: "በብዛት ፍለጋ በመጀመሪያ። እነዚህ በአቅራቢያዎ ተፈልገዋል፤ በክምችትዎ ውስጥ ግን የሉም።",
+      count: "{count} መድሀኒቶች",
+      searchesOne: "{count} ፍለጋ",
+      searchesOther: "{count} ፈልጋዎች",
+      emptyTitle: "በአሁኑ ጊዜ የጎደለ የለም",
+      emptyBody: "በአቅራቢያዎ የፈለገ ማንም በክምችትዎ ያልተሸፈነ ነገር አልፈለገም። በኋላ እንደገና ይመልከቱ።",
+      manageInventory: "ክምችት አስተዳድር",
     },
     medicines: {
       title: "የመድሀኒት ካታሎግ",
@@ -759,5 +782,8 @@ export const am = {
     invalidChannel: "ያ የማሳወቂያ መንገድ አይገኝም።",
     reminderMissing: "ያ ማስታወሻ ከእንግዲህ የለም።",
     reminderCancelled: "ያ ማስታወሻ ተሰርዟል፤ ሊለወጥ አይችልም።",
+    pharmacyLocationUnknown:
+      "ይህ ፋርማሲ የአካባቢ መረጃ የለውም፤ ስለዚህ በአቅራቢያው ያለው ፍላጎት ሊለካ አይችልም። በፋርማሲዎ ዝርዝር ውስጥ አካባቢውን ያክሉ።",
+    notYourPharmacy: "ያ ፋርማሲ የእርስዎ አይደለም።",
   },
 } satisfies Dictionary;

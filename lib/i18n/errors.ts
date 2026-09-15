@@ -22,6 +22,8 @@ const CODE_MESSAGES: Record<string, (t: Dictionary) => string> = {
   INVALID_CHANNEL: (t) => t.errors.invalidChannel,
   REMINDER_NOT_FOUND: (t) => t.errors.reminderMissing,
   REMINDER_CANCELLED: (t) => t.errors.reminderCancelled,
+  PHARMACY_LOCATION_UNKNOWN: (t) => t.errors.pharmacyLocationUnknown,
+  NOT_YOUR_PHARMACY: (t) => t.errors.notYourPharmacy,
 };
 
 /** Human message for a thrown error in the current language. */

@@ -24,6 +24,7 @@ export const en = {
     pharmacyDetail: "Pharmacy details",
     nearbyPharmacies: "Pharmacies near you",
     reminders: "Reminders",
+    analytics: "Analytics",
   },
 
   common: {
@@ -351,6 +352,30 @@ export const en = {
         markOutOfStockAria: "Mark {name} as out of stock",
         markedOutOfStock: "Marked out of stock.",
       },
+    },
+    analytics: {
+      title: "Demand analytics",
+      subtitle: "See what patients near you searched for that your pharmacy can't sell yet.",
+      manageHint: "See what patients nearby searched for.",
+      loading: "Loading demand analytics",
+      retry: "Try again",
+      noPharmacy: "Register your pharmacy first, then you can see the demand around it.",
+      pharmacyLabel: "Pharmacy",
+      selectPharmacyHint: "Choose which pharmacy's demand to see.",
+      periodLabel: "Look-back window",
+      period7d: "7 days",
+      period30d: "30 days",
+      period90d: "90 days",
+      listHeader: "Wanted nearby, not stocked here",
+      listHint:
+        "Busiest first. Patients searched for these near you and they aren't in your stock.",
+      count: "{count} medicines",
+      searchesOne: "{count} search",
+      searchesOther: "{count} searches",
+      emptyTitle: "Nothing missed right now",
+      emptyBody:
+        "Nobody near you searched for something your stock doesn't cover. Check back later.",
+      manageInventory: "Manage inventory",
     },
     medicines: {
       title: "Medicine catalogue",
@@ -757,6 +782,9 @@ export const en = {
     invalidChannel: "That reminder channel isn't available.",
     reminderMissing: "That reminder no longer exists.",
     reminderCancelled: "That reminder was cancelled and can't be changed.",
+    pharmacyLocationUnknown:
+      "This pharmacy has no location on record, so nearby demand can't be measured. Add its location in your pharmacy details.",
+    notYourPharmacy: "That pharmacy isn't one of yours.",
   },
 };
 

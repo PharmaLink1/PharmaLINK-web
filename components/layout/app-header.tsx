@@ -16,6 +16,7 @@ import {
   Pill,
   Settings,
   Store,
+  TrendingUp,
   User,
   UserPlus,
   X,
@@ -78,6 +79,7 @@ export function AppHeader() {
         { href: "/dashboard/pharmacy", label: t.meta.pharmacy, icon: Store },
         { href: "/dashboard/inventory", label: t.meta.inventory, icon: Boxes },
         { href: "/dashboard/medicines", label: t.meta.medicines, icon: Pill },
+        { href: "/dashboard/analytics", label: t.meta.analytics, icon: TrendingUp },
       ];
     }
     if (user?.role === "user") {

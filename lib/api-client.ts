@@ -14,10 +14,12 @@ import type {
 } from "./search-types";
 import type {
   AdminPharmacy,
+  AnalyticsPeriod,
   CatalogMedicine,
   CreateMedicineRequest,
   InventoryListing,
   MyPharmacy,
+  PharmacyAnalytics,
   PharmacyDetail,
   PharmacyListItem,
   RegisterPharmacyRequest,
@@ -401,6 +403,21 @@ export const inventoryApi = {
         "/listings/" +
         encodeURIComponent(medicineID),
       { method: "PUT", body },
+    );
+  },
+};
+
+export const analyticsApi = {
+  /** GET /dashboard/{pharmacyId}/analytics - medicines patients searched for near the
+   * pharmacy that it cannot currently sell, busiest first. Pharmacist + owner only.
+   * Omitting the period takes the backend's 30d default. Throws ApiError
+   * PHARMACY_LOCATION_UNKNOWN (409) when the pharmacy has no coordinates on record, so
+   * demand cannot be scoped to a neighbourhood. */
+  demand(pharmacyID: string, period?: AnalyticsPeriod): Promise<PharmacyAnalytics> {
+    const query = period ? "?period=" + encodeURIComponent(period) : "";
+    return request<PharmacyAnalytics>(
+      "/dashboard/" + encodeURIComponent(pharmacyID) + "/analytics" + query,
+      {},
     );
   },
 };
