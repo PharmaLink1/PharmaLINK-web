@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import {
+  AlarmClock,
   Boxes,
   ChevronDown,
   ChevronRight,
@@ -80,7 +81,10 @@ export function AppHeader() {
       ];
     }
     if (user?.role === "user") {
-      return [{ href: "/dashboard/pharmacies", label: t.nav.pharmacies, icon: MapPin }];
+      return [
+        { href: "/dashboard/pharmacies", label: t.nav.pharmacies, icon: MapPin },
+        { href: "/dashboard/reminders", label: t.nav.reminders, icon: AlarmClock },
+      ];
     }
     return [];
   }, [user?.role, t]);

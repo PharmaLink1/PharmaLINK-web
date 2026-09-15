@@ -1,0 +1,33 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useSession } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/i18n";
+import { Spinner } from "@/components/ui/spinner";
+
+/**
+ * Gates patient-only routes: waits for session hydration, sends unauthenticated
+ * visitors to sign in and everyone else back to the dashboard. The backend still
+ * enforces the role - this just keeps the UI honest.
+ */
+export function PatientGuard({ children }: { children: React.ReactNode }) {
+  const { status, user } = useSession();
+  const { t } = useLanguage();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (status === "unauthenticated") router.replace("/signin");
+    else if (status === "authenticated" && user?.role !== "user") router.replace("/dashboard");
+  }, [status, user, router]);
+
+  if (status !== "authenticated" || user?.role !== "user") {
+    return (
+      <div className="flex min-h-dvh items-center justify-center">
+        <Spinner label={t.common.loading} />
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}

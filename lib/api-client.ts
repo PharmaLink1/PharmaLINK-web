@@ -30,6 +30,13 @@ import type {
 import type { DrugInfo } from "./drug-info-types";
 import type { PriceComparisonItem, PriceSort } from "./price-types";
 import type { DeviceRegistration, RegisterDeviceRequest } from "./device-types";
+import type {
+  CreateReminderRequest,
+  ReminderDetail,
+  ReminderListItem,
+  ReminderStatus,
+  UpdateReminderRequest,
+} from "./reminder-types";
 import { tokenStorage } from "./token-storage";
 import { getCurrentLocale } from "./i18n/config";
 
@@ -410,6 +417,36 @@ export const deviceApi = {
    * Idempotent, so an unknown id is not an error; the 204 carries no data. */
   unregister(deviceId: string): Promise<null> {
     return request<null>("/devices/" + encodeURIComponent(deviceId), { method: "DELETE" });
+  },
+};
+
+export const reminderApi = {
+  /** GET /reminders - the caller's own reminders, soonest due first. The backend
+   * leaves cancelled ones out unless a status is asked for. Patients only. */
+  list(status?: ReminderStatus): Promise<ReminderListItem[]> {
+    const query = status ? "?status=" + encodeURIComponent(status) : "";
+    return request<ReminderListItem[]>("/reminders" + query, {});
+  },
+
+  /** POST /reminders - schedules a recurring reminder for a medicine the patient
+   * names themselves. No channel is sent, so the backend takes its push default. */
+  create(body: CreateReminderRequest): Promise<ReminderDetail> {
+    return request<ReminderDetail>("/reminders", { method: "POST", body });
+  },
+
+  /** PATCH /reminders/{id} - partial edit. Pausing and resuming go through here;
+   * changing the cadence, or resuming, recomputes the next due time. */
+  update(id: string, body: UpdateReminderRequest): Promise<ReminderDetail> {
+    return request<ReminderDetail>("/reminders/" + encodeURIComponent(id), {
+      method: "PATCH",
+      body,
+    });
+  },
+
+  /** DELETE /reminders/{id} - cancels a reminder and keeps the record as history.
+   * Idempotent, so cancelling twice still succeeds; the 204 carries no data. */
+  cancel(id: string): Promise<null> {
+    return request<null>("/reminders/" + encodeURIComponent(id), { method: "DELETE" });
   },
 };
 export type { ApiSuccess };
