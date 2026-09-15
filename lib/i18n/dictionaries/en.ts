@@ -325,6 +325,8 @@ export const en = {
       pharmacyLabel: "Pharmacy",
       selectPharmacyHint: "Choose which pharmacy's stock to manage.",
       count: "{count} medicines listed",
+      modeSingle: "Single medicine",
+      modeBulk: "Bulk CSV upload",
       add: {
         heading: "Add or update a medicine",
         medicine: "Medicine",
@@ -343,6 +345,37 @@ export const en = {
         saved: "Listing saved.",
         pickMedicine: "Choose a medicine first.",
         invalidPrice: "Price can't be negative.",
+      },
+      bulk: {
+        heading: "Bulk upload stock from CSV",
+        description:
+          "Upload a CSV file to add or update multiple medicine listings at once. Existing listings will have their stock and price updated.",
+        templateLabel: "Download CSV template",
+        dropzonePrompt: "Choose a CSV file or drag and drop here",
+        dropzoneHint:
+          "CSV up to 5 MB. Columns: medicine_name, generic_name, dosage_form, strength, stock_status, price.",
+        selectedFile: "Selected file",
+        fileSize: "Size: {size}",
+        removeFile: "Remove file",
+        upload: "Upload CSV",
+        uploading: "Uploading and processing…",
+        successAll: "All {count} medicines updated successfully.",
+        partialSuccess: "{succeeded} of {total} medicines updated. {failed} rows had errors.",
+        failedAll: "Failed to update any medicines. {failed} rows had errors.",
+        summaryTitle: "Upload results",
+        totalRows: "Total rows",
+        succeededRows: "Succeeded",
+        failedRows: "Failed",
+        errorsTitle: "Row errors ({count})",
+        rowNumber: "Row {row}",
+        fieldLabel: "Field: {field}",
+        noFileSelected: "Please choose a CSV file first.",
+        invalidFileType: "Please select a valid CSV file (.csv).",
+        fileTooLarge: "File exceeds the 5 MB limit. Please select a smaller file.",
+        formatGuideTitle: "CSV format requirements",
+        formatGuideColumns: "Header row must include exactly:",
+        formatGuideStatuses: "Allowed stock_status values:",
+        formatGuidePrice: "price: ETB number (e.g. 45.50) or leave blank if unlisted.",
       },
       row: {
         updated: "Updated {time} ago",
@@ -785,6 +818,9 @@ export const en = {
     pharmacyLocationUnknown:
       "This pharmacy has no location on record, so nearby demand can't be measured. Add its location in your pharmacy details.",
     notYourPharmacy: "That pharmacy isn't one of yours.",
+    invalidCsv: "The uploaded CSV file is empty, invalid, or has incorrect column headers.",
+    fileTooLarge: "The file is too large. The maximum size is 5 MB.",
+    invalidRequest: "Invalid request. Please check your file and try again.",
   },
 };
 

@@ -15,6 +15,7 @@ import type {
 import type {
   AdminPharmacy,
   AnalyticsPeriod,
+  BulkUploadResponse,
   CatalogMedicine,
   CreateMedicineRequest,
   InventoryListing,
@@ -58,7 +59,8 @@ async function raw<T>(path: string, { method = "GET", body, auth }: RequestOptio
     // the current language is always sent so every endpoint sees it.
     "Accept-Language": getCurrentLocale(),
   };
-  if (body !== undefined) headers["Content-Type"] = "application/json";
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+  if (body !== undefined && !isFormData) headers["Content-Type"] = "application/json";
   if (auth) {
     const token = tokenStorage.getAccessToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -69,7 +71,7 @@ async function raw<T>(path: string, { method = "GET", body, auth }: RequestOptio
     res = await fetch(`${BASE_URL}${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiError("NETWORK_ERROR", "Can't reach the server. Check your connection.", 0);
@@ -403,6 +405,18 @@ export const inventoryApi = {
         "/listings/" +
         encodeURIComponent(medicineID),
       { method: "PUT", body },
+    );
+  },
+
+  /** POST /dashboard/{pharmacyId}/listings/bulk-upload - bulk upload listings from CSV.
+   * Uploads multipart/form-data in field "file". Columns: medicine_name, generic_name,
+   * dosage_form, strength, stock_status, price. Pharmacist + owner only. */
+  bulkUpload(pharmacyID: string, file: File): Promise<BulkUploadResponse> {
+    const form = new FormData();
+    form.append("file", file);
+    return request<BulkUploadResponse>(
+      "/dashboard/" + encodeURIComponent(pharmacyID) + "/listings/bulk-upload",
+      { method: "POST", body: form },
     );
   },
 };

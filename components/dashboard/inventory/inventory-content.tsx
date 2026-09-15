@@ -2,18 +2,20 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, PlusCircle, UploadCloud } from "lucide-react";
 import { inventoryApi, pharmacyApi } from "@/lib/pharmacy-api";
-import type { InventoryListing, MyPharmacy } from "@/lib/pharmacy-types";
+import type { BulkSummary, InventoryListing, MyPharmacy } from "@/lib/pharmacy-types";
 import { getErrorMessage } from "@/lib/i18n/errors";
 import { interpolate, useLanguage } from "@/lib/i18n";
 import { Alert } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Spinner } from "@/components/ui/spinner";
 import { AppHeader } from "@/components/layout/app-header";
 import { ListingForm } from "@/components/dashboard/inventory/listing-form";
+import { BulkUploadForm } from "@/components/dashboard/inventory/bulk-upload-form";
 import { ListingRow } from "@/components/dashboard/inventory/listing-row";
 import { cn } from "@/lib/cn";
 
@@ -33,6 +35,7 @@ export function InventoryContent() {
   const [error, setError] = React.useState("");
   const [notice, setNotice] = React.useState("");
   const [marking, setMarking] = React.useState<string | null>(null);
+  const [mode, setMode] = React.useState<"single" | "bulk">("single");
 
   const selected = React.useMemo(
     () => pharmacies.find((p) => p.pharmacy_id === selectedId) ?? null,
@@ -50,6 +53,8 @@ export function InventoryContent() {
         if (!active) return;
         setPharmacies(mine);
         const wanted = new URLSearchParams(window.location.search).get("pharmacy");
+        const wantedMode = new URLSearchParams(window.location.search).get("mode");
+        if (wantedMode === "bulk") setMode("bulk");
         const initial = mine.find((p) => p.pharmacy_id === wanted) ?? mine[0] ?? null;
         setSelectedId(initial?.pharmacy_id ?? null);
         if (initial) setListings(await inventoryApi.list(initial.pharmacy_id));
@@ -83,6 +88,18 @@ export function InventoryContent() {
       const rest = prev.filter((l) => l.medicineId !== saved.medicineId);
       return [saved, ...rest];
     });
+  }
+
+  async function handleBulkUploaded(summary: BulkSummary) {
+    if (!selected) return;
+    if (summary.succeeded > 0) {
+      try {
+        const refreshed = await inventoryApi.list(selected.pharmacy_id);
+        setListings(refreshed);
+      } catch (err) {
+        setError(getErrorMessage(err, t));
+      }
+    }
   }
 
   async function handleMarkOutOfStock(medicineID: string) {
@@ -179,11 +196,29 @@ export function InventoryContent() {
             {notice && <Alert variant={"success"}>{notice}</Alert>}
             {error && <Alert variant={"danger"}>{error}</Alert>}
 
-            <ListingForm
-              key={selected.pharmacy_id}
-              pharmacyID={selected.pharmacy_id}
-              onSaved={handleSaved}
+            <SegmentedControl
+              options={[
+                { value: "single", label: inv.modeSingle, icon: PlusCircle },
+                { value: "bulk", label: inv.modeBulk, icon: UploadCloud },
+              ]}
+              value={mode}
+              onChange={setMode}
+              ariaLabel={inv.title}
             />
+
+            {mode === "single" ? (
+              <ListingForm
+                key={selected.pharmacy_id}
+                pharmacyID={selected.pharmacy_id}
+                onSaved={handleSaved}
+              />
+            ) : (
+              <BulkUploadForm
+                key={selected.pharmacy_id}
+                pharmacyID={selected.pharmacy_id}
+                onUploaded={handleBulkUploaded}
+              />
+            )}
 
             {listings.length > 0 ? (
               <div className={"space-y-2"}>

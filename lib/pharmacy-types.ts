@@ -190,3 +190,23 @@ export type PharmacyAnalytics = {
   unmetDemand: UnmetDemandItem[];
 };
 
+/** One bad cell or rejected row from a bulk CSV upload. Row is 1-based and excludes the header. */
+export type BulkErrorDetail = {
+  row: number;
+  field: string;
+  message: string;
+};
+
+/** Summary counts of processed bulk upload rows. */
+export type BulkSummary = {
+  totalRows: number;
+  succeeded: number;
+  failed: number;
+};
+
+/** Response body from POST /dashboard/{pharmacyId}/listings/bulk-upload. */
+export type BulkUploadResponse = {
+  summary: BulkSummary;
+  errors: BulkErrorDetail[];
+};
+
