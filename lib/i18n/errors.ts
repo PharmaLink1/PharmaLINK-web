@@ -24,6 +24,9 @@ const CODE_MESSAGES: Record<string, (t: Dictionary) => string> = {
   REMINDER_CANCELLED: (t) => t.errors.reminderCancelled,
   PHARMACY_LOCATION_UNKNOWN: (t) => t.errors.pharmacyLocationUnknown,
   NOT_YOUR_PHARMACY: (t) => t.errors.notYourPharmacy,
+  INVALID_CSV: (t) => t.errors.invalidCsv,
+  FILE_TOO_LARGE: (t) => t.errors.fileTooLarge,
+  INVALID_REQUEST: (t) => t.errors.invalidRequest,
 };
 
 /** Human message for a thrown error in the current language. */

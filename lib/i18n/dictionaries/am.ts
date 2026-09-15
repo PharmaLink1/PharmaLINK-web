@@ -27,6 +27,7 @@ export const am = {
     nearbyPharmacies: "በአቅራቢያዎ ያሉ ፋርማሲዎች",
     reminders: "ማስታወሻዎች",
     analytics: "ትንታኔ",
+    applicationDetail: "የማመልከቻ ዝርዝሮች",
   },
 
   common: {
@@ -327,6 +328,8 @@ export const am = {
       pharmacyLabel: "ፋርማሲ",
       selectPharmacyHint: "ክምችቱን የሚያስተዳድሩበትን ፋርማሲ ይምረጡ።",
       count: "{count} መድሀኒቶች ተዘርዝረዋል",
+      modeSingle: "ነጠላ መድሀኒት",
+      modeBulk: "በCSV በጅምላ ጫን",
       add: {
         heading: "መድሀኒት ያክሉ ወይም ያዘምኑ",
         medicine: "መድሀኒት",
@@ -345,6 +348,37 @@ export const am = {
         saved: "ዝርዝሩ ተቀምጧል።",
         pickMedicine: "በመጀመሪያ መድሀኒት ይምረጡ።",
         invalidPrice: "ዋጋ አሉታዊ መሆን አይችልም።",
+      },
+      bulk: {
+        heading: "ክምችትን በCSV በጅምላ ጫን",
+        description:
+          "ብዙ መድሀኒቶችን በአንድ ጊዜ ለማከል ወይም ለማዘመን የCSV ፋይል ይጫኑ። ነባር ዝርዝሮች ክምችታቸው እና ዋጋቸው ይዘመናል።",
+        templateLabel: "የCSV አብነት ያውርዱ",
+        dropzonePrompt: "የCSV ፋይል ይምረጡ ወይም እዚህ ይጎትቱ",
+        dropzoneHint:
+          "እስከ 5 ሜባ CSV። ዓምዶች፡ medicine_name, generic_name, dosage_form, strength, stock_status, price።",
+        selectedFile: "የተመረጠ ፋይል",
+        fileSize: "መጠን፡ {size}",
+        removeFile: "ፋይል አስወግድ",
+        upload: "CSV ጫን",
+        uploading: "በመጫን እና በማስኬድ ላይ…",
+        successAll: "ሁሉም {count} መድሀኒቶች በተሳካ ሁኔታ ተዘምነዋል።",
+        partialSuccess: "ከ{total} ውስጥ {succeeded} መድሀኒቶች ተዘምነዋል። {failed} ረድፎች ስህተት ነበረባቸው።",
+        failedAll: "ምንም መድሀኒት ማዘመን አልተቻለም። {failed} ረድፎች ስህተት ነበረባቸው።",
+        summaryTitle: "የጭነት ውጤቶች",
+        totalRows: "ጠቅላላ ረድፎች",
+        succeededRows: "የተሳኩ",
+        failedRows: "ያልተሳኩ",
+        errorsTitle: "የረድፍ ስህተቶች ({count})",
+        rowNumber: "ረድፍ {row}",
+        fieldLabel: "ዓምድ፡ {field}",
+        noFileSelected: "እባክዎ መጀመሪያ የCSV ፋይል ይምረጡ።",
+        invalidFileType: "እባክዎ ትክክለኛ የCSV ፋይል (.csv) ይምረጡ።",
+        fileTooLarge: "ፋይሉ ከ5 ሜባ ገደብ በላይ ነው። እባክዎ አነስተኛ ፋይል ይምረጡ።",
+        formatGuideTitle: "የCSV ቅርጸት መስፈርቶች",
+        formatGuideColumns: "የራስጌ ረድፍ በትክክል እነዚህን ማካተት አለበት፡",
+        formatGuideStatuses: "የሚፈቀዱ የstock_status እሴቶች፡",
+        formatGuidePrice: "price: የብር ቁጥር (ለምሳሌ 45.50) ወይም ካልተዘረዘረ ባዶ ይተዉት።",
       },
       row: {
         updated: "ከ{time} በፊት ተዘምኗል",
@@ -695,6 +729,22 @@ export const am = {
     approving: "በማጽደቅ ላይ",
     approve: "አጽድቅ",
     reject: "ውድቅ አድርግ",
+    detail: {
+      back: "ወደ ማመልከቻዎች ተመለስ",
+      loading: "ማመልከቻን በመጫን ላይ",
+      error: "ይህን ማመልከቻ መጫን አልተቻለም።",
+      retry: "እንደገና ይሞክሩ",
+      viewDetails: "ዝርዝር ይመልከቱ",
+      applicationId: "የማመልከቻ መለያ",
+      reviewedBy: "የገመገመ",
+      reviewedAt: "የተገመገመበት",
+      approved: "ማመልከቻው ጸድቋል።",
+      rejected: "ማመልከቻው ውድቅ ተደርጓል።",
+      notFound: {
+        title: "ማመልከቻ አልተገኘም",
+        body: "ይህ ማመልከቻ ተወግዶ ወይም አገናኙ ልክ ያልሆነ ሊሆን ይችላል።",
+      },
+    },
     pharmacies: {
       title: "ፋርማሲዎች",
       subtitle: "ክምችታቸው በሕመምተኞች ፍለጋ እንዲታይ ፋርማሲዎችን ያረጋግጡ።",
@@ -785,5 +835,8 @@ export const am = {
     pharmacyLocationUnknown:
       "ይህ ፋርማሲ የአካባቢ መረጃ የለውም፤ ስለዚህ በአቅራቢያው ያለው ፍላጎት ሊለካ አይችልም። በፋርማሲዎ ዝርዝር ውስጥ አካባቢውን ያክሉ።",
     notYourPharmacy: "ያ ፋርማሲ የእርስዎ አይደለም።",
+    invalidCsv: "የተጫነው የCSV ፋይል ባዶ፣ ልክ ያልሆነ ወይም የተሳሳቱ የአምድ ርዕሶች አሉት።",
+    fileTooLarge: "ፋይሉ በጣም ትልቅ ነው። ከፍተኛው መጠን 5 ሜባ ነው።",
+    invalidRequest: "ልክ ያልሆነ ጥያቄ። እባክዎ ፋይልዎን ይፈትሹና እንደገና ይሞክሩ።",
   },
 } satisfies Dictionary;

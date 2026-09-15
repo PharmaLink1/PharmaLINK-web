@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import type { ApplicationStatus, PharmacistApplication } from "@/lib/auth-types";
 import { useLanguage, interpolate } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const statusStyles: Record<ApplicationStatus, string> = {
@@ -34,14 +36,17 @@ function formatDate(iso: string, locale: string): string {
 
 /**
  * One pharmacist application in the admin review queue. Presentational only -
- * the optional `actions` slot renders approve/reject controls for pending items.
+ * the optional `actions` slot renders approve/reject controls for pending items,
+ * and `detailsHref` links out to the full application.
  */
 export function ApplicationCard({
   application,
   actions,
+  detailsHref,
 }: {
   application: PharmacistApplication;
   actions?: React.ReactNode;
+  detailsHref?: string;
 }) {
   const { locale, t } = useLanguage();
 
@@ -84,6 +89,17 @@ export function ApplicationCard({
       )}
 
       {actions && <div className="mt-5 flex items-center gap-3">{actions}</div>}
+
+      {detailsHref && (
+        <div className="mt-5">
+          <Link
+            href={detailsHref}
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
+            {t.admin.detail.viewDetails}
+          </Link>
+        </div>
+      )}
     </Card>
   );
 }
