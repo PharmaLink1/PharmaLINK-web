@@ -10,16 +10,6 @@ import { FullWidthDivider } from "@/components/full-width-divider";
 
 type StockLevel = "in" | "low";
 
-interface SampleListing {
-  id: string;
-  name: string;
-  category: string;
-  pharmacy: string;
-  distance: string;
-  updated: string;
-  stock: StockLevel;
-  price: string;
-}
 
 const results: {
   id: string;
