@@ -47,8 +47,11 @@ export function PriceComparePanel({
   React.useEffect(() => {
     if (!location) return;
     const seq = ++seqRef.current;
-    setPhase("loading");
-    setError("");
+    queueMicrotask(() => {
+      if (seqRef.current !== seq) return;
+      setPhase("loading");
+      setError("");
+    });
     priceApi
       .compare(medicineId, { lat: location.lat, lng: location.lng, sort })
       .then((data) => {
