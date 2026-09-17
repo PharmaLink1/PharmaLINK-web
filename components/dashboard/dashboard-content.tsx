@@ -24,7 +24,7 @@ export function DashboardContent() {
     <div className={"flex min-h-dvh flex-col"}>
       <AppHeader />
 
-      <main className={"mx-auto w-full max-w-6xl flex-1 px-6 py-10"}>
+      <main className={isPatient ? "mx-auto w-full max-w-4xl flex-1 px-4 py-6 sm:px-6 sm:py-10" : "mx-auto w-full max-w-6xl flex-1 px-6 py-10"}>
         <h1 className={"text-2xl font-semibold tracking-tight"}>
           {interpolate(t.dashboard.welcome, { name: displayName })}
         </h1>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { CheckCircle2, MapPin, Phone } from "lucide-react";
 import type { MedicineSearchResult } from "@/lib/search-types";
 import { interpolate } from "@/lib/i18n";
@@ -34,71 +35,69 @@ export function ListingRow({
     : interpolate(t.dashboard.search.updatedAgo, { time: ago.label });
 
   return (
-    <li className={"flex items-start justify-between gap-4 px-4 py-4 sm:px-5"}>
+    <li className={"grid min-w-0 grid-cols-1 gap-3 px-4 py-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.6fr)] sm:gap-x-6 sm:px-5"}>
       <div className={"min-w-0"}>
-        <p className={"truncate text-sm font-medium text-foreground"}>
-          <Link
-            href={"/dashboard/pharmacies/" + result.pharmacy_id}
-            className={"rounded hover:underline"}
-          >
-            {result.pharmacy_name}
-          </Link>
-          {result.distance_label ? (
-            <span className={"font-normal text-muted-foreground"}>{" · " + result.distance_label}</span>
-          ) : null}
-        </p>
-        <p className={"mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"}>
-          <a
-            href={directionsUrl(result.lat, result.lng)}
-            target={"_blank"}
-            rel={"noreferrer"}
-            className={"inline-flex items-center gap-1 rounded font-medium text-primary-strong hover:underline"}
-          >
-            <MapPin className={"size-3.5"} aria-hidden />
-            {t.dashboard.search.directions}
-          </a>
-          {result.phone ? (
-            <>
-              <span className={"text-muted-foreground"} aria-hidden>
-                ·
-              </span>
-              <a
-                href={"tel:" + result.phone}
-                className={"inline-flex items-center gap-1 rounded font-medium text-primary-strong hover:underline"}
-                aria-label={interpolate(t.dashboard.search.nearby.callAria, {
-                  name: result.pharmacy_name,
-                })}
-              >
-                <Phone className={"size-3.5"} aria-hidden />
-                {t.dashboard.search.nearby.call}
-              </a>
-            </>
-          ) : null}
-          <span className={"text-muted-foreground"} aria-hidden>
-            ·
-          </span>
-          <span className={"text-muted-foreground"}>{updated}</span>
-        </p>
+        <Link
+          href={"/dashboard/pharmacies/" + result.pharmacy_id}
+          className={"inline-flex min-h-11 min-w-11 max-w-full items-center rounded py-2 text-base font-semibold leading-relaxed text-foreground hover:text-primary-strong hover:underline"}
+        >
+          <span className={"min-w-0 break-words"}>{result.pharmacy_name}</span>
+        </Link>
+        {result.distance_label ? (
+          <p className={"break-words text-sm leading-relaxed text-muted-foreground"}>
+            {result.distance_label}
+          </p>
+        ) : null}
+        <p className={"mt-1 break-words text-sm leading-relaxed text-muted-foreground"}>{updated}</p>
       </div>
-      <div className={"flex shrink-0 flex-col items-end gap-1.5"}>
+      <div className={"flex min-w-0 flex-col items-start gap-2 sm:items-end sm:text-right"}>
         <span
           className={cn(
-            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
+            "inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium leading-relaxed",
             stockPillClasses[result.stock_status],
           )}
         >
-          {result.stock_status === "in_stock" && <CheckCircle2 className={"size-3.5"} aria-hidden />}
-          {stockLabel(result.stock_status, t)}
+          {result.stock_status === "in_stock" && <CheckCircle2 className={"size-3.5 shrink-0"} aria-hidden />}
+          <span className={"min-w-0 break-words"}>{stockLabel(result.stock_status, t)}</span>
         </span>
         {result.price_etb !== null ? (
-          <span className={"text-sm font-semibold tabular-nums"}>
+          <span className={"max-w-full break-words text-xl font-semibold leading-snug tracking-tight text-foreground tabular-nums"}>
             {formatPrice(result.price_etb)}
           </span>
         ) : (
-          <span className={"text-xs text-muted-foreground"}>
+          <span className={"max-w-full break-words text-sm leading-relaxed text-muted-foreground"}>
             {t.dashboard.search.priceNotListed}
           </span>
         )}
+      </div>
+      <div className={"flex min-w-0 flex-col gap-2 sm:col-span-2 sm:flex-row sm:flex-wrap"}>
+        <a
+          href={directionsUrl(result.lat, result.lng)}
+          target={"_blank"}
+          rel={"noreferrer"}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-auto min-h-11 min-w-11 max-w-full whitespace-normal py-2.5 text-primary-strong",
+          )}
+        >
+          <MapPin className={"size-4"} aria-hidden />
+          <span className={"min-w-0 break-words"}>{t.dashboard.search.directions}</span>
+        </a>
+        {result.phone ? (
+          <a
+            href={"tel:" + result.phone}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-auto min-h-11 min-w-11 max-w-full whitespace-normal py-2.5 text-primary-strong",
+            )}
+            aria-label={interpolate(t.dashboard.search.nearby.callAria, {
+              name: result.pharmacy_name,
+            })}
+          >
+            <Phone className={"size-4"} aria-hidden />
+            <span className={"min-w-0 break-words"}>{t.dashboard.search.nearby.call}</span>
+          </a>
+        ) : null}
       </div>
     </li>
   );

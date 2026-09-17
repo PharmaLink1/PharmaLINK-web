@@ -495,6 +495,7 @@ export const en = {
         radiusOption: "{km} km",
         radiusLocationHint: "Turn on location to filter by distance.",
         clear: "Clear filters",
+        activeCountLabel: "Filters, {count} active",
         forms: {
           tablet: "Tablet",
           capsule: "Capsule",
@@ -612,6 +613,8 @@ export const en = {
         body: "We couldn't find verified pharmacies near you right now.",
       },
       emptyOpenNow: "No nearby pharmacies are open right now.",
+      resultOne: "pharmacy found",
+      resultMany: "pharmacies found",
     },
     notifications: {
       title: "Notifications",

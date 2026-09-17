@@ -208,11 +208,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Consistent, visible keyboard focus that matches the accent. */
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-  border-radius: 2px;
+/* Consistent, visible keyboard focus that matches the accent.
+   Layered so Tailwind utilities (e.g. focus-visible:outline-none) can override. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 /* Text selection - a small on-brand touch. */

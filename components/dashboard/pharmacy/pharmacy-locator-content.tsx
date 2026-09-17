@@ -10,10 +10,11 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { getErrorMessage } from "@/lib/i18n/errors";
 import { directionsUrl, formatDistanceMeters } from "@/lib/search-format";
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { AppHeader } from "@/components/layout/app-header";
+import { VerifiedBadge } from "@/components/dashboard/pharmacy/verified-badge";
 import { cn } from "@/lib/cn";
 
 type Status = "idle" | "locating" | "loading" | "error" | "ready";
@@ -122,7 +123,10 @@ export function PharmacyLocatorContent() {
           {status === "ready" && (
             <div className={"space-y-4"}>
               {pharmacies.length > 0 && (
-                <div className={"flex justify-end"}>
+                <div className={"flex items-center justify-between gap-3"}>
+                  <p className={"text-sm text-muted-foreground"} aria-live={"polite"}>
+                    {visible.length} {visible.length === 1 ? d.resultOne : d.resultMany}
+                  </p>
                   <button
                     type={"button"}
                     onClick={() => setOpenNowOnly((v) => !v)}
@@ -155,7 +159,7 @@ export function PharmacyLocatorContent() {
                 <Card className={"overflow-hidden"}>
                   <ul className={"divide-y divide-border"}>
                     {visible.map((pharmacy) => (
-                      <LocatorRow key={pharmacy.pharmacy_id} pharmacy={pharmacy} d={d} />
+                      <LocatorRow key={pharmacy.pharmacy_id} pharmacy={pharmacy} d={d} t={t} />
                     ))}
                   </ul>
                 </Card>
@@ -168,62 +172,108 @@ export function PharmacyLocatorContent() {
   );
 }
 
-function LocatorRow({ pharmacy, d }: { pharmacy: PharmacyListItem; d: LocatorStrings }) {
+function LocatorRow({
+  pharmacy,
+  d,
+  t,
+}: {
+  pharmacy: PharmacyListItem;
+  d: LocatorStrings;
+  t: Dictionary;
+}) {
   return (
-    <li className={"px-4 py-4 sm:px-5"}>
-      <p className={"truncate text-sm font-medium text-foreground"}>
-        <Link
-          href={"/dashboard/pharmacies/" + pharmacy.pharmacy_id}
-          className={"rounded hover:underline"}
-        >
-          {pharmacy.name}
-        </Link>
-      </p>
+    <li
+      className={cn(
+        "group relative px-4 py-4 transition-colors sm:px-5",
+        "hover:bg-muted/60 focus-within:bg-muted/60",
+      )}
+    >
+      <div className={"flex items-start justify-between gap-3"}>
+        <div className={"min-w-0 flex-1"}>
+          <div className={"flex flex-wrap items-center gap-x-2 gap-y-1"}>
+            <Link
+              href={"/dashboard/pharmacies/" + pharmacy.pharmacy_id}
+              className={"rounded text-sm font-semibold text-foreground hover:underline"}
+            >
+              {pharmacy.name}
+            </Link>
+            {pharmacy.verified_status === "verified" && (
+              <VerifiedBadge status={pharmacy.verified_status} t={t} />
+            )}
+          </div>
 
-      <p className={"mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground"}>
-        <span
-          className={cn(
-            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium",
-            pharmacy.is_open_now ? "bg-success-subtle text-success" : "bg-muted text-muted-foreground",
-          )}
-        >
-          <Clock className={"size-3"} aria-hidden />
-          {pharmacy.is_open_now ? d.openNow : d.closedNow}
-        </span>
-        <span aria-hidden>·</span>
-        <span className={"tabular-nums"}>{formatDistanceMeters(pharmacy.distance_m)}</span>
-      </p>
-
-      {pharmacy.address ? (
-        <p className={"mt-1 truncate text-xs text-muted-foreground"}>{pharmacy.address}</p>
-      ) : null}
-
-      <p className={"mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"}>
-        <a
-          href={directionsUrl(pharmacy.lat, pharmacy.lng)}
-          target={"_blank"}
-          rel={"noreferrer"}
-          className={"inline-flex items-center gap-1 rounded font-medium text-primary-strong hover:underline"}
-        >
-          <MapPin className={"size-3.5"} aria-hidden />
-          {d.directions}
-        </a>
-        {pharmacy.phone ? (
-          <>
-            <span className={"text-muted-foreground"} aria-hidden>
-              ·
+          <div className={"mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"}>
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium",
+                pharmacy.is_open_now
+                  ? "bg-success-subtle text-success"
+                  : "bg-muted text-muted-foreground",
+              )}
+            >
+              <Clock className={"size-3"} aria-hidden />
+              {pharmacy.is_open_now ? d.openNow : d.closedNow}
             </span>
+            <span className={"inline-flex items-center gap-1 text-muted-foreground"}>
+              <Navigation className={"size-3"} aria-hidden />
+              <span className={"tabular-nums font-medium text-foreground"}>
+                {formatDistanceMeters(pharmacy.distance_m)}
+              </span>
+            </span>
+            {pharmacy.hours_today ? (
+              <>
+                <span className={"text-muted-foreground"} aria-hidden>
+                  ·
+                </span>
+                <span className={"tabular-nums text-muted-foreground"}>{pharmacy.hours_today}</span>
+              </>
+            ) : null}
+          </div>
+
+          {pharmacy.address ? (
+            <p className={"mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground"}>
+              <MapPin className={"size-3.5 shrink-0"} aria-hidden />
+              <span className={"truncate"}>{pharmacy.address}</span>
+            </p>
+          ) : null}
+        </div>
+
+        <div
+          className={
+            "relative z-10 flex shrink-0 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center"
+          }
+        >
+          <a
+            href={directionsUrl(pharmacy.lat, pharmacy.lng)}
+            target={"_blank"}
+            rel={"noreferrer"}
+            className={cn(buttonVariants({ size: "sm" }))}
+          >
+            <Navigation className={"size-4"} aria-hidden />
+            {d.directions}
+          </a>
+          {pharmacy.phone ? (
             <a
               href={"tel:" + pharmacy.phone}
-              className={"inline-flex items-center gap-1 rounded font-medium text-primary-strong hover:underline"}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
               aria-label={interpolate(d.callAria, { name: pharmacy.name })}
             >
-              <Phone className={"size-3.5"} aria-hidden />
+              <Phone className={"size-4"} aria-hidden />
               {d.call}
             </a>
-          </>
-        ) : null}
-      </p>
+          ) : null}
+        </div>
+      </div>
+
+      {/* Stretched-link affordance: the whole row is clickable to the detail page,
+          while the Directions/Call buttons stay independently tappable. */}
+      <Link
+        href={"/dashboard/pharmacies/" + pharmacy.pharmacy_id}
+        className={"absolute inset-0 rounded focus-visible:outline-none"}
+        aria-label={pharmacy.name}
+      >
+        <span className={"sr-only"}>{pharmacy.name}</span>
+      </Link>
     </li>
   );
 }

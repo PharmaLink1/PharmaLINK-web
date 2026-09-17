@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { LoaderCircle, LocateFixed, Search, X } from "lucide-react";
+import { ChevronDown, LoaderCircle, LocateFixed, Search, SlidersHorizontal, X } from "lucide-react";
 import { notifyApi, searchApi } from "@/lib/api-client";
 import type {
   MedicineSearchResult,
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
+  activeFilterCount,
   DEFAULT_FILTERS,
   FiltersBar,
   type SearchFilters,
@@ -27,6 +28,14 @@ import { cn } from "@/lib/cn";
 
 const RESULTS_PER_PAGE = 10;
 const AUTOCOMPLETE_DEBOUNCE_MS = 250;
+
+/** Secondary text for a suggestion row: strength and generic name, when they add
+ * something the display name doesn't already say. */
+function suggestionDetail(suggestion: MedicineSuggestion): string {
+  const generic =
+    suggestion.generic_name === suggestion.display_name ? null : suggestion.generic_name;
+  return [suggestion.strength, generic].filter(Boolean).join(" · ");
+}
 
 type SearchPhase = "idle" | "loading" | "success" | "error";
 type Location = { lat: number; lng: number };
@@ -47,6 +56,7 @@ export function MedicineSearch() {
   const [loadingMore, setLoadingMore] = React.useState(false);
 
   const [filters, setFilters] = React.useState<SearchFilters>(DEFAULT_FILTERS);
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
 
   const [suggestions, setSuggestions] = React.useState<MedicineSuggestion[]>([]);
   const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
@@ -71,8 +81,12 @@ export function MedicineSearch() {
   const didMountRef = React.useRef(false);
   const inputId = "medicine-search-input";
   const listboxId = "medicine-search-suggestions";
+  const filtersPanelId = "medicine-search-filters";
 
   const groups = React.useMemo(() => groupByMedicine(results), [results]);
+
+  const filtersT = t.dashboard.search.filters;
+  const activeFilters = activeFilterCount(filters);
 
   // Debounced autocomplete for as-you-type suggestions. Only the latest
   // typed query may update the list; full searches run on submit/select.
@@ -349,130 +363,188 @@ export function MedicineSearch() {
   return (
     <section aria-label={t.dashboard.search.label} className={"space-y-4"}>
       <Card className={"p-4 sm:p-5"}>
-        <div className={"flex flex-col gap-2 sm:flex-row sm:items-end"}>
-          <div className={"min-w-0 flex-1"}>
-            <label htmlFor={inputId} className={"mb-1.5 block text-sm font-medium text-foreground"}>
-              {t.dashboard.search.inputLabel}
-            </label>
-            <div className={"relative"}>
-              <Search
-                className={"pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"}
-                aria-hidden
-              />
-              <Input
-                id={inputId}
-                type={"text"}
-                value={query}
-                onChange={(event) => handleQueryChange(event.target.value)}
-                onKeyDown={handleInputKeyDown}
-                onFocus={() => {
-                  if (query.trim() && !suggestionsOpen) setSuggestionsOpen(true);
-                }}
-                onBlur={() => {
-                  window.setTimeout(() => {
-                    setSuggestionsOpen(false);
-                    setActiveIndex(-1);
-                  }, 150);
-                }}
-                role={"combobox"}
-                aria-expanded={suggestionsOpen}
-                aria-controls={listboxId}
-                aria-autocomplete={"list"}
-                aria-activedescendant={
-                  activeIndex >= 0 ? listboxId + "-option-" + activeIndex : undefined
-                }
-                aria-label={t.dashboard.search.inputLabel}
-                placeholder={t.dashboard.search.placeholder}
-                autoComplete={"off"}
-                enterKeyHint={"search"}
-                className={"pl-10 pr-10"}
-              />
-              {query && (
-                <button
-                  type={"button"}
-                  onClick={handleClear}
-                  aria-label={t.dashboard.search.clearSearch}
-                  className={"absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"}
-                >
-                  <X className={"size-4"} aria-hidden />
-                </button>
-              )}
-              {suggestionsOpen && (
-                <ul
-                  id={listboxId}
-                  role={"listbox"}
-                  aria-label={t.dashboard.search.inputLabel}
-                  className={"absolute z-20 mt-1.5 max-h-72 w-full overflow-y-auto rounded-md border border-border bg-card py-1 shadow-md"}
-                >
-                  {suggestionsLoading && (
-                    <li
-                      role={"status"}
-                      className={"flex items-center gap-2 px-3.5 py-2.5 text-sm text-muted-foreground"}
-                    >
-                      <LoaderCircle className={"size-4 animate-spin"} aria-hidden />
-                      {t.dashboard.search.suggestionsLoading}
-                    </li>
-                  )}
-                  {!suggestionsLoading && suggestions.length === 0 && (
-                    <li className={"px-3.5 py-2.5 text-sm text-muted-foreground"}>
-                      {t.dashboard.search.noSuggestions}
-                    </li>
-                  )}
-                  {!suggestionsLoading &&
-                    suggestions.map((suggestion, index) => (
-                      <li
-                        key={suggestion.medicine_id}
-                        id={listboxId + "-option-" + index}
-                        role={"option"}
-                        aria-selected={activeIndex === index}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => selectSuggestion(suggestion)}
-                        className={cn(
-                          "cursor-pointer px-3.5 py-2.5 text-sm text-foreground",
-                          activeIndex === index ? "bg-muted" : undefined,
-                        )}
-                      >
-                        <span className={"block truncate"}>{suggestion.display_name}</span>
-                      </li>
-                    ))}
-                </ul>
-              )}
-            </div>
-          </div>
-          <Button
-            type={"button"}
-            onClick={() => startSearch(query, null)}
-            disabled={phase === "loading"}
-            className={"w-full sm:w-auto"}
+        <label htmlFor={inputId} className={"mb-2 block text-sm font-medium"}>
+          {t.dashboard.search.inputLabel}
+        </label>
+        <div className={"relative"}>
+          <div
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg border border-input bg-card p-1.5 pl-3.5",
+              "transition-colors focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20",
+            )}
           >
-            {t.dashboard.search.submit}
-          </Button>
+            <Search className={"pointer-events-none size-5 shrink-0 text-muted-foreground"} aria-hidden />
+            <Input
+              id={inputId}
+              type={"text"}
+              value={query}
+              onChange={(event) => handleQueryChange(event.target.value)}
+              onKeyDown={handleInputKeyDown}
+              onFocus={() => {
+                if (query.trim() && !suggestionsOpen) setSuggestionsOpen(true);
+              }}
+              onBlur={() => {
+                window.setTimeout(() => {
+                  setSuggestionsOpen(false);
+                  setActiveIndex(-1);
+                }, 150);
+              }}
+              role={"combobox"}
+              aria-expanded={suggestionsOpen}
+              aria-controls={listboxId}
+              aria-autocomplete={"list"}
+              aria-activedescendant={
+                activeIndex >= 0 ? listboxId + "-option-" + activeIndex : undefined
+              }
+              aria-label={t.dashboard.search.inputLabel}
+              placeholder={t.dashboard.search.placeholder}
+              autoComplete={"off"}
+              enterKeyHint={"search"}
+              className={"h-11 min-w-0 flex-1 rounded-md border-0 bg-transparent px-0 text-base outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0"}
+            />
+            {query && (
+              <button
+                type={"button"}
+                onClick={handleClear}
+                aria-label={t.dashboard.search.clearSearch}
+                className={"grid size-11 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"}
+              >
+                <X className={"size-4"} aria-hidden />
+              </button>
+            )}
+            {suggestionsOpen && (
+              <ul
+                id={listboxId}
+                role={"listbox"}
+                aria-label={t.dashboard.search.inputLabel}
+                className={"absolute inset-x-0 z-30 mt-1.5 max-h-72 overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-lg"}
+              >
+                {suggestionsLoading && (
+                  <li
+                    role={"status"}
+                    className={"flex min-h-11 items-center gap-2 px-3.5 text-sm text-muted-foreground"}
+                  >
+                    <LoaderCircle className={"size-4 animate-spin"} aria-hidden />
+                    {t.dashboard.search.suggestionsLoading}
+                  </li>
+                )}
+                {!suggestionsLoading && suggestions.length === 0 && (
+                  <li className={"flex min-h-11 items-center px-3.5 text-sm text-muted-foreground"}>
+                    {t.dashboard.search.noSuggestions}
+                  </li>
+                )}
+                {!suggestionsLoading &&
+                  suggestions.map((suggestion, index) => (
+                    <li
+                      key={suggestion.medicine_id}
+                      id={listboxId + "-option-" + index}
+                      role={"option"}
+                      aria-selected={activeIndex === index}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => selectSuggestion(suggestion)}
+                      className={cn(
+                        "flex min-h-11 cursor-pointer items-center gap-2 px-3.5 text-sm text-foreground transition-colors",
+                        activeIndex === index ? "bg-muted" : "hover:bg-muted",
+                      )}
+                    >
+                      <span className={"min-w-0 flex-1 truncate"}>{suggestion.display_name}</span>
+                      {suggestionDetail(suggestion) ? (
+                        <span className={"max-w-[45%] shrink-0 truncate text-xs text-muted-foreground"}>
+                          {suggestionDetail(suggestion)}
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+              </ul>
+            )}
+            <Button
+              type={"button"}
+              size={"md"}
+              loading={phase === "loading"}
+              aria-label={t.dashboard.search.submit}
+              onClick={() => startSearch(query, null)}
+              className={"shrink-0 px-3 sm:px-5"}
+            >
+              <Search className={"size-4 sm:hidden"} aria-hidden />
+              <span className={"hidden sm:inline"}>{t.dashboard.search.submit}</span>
+            </Button>
+          </div>
         </div>
 
-        <div className={"mt-4 flex flex-wrap items-center gap-x-4 gap-y-2.5"}>
+        {/* Quiet control row: location, filters, and (before the first search) examples.
+            Filters open on demand so the collapsed hero stays three lines tall. */}
+        <div className={"mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-2"}>
           {location ? (
             <button
               type={"button"}
               onClick={clearLocation}
               aria-label={t.dashboard.search.location.turnOff}
-              className={"inline-flex items-center gap-1.5 rounded-full bg-primary-subtle px-3 py-1.5 text-xs font-medium text-primary-strong transition-colors hover:bg-primary/30"}
+              className={"inline-flex h-9 items-center gap-1.5 rounded-full bg-primary-subtle px-3 text-xs font-medium text-primary-strong transition-colors hover:bg-primary/30"}
             >
               <LocateFixed className={"size-3.5"} aria-hidden />
               {t.dashboard.search.location.on}
               <X className={"size-3.5"} aria-hidden />
             </button>
           ) : (
-            <Button
+            <button
               type={"button"}
-              variant={"outline"}
-              size={"sm"}
-              loading={locating}
               onClick={handleUseLocation}
+              disabled={locating}
+              className={"inline-flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary-subtle hover:text-primary-strong disabled:opacity-60"}
             >
-              <LocateFixed className={"size-4"} aria-hidden />
+              {locating ? (
+                <LoaderCircle className={"size-3.5 animate-spin"} aria-hidden />
+              ) : (
+                <LocateFixed className={"size-3.5"} aria-hidden />
+              )}
               {locating ? t.dashboard.search.location.locating : t.dashboard.search.location.use}
-            </Button>
+            </button>
           )}
+
+          <button
+            type={"button"}
+            onClick={() => setFiltersOpen((open) => !open)}
+            aria-expanded={filtersOpen}
+            aria-controls={filtersPanelId}
+            aria-label={
+              activeFilters > 0
+                ? interpolate(filtersT.activeCountLabel, { count: activeFilters })
+                : undefined
+            }
+            className={cn(
+              "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors",
+              filtersOpen || activeFilters > 0
+                ? "border-primary/40 bg-primary-subtle text-primary-strong"
+                : "border-border text-muted-foreground hover:border-primary/40 hover:bg-primary-subtle hover:text-primary-strong",
+            )}
+          >
+            <SlidersHorizontal className={"size-3.5"} aria-hidden />
+            {filtersT.label}
+            {activeFilters > 0 && (
+              <span
+                aria-hidden
+                className={"grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[0.6875rem] font-semibold leading-none text-primary-foreground"}
+              >
+                {activeFilters}
+              </span>
+            )}
+            <ChevronDown
+              className={cn("size-3.5 transition-transform", filtersOpen && "rotate-180")}
+              aria-hidden
+            />
+          </button>
+
+          {activeFilters > 0 && (
+            <button
+              type={"button"}
+              onClick={() => setFilters(DEFAULT_FILTERS)}
+              className={"inline-flex h-9 items-center gap-1 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline hover:underline-offset-4"}
+            >
+              <X className={"size-3.5"} aria-hidden />
+              {filtersT.clear}
+            </button>
+          )}
+
           {locationError && (
             <span role={"alert"} className={"text-xs font-medium text-danger"}>
               {locationError === "denied"
@@ -480,26 +552,37 @@ export function MedicineSearch() {
                 : t.dashboard.search.location.failed}
             </span>
           )}
-          <div className={"ml-auto flex items-center gap-1.5 text-xs text-muted-foreground"}>
-            <span className={"hidden sm:inline"}>{t.dashboard.search.exampleLabel}:</span>
-            {t.dashboard.search.examples.map((example) => (
-              <button
-                key={example}
-                type={"button"}
-                onClick={() => {
-                  skipSuggestionsRef.current = true;
-                  setQuery(example);
-                  startSearch(example, null);
-                }}
-                className={"rounded-full border border-border bg-card px-3 py-1.5 font-medium text-foreground transition-colors hover:bg-muted"}
-              >
-                {example}
-              </button>
-            ))}
-          </div>
+
+          {phase === "idle" && (
+            <div className={"ml-auto flex flex-wrap items-center gap-x-1 gap-y-1"}>
+              <span className={"px-1 text-xs text-muted-foreground"}>
+                {t.dashboard.search.exampleLabel}
+              </span>
+              {t.dashboard.search.examples.map((example) => (
+                <button
+                  key={example}
+                  type={"button"}
+                  onClick={() => {
+                    skipSuggestionsRef.current = true;
+                    setQuery(example);
+                    startSearch(example, null);
+                  }}
+                  className={"inline-flex h-9 items-center rounded-full px-2.5 text-xs font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:text-primary-strong hover:decoration-primary-strong"}
+                >
+                  {example}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <FiltersBar value={filters} onChange={setFilters} locationOn={location !== null} t={t} />
+        <div
+          id={filtersPanelId}
+          hidden={!filtersOpen}
+          className={"mt-4 border-t border-border pt-4"}
+        >
+          <FiltersBar value={filters} onChange={setFilters} locationOn={location !== null} t={t} />
+        </div>
       </Card>
 
       <p className={"sr-only"} role={"status"}>
@@ -510,11 +593,14 @@ export function MedicineSearch() {
         <Card
           role={"status"}
           aria-label={t.dashboard.search.searching}
-          className={"divide-y divide-border overflow-hidden"}
+          className={"overflow-hidden"}
         >
-          {[0, 1, 2, 3, 4].map((index) => (
-            <div key={index} className={"animate-pulse px-4 py-4 sm:px-5"}>
-              <div className={"h-3.5 w-2/5 rounded bg-muted"} />
+          {[0, 1, 2].map((index) => (
+            <div
+              key={index}
+              className={"animate-pulse px-4 py-4 sm:px-5 [&+&]:border-t [&+&]:border-border"}
+            >
+              <div className={"h-4 w-2/5 rounded bg-muted"} />
               <div className={"mt-2.5 h-3 w-3/5 rounded bg-muted"} />
               <div className={"mt-2.5 h-3 w-1/3 rounded bg-muted"} />
             </div>
@@ -539,7 +625,7 @@ export function MedicineSearch() {
       )}
 
       {phase === "success" && results.length > 0 && (
-        <div className={"space-y-3"}>
+        <div className={"space-y-4"}>
           <div className={"flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"}>
             <h2 className={"text-lg font-semibold tracking-tight"}>
               {interpolate(t.dashboard.search.resultsFor, { query: submittedQuery })}
@@ -552,7 +638,7 @@ export function MedicineSearch() {
               })}
             </p>
           </div>
-          <div className={"space-y-3"}>
+          <div className={"space-y-4"}>
             {groups.map((group) => (
               <MedicineGroupCard
                 key={group.medicine_id}
@@ -569,7 +655,7 @@ export function MedicineSearch() {
             ))}
           </div>
           {pagination.total > results.length && (
-            <div className={"flex justify-center pt-1"}>
+            <div className={"flex justify-center pt-2"}>
               <Button
                 type={"button"}
                 variant={"outline"}
@@ -584,27 +670,36 @@ export function MedicineSearch() {
       )}
 
       {phase === "success" && results.length === 0 && (
-        <div className={"space-y-3"}>
-          <Card className={"p-5"}>
-            <h2 className={"font-semibold"}>{t.dashboard.search.empty.title}</h2>
-            <p className={"mt-1 text-sm text-muted-foreground"}>{t.dashboard.search.empty.body}</p>
-            <p className={"mt-1 text-sm text-muted-foreground"}>
-              {location ? t.dashboard.search.empty.tryDifferent : t.dashboard.search.empty.noLocation}
-            </p>
-            {submittedMedicineId && (
-              <div className={"mt-4 border-t border-border pt-4"}>
-                <p className={"mb-2 text-sm text-foreground"}>
-                  {t.dashboard.search.notify.emptyPrompt}
-                </p>
-                <NotifyButton
-                  subscribed={subs.has(submittedMedicineId)}
-                  pending={notifyPending.has(submittedMedicineId)}
-                  error={notifyError.get(submittedMedicineId)}
-                  onToggle={() => toggleNotify(submittedMedicineId)}
-                  t={t}
-                />
-              </div>
-            )}
+        <div className={"space-y-4"}>
+          <Card variant={"elevated"} className={"p-6 text-center sm:p-8"}>
+            <div className={"mx-auto flex flex-col items-center"}>
+              <span
+                className={"flex size-12 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}
+              >
+                <Search className={"size-6"} aria-hidden />
+              </span>
+              <h2 className={"mt-4 font-semibold"}>{t.dashboard.search.empty.title}</h2>
+              <p className={"mt-1 max-w-sm text-sm text-muted-foreground"}>
+                {t.dashboard.search.empty.body}
+              </p>
+              <p className={"mt-1 max-w-sm text-sm text-muted-foreground"}>
+                {location ? t.dashboard.search.empty.tryDifferent : t.dashboard.search.empty.noLocation}
+              </p>
+              {submittedMedicineId && (
+                <div className={"mt-5 w-full max-w-sm border-t border-border pt-5"}>
+                  <p className={"mb-3 text-sm text-foreground"}>
+                    {t.dashboard.search.notify.emptyPrompt}
+                  </p>
+                  <NotifyButton
+                    subscribed={subs.has(submittedMedicineId)}
+                    pending={notifyPending.has(submittedMedicineId)}
+                    error={notifyError.get(submittedMedicineId)}
+                    onToggle={() => toggleNotify(submittedMedicineId)}
+                    t={t}
+                  />
+                </div>
+              )}
+            </div>
           </Card>
 
           {nearby.length > 0 ? (
@@ -627,7 +722,7 @@ export function MedicineSearch() {
                 loading={locating || nearbyLoading}
                 onClick={() => void loadFallbackNearby()}
               >
-                <LocateFixed className={"size-4"} aria-hidden />
+                {!locating && !nearbyLoading && <LocateFixed className={"size-4"} aria-hidden />}
                 {nearbyLoading ? t.dashboard.search.nearby.loading : t.dashboard.search.nearby.useLocation}
               </Button>
               {nearbyError && (

@@ -198,7 +198,7 @@ function CompareRow({
   const best = cheapest !== null && item.price_listed && item.price_etb === cheapest;
 
   return (
-    <li className={"flex items-start justify-between gap-4 py-3.5"}>
+    <li className={"flex flex-col gap-3 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6"}>
       <div className={"min-w-0"}>
         <p className={"truncate text-sm font-medium text-foreground"}>
           <Link

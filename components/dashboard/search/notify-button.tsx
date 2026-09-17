@@ -34,6 +34,7 @@ export function NotifyButton({
         type={"button"}
         variant={subscribed ? "secondary" : "outline"}
         size={"sm"}
+        className={"h-auto min-h-11 max-w-full whitespace-normal py-2.5 text-left"}
         loading={pending}
         onClick={onToggle}
       >

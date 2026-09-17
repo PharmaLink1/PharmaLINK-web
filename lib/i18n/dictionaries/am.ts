@@ -495,6 +495,7 @@ export const am = {
         radiusOption: "{km} ኪሜ",
         radiusLocationHint: "በርቀት ለማጣራት አካባቢዎን ያብሩ።",
         clear: "ማጣሪያዎችን አጽዳ",
+        activeCountLabel: "ማጣሪያዎች፣ {count} ንቁ",
         forms: {
           tablet: "ኪኒን",
           capsule: "ካፕሱል",
@@ -612,6 +613,8 @@ export const am = {
         body: "አሁን በአቅራቢያዎ የተረጋገጡ ፋርማሲዎችን ማግኘት አልቻልንም።",
       },
       emptyOpenNow: "በአቅራቢያ ያሉ ፋርማሲዎች አሁን ክፍት የሆኑ የሉም።",
+      resultOne: "ፋርማሲ ተገኝቷል",
+      resultMany: "ፋርማሲዎች ተገኝተዋል",
     },
     notifications: {
       title: "ማሳወቂያዎች",

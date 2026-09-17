@@ -19,7 +19,7 @@ export function NearbyList({ pharmacies, t }: { pharmacies: NearbyPharmacy[]; t:
         {pharmacies.map((pharmacy) => (
           <li
             key={pharmacy.pharmacy_id}
-            className={"flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5"}
+            className={"flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-5"}
           >
             <div className={"min-w-0"}>
               <p className={"truncate text-sm font-medium text-foreground"}>
