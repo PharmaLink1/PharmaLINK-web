@@ -181,19 +181,36 @@ function LocatorRow({
   d: LocatorStrings;
   t: Dictionary;
 }) {
+  // hours_today is an English label from the backend; when it's just "Closed" it repeats
+  // the status badge, so only a real span ("08:00-21:00", "24 Hours") is worth showing.
+  const hoursToday =
+    pharmacy.hours_today && pharmacy.hours_today.toLowerCase() !== "closed"
+      ? pharmacy.hours_today
+      : null;
+
   return (
     <li
       className={cn(
-        "group relative px-4 py-4 transition-colors sm:px-5",
+        "group relative px-3.5 py-3 transition-colors sm:px-5 sm:py-4",
         "hover:bg-muted/60 focus-within:bg-muted/60",
       )}
     >
-      <div className={"flex items-start justify-between gap-3"}>
+      <div className={"flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:gap-4"}>
+        {/* Image-free identity mark: first letter of the pharmacy name. */}
+        <span
+          className={
+            "mt-0.5 hidden size-10 shrink-0 items-center justify-center rounded-md bg-primary-subtle text-base font-semibold text-primary-strong sm:flex"
+          }
+          aria-hidden
+        >
+          {pharmacy.name.trim().charAt(0) || "?"}
+        </span>
+
         <div className={"min-w-0 flex-1"}>
           <div className={"flex flex-wrap items-center gap-x-2 gap-y-1"}>
             <Link
               href={"/dashboard/pharmacies/" + pharmacy.pharmacy_id}
-              className={"rounded text-sm font-semibold text-foreground hover:underline"}
+              className={"rounded text-sm font-semibold text-foreground hover:underline sm:text-base"}
             >
               {pharmacy.name}
             </Link>
@@ -202,17 +219,17 @@ function LocatorRow({
             )}
           </div>
 
-          <div className={"mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"}>
+          <div className={"mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs"}>
             <span
               className={cn(
-                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium",
-                pharmacy.is_open_now
-                  ? "bg-success-subtle text-success"
-                  : "bg-muted text-muted-foreground",
+                "font-medium",
+                pharmacy.is_open_now ? "text-success" : "text-muted-foreground",
               )}
             >
-              <Clock className={"size-3"} aria-hidden />
               {pharmacy.is_open_now ? d.openNow : d.closedNow}
+            </span>
+            <span className={"text-muted-foreground"} aria-hidden>
+              ·
             </span>
             <span className={"inline-flex items-center gap-1 text-muted-foreground"}>
               <Navigation className={"size-3"} aria-hidden />
@@ -220,34 +237,45 @@ function LocatorRow({
                 {formatDistanceMeters(pharmacy.distance_m)}
               </span>
             </span>
-            {pharmacy.hours_today ? (
+            {hoursToday ? (
               <>
                 <span className={"text-muted-foreground"} aria-hidden>
                   ·
                 </span>
-                <span className={"tabular-nums text-muted-foreground"}>{pharmacy.hours_today}</span>
+                <span className={"tabular-nums text-muted-foreground"}>{hoursToday}</span>
               </>
             ) : null}
           </div>
 
           {pharmacy.address ? (
-            <p className={"mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground"}>
-              <MapPin className={"size-3.5 shrink-0"} aria-hidden />
+            <p className={"mt-1 flex items-center gap-1.5 text-xs text-muted-foreground"}>
+              <MapPin className={"size-3 shrink-0"} aria-hidden />
               <span className={"truncate"}>{pharmacy.address}</span>
             </p>
           ) : null}
+
+          <p className={"mt-1 hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex"}>
+            <Phone className={"size-3.5 shrink-0"} aria-hidden />
+            {pharmacy.phone ? (
+              <span className={"tabular-nums"} dir={"ltr"}>
+                {pharmacy.phone}
+              </span>
+            ) : (
+              <span>{d.noPhone}</span>
+            )}
+          </p>
         </div>
 
         <div
           className={
-            "relative z-10 flex shrink-0 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center"
+            "relative z-10 flex shrink-0 flex-wrap items-center gap-2"
           }
         >
           <a
             href={directionsUrl(pharmacy.lat, pharmacy.lng)}
             target={"_blank"}
             rel={"noreferrer"}
-            className={cn(buttonVariants({ size: "sm" }))}
+            className={cn(buttonVariants({ size: "sm" }), "h-11 px-3 text-xs sm:h-9 sm:text-sm")}
           >
             <Navigation className={"size-4"} aria-hidden />
             {d.directions}
@@ -255,7 +283,7 @@ function LocatorRow({
           {pharmacy.phone ? (
             <a
               href={"tel:" + pharmacy.phone}
-              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-11 px-3 text-xs sm:h-9 sm:text-sm")}
               aria-label={interpolate(d.callAria, { name: pharmacy.name })}
             >
               <Phone className={"size-4"} aria-hidden />

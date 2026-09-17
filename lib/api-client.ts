@@ -327,18 +327,57 @@ export const notifyApi = {
   },
 };
 
+const DEFAULT_NEARBY_RADIUS_KM = 10;
+
+/** Latitude/longitude box of `radiusKm` around a point, as the backend's
+ * bbox=min_lng,min_lat,max_lng,max_lat. A degree of latitude is ~110.6km; a degree of
+ * longitude shrinks towards the poles, hence the cos(lat) term. */
+function bboxAround(lat: number, lng: number, radiusKm: number): string {
+  const latSpan = radiusKm / 110.574;
+  const lngSpan = radiusKm / (111.32 * Math.max(Math.cos((lat * Math.PI) / 180), 0.01));
+  return [lng - lngSpan, lat - latSpan, lng + lngSpan, lat + latSpan]
+    .map((n) => n.toFixed(6))
+    .join(",");
+}
+
+/** Great-circle distance in metres. */
+function distanceMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const earthRadiusM = 6371000;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * earthRadiusM * Math.asin(Math.sqrt(a));
+}
+
 export const pharmacyApi = {
-  /** GET /pharmacies?lat=&lng=&radius_km= "—" verified pharmacies near a point, sorted by
-   * distance (radius defaults to 10km server-side). Public (no auth), so it uses `raw`.
-   * "Open now" is filtered client-side on each item's server-computed is_open_now, so no
-   * refetch is needed to toggle it. Throws ApiError INVALID_REQUEST/INVALID_COORDINATES
-   * (400) if coordinates are missing or unparseable. */
-  listNearby(params: { lat: number; lng: number; radiusKm?: number }): Promise<PharmacyListItem[]> {
-    const query = new URLSearchParams();
-    query.set("lat", String(params.lat));
-    query.set("lng", String(params.lng));
-    if (params.radiusKm !== undefined) query.set("radius_km", String(params.radiusKm));
-    return raw<PharmacyListItem[]>("/pharmacies?" + query.toString(), {});
+  /** GET /pharmacies?bbox= "—" verified pharmacies around a point. Public (no auth), so it
+   * uses `raw`. "Open now" is filtered client-side on each item's server-computed
+   * is_open_now, so no refetch is needed to toggle it.
+   *
+   * Why bbox and not the radius (lat/lng) form: the backend's $geoNear path currently
+   * returns every field blank except distance_m (its aggregation result decodes into an
+   * unexported embedded struct), so the list renders nameless rows. The bbox path decodes
+   * correctly, so we ask for a box around the point and do the distance + sort here.
+   * Revert to lat/lng/radius_km once the backend's radius path returns full documents. */
+  async listNearby(params: {
+    lat: number;
+    lng: number;
+    radiusKm?: number;
+  }): Promise<PharmacyListItem[]> {
+    const radiusKm = params.radiusKm ?? DEFAULT_NEARBY_RADIUS_KM;
+    const box = bboxAround(params.lat, params.lng, radiusKm);
+    const items = (await raw<PharmacyListItem[] | null>("/pharmacies?bbox=" + box, {})) ?? [];
+
+    return items
+      .map((pharmacy) => ({
+        ...pharmacy,
+        distance_m: distanceMeters(params.lat, params.lng, pharmacy.lat, pharmacy.lng),
+      }))
+      .filter((pharmacy) => pharmacy.distance_m <= radiusKm * 1000)
+      .sort((a, b) => a.distance_m - b.distance_m);
   },
 
   /** GET /pharmacies/{id} "—" full public details for one pharmacy (hours, open-now,
