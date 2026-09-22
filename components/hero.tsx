@@ -1,60 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLanguage, interpolate } from "@/lib/i18n";
+import { useLanguage } from "@/lib/i18n";
 import { buttonVariants } from "@/components/ui/button";
 import { DecorIcon } from "@/components/decor-icon";
 import { FullWidthDivider } from "@/components/full-width-divider";
-
-type StockLevel = "in" | "low";
-
-
-const results: {
-  id: string;
-  name: string;
-  pharmacy: string;
-  distance: string;
-  updated: string;
-  stock: StockLevel;
-  price: string;
-}[] = [
-  {
-    id: "care",
-    name: "Amoxicillin 500mg",
-    pharmacy: "Care Pharmacy",
-    distance: "1.2 km",
-    updated: "2h",
-    stock: "in",
-    price: "ETB 85",
-  },
-  {
-    id: "zemen",
-    name: "Amoxicillin 500mg",
-    pharmacy: "Zemen Drugstore",
-    distance: "2.4 km",
-    updated: "5h",
-    stock: "low",
-    price: "ETB 92",
-  },
-  {
-    id: "stmary",
-    name: "Amoxicillin 500mg",
-    pharmacy: "St. Mary Pharmacy",
-    distance: "3.1 km",
-    updated: "8h",
-    stock: "in",
-    price: "ETB 98",
-  },
-];
+import { MedicineSearch } from "@/components/dashboard/medicine-search";
 
 export function HeroSection() {
   const { t } = useLanguage();
 
   return (
     <section className="overflow-x-clip">
-      {/* Hero copy: badge, headline, subtitle, and CTAs. Search lives on the dashboard. */}
+      {/* Hero copy: badge, headline, subtitle, and CTAs. */}
       <div className="relative flex min-h-[calc(100svh-8rem)] flex-col px-4 py-10 md:px-4 md:py-16">
         {/* Faded vertical rules - efferd hero structure */}
         <div aria-hidden="true" className="absolute inset-0 -z-10 size-full overflow-hidden">
@@ -93,13 +53,13 @@ export function HeroSection() {
 
           {/* CTAs: patient search + pharmacy onboarding */}
           <div className="fade-in slide-in-from-bottom-10 flex w-fit animate-in flex-col items-center justify-center gap-3 fill-mode-backwards pt-2 delay-300 duration-500 ease-out sm:flex-row">
-            <Link
-              href="/signup"
+            <a
+              href="#search"
               className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}
             >
               {t.hero.findMedicine}
               <ArrowRight className="size-4" aria-hidden />
-            </Link>
+            </a>
             <Link
               href="/signup/pharmacy"
               className={cn(
@@ -113,63 +73,13 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Product preview: static sample of the search-results surface */}
-      <div className="relative mx-auto w-full max-w-5xl px-4">
+      {/* Live medicine search - open to guests, no sign-in needed */}
+      <div id="search" className="relative mx-auto w-full max-w-3xl scroll-mt-24 px-4 pb-16">
         <DecorIcon className="hidden size-4 xl:block" position="top-left" />
         <DecorIcon className="hidden size-4 xl:block" position="top-right" />
-        <DecorIcon className="hidden size-4 xl:block" position="bottom-left" />
-        <DecorIcon className="hidden size-4 xl:block" position="bottom-right" />
 
         <FullWidthDivider className="-top-px" />
-        <div className="overflow-hidden rounded-(--radius) border border-border bg-card shadow-sm">
-          {/* Preview header: sample search context */}
-          <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-            <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-            <span className="truncate text-sm text-muted-foreground">
-              {t.hero.sampleSearch}
-            </span>
-            <span className="ml-auto shrink-0 rounded-full bg-primary-subtle px-2.5 py-0.5 text-xs font-semibold text-primary-strong">
-              {t.hero.resultCount}
-            </span>
-          </div>
-
-          {/* Sample result rows */}
-          <ul className="divide-y divide-border">
-            {results.map((result) => (
-              <li
-                key={result.id}
-                className="flex items-center justify-between gap-3 px-4 py-4"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{result.name}</p>
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                    {result.pharmacy} &middot; {result.distance} &middot;{" "}
-                    {interpolate(t.hero.updatedAgo, { time: result.updated })}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-3">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
-                      result.stock === "in"
-                        ? "bg-success-subtle text-success"
-                        : "bg-warning-subtle text-warning",
-                    )}
-                  >
-                    {result.stock === "in" && (
-                      <CheckCircle2 className="size-3.5" aria-hidden />
-                    )}
-                    {result.stock === "in" ? t.common.inStock : t.common.lowStock}
-                  </span>
-                  <span className="text-sm font-semibold tabular-nums">
-                    {result.price}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <FullWidthDivider className="-bottom-px" />
+        <MedicineSearch />
       </div>
     </section>
   );

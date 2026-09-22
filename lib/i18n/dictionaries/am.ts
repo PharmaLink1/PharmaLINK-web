@@ -518,6 +518,7 @@ export const am = {
         subscribed: "በአቅራቢያ ሲመለስ እናሳውቅዎታለን።",
         emptyPrompt: "ይህ በአቅራቢያዎ ክምችት ሲመለስ ማወቅ ይፈልጋሉ?",
         needLocation: "የት እንደምንፈልግ እንድናውቅ አካባቢዎን ያብሩ።",
+        signInRequired: "ክምችት ሲመለስ ማሳወቂያ ለማግኘት ይግቡ።",
       },
       compare: {
         label: "ዋጋ አወዳድር",
