@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ChevronDown, LoaderCircle, LocateFixed, Search, SlidersHorizontal, X } from "lucide-react";
 import { notifyApi, searchApi } from "@/lib/api-client";
+import { useSession } from "@/lib/auth-context";
 import type {
   MedicineSearchResult,
   MedicineSuggestion,
@@ -42,6 +43,7 @@ type Location = { lat: number; lng: number };
 
 export function MedicineSearch() {
   const { t } = useLanguage();
+  const { status: sessionStatus } = useSession();
   const time = t.dashboard.search.time;
 
   const [query, setQuery] = React.useState("");
@@ -287,6 +289,11 @@ export function MedicineSearch() {
 
   async function toggleNotify(medicineId: string) {
     if (notifyPending.has(medicineId)) return;
+    // Search is open to guests on the landing page, but alerts belong to an account.
+    if (sessionStatus !== "authenticated") {
+      setNotifyError((m) => new Map(m).set(medicineId, t.dashboard.search.notify.signInRequired));
+      return;
+    }
     setNotifyError((m) => {
       if (!m.has(medicineId)) return m;
       const next = new Map(m);

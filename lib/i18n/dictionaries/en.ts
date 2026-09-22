@@ -518,6 +518,7 @@ export const en = {
         subscribed: "We'll alert you when it's back nearby.",
         emptyPrompt: "Want to know when this is back in stock near you?",
         needLocation: "Turn on location so we know where to look.",
+        signInRequired: "Sign in to get back-in-stock alerts.",
       },
       compare: {
         label: "Compare prices",
