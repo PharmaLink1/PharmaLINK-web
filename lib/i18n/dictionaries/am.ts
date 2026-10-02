@@ -517,6 +517,7 @@ export const am = {
         canceling: "በመሰረዝ ላይ…",
         subscribed: "በአቅራቢያ ሲመለስ እናሳውቅዎታለን።",
         emptyPrompt: "ይህ በአቅራቢያዎ ክምችት ሲመለስ ማወቅ ይፈልጋሉ?",
+        emptyPromptMany: "የሚፈልጉትን ይምረጡ፤ በአቅራቢያዎ ክምችት ሲመለስ እናሳውቅዎታለን።",
         needLocation: "የት እንደምንፈልግ እንድናውቅ አካባቢዎን ያብሩ።",
         signInRequired: "ክምችት ሲመለስ ማሳወቂያ ለማግኘት ይግቡ።",
       },

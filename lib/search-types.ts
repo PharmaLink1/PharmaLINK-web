@@ -66,6 +66,11 @@ export type SearchPagination = {
 export type MedicineSearchResponse = {
   results: MedicineSearchResult[];
   nearby?: NearbyPharmacy[];
+  // Only sent when no pharmacy lists the medicine: the catalogue entries the query
+  // resolved to. It is what lets a typed search offer a back-in-stock alert, since
+  // the results that would normally carry a medicine_id are empty. Same shape as an
+  // autocomplete suggestion.
+  catalogue_matches?: MedicineSuggestion[];
   pagination: SearchPagination;
 };
 

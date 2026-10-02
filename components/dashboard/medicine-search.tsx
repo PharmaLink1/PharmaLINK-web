@@ -51,6 +51,10 @@ export function MedicineSearch() {
   const [error, setError] = React.useState("");
   const [results, setResults] = React.useState<MedicineSearchResult[]>([]);
   const [nearby, setNearby] = React.useState<NearbyPharmacy[]>([]);
+  // The catalogue entries the query resolved to. The backend sends these only when no
+  // pharmacy lists the medicine, which is exactly when the results carry no
+  // medicine_id of their own and a notify-me alert would otherwise be unreachable.
+  const [catalogueMatches, setCatalogueMatches] = React.useState<MedicineSuggestion[]>([]);
   const [pagination, setPagination] = React.useState({ page: 1, total: 0 });
   const [submittedQuery, setSubmittedQuery] = React.useState("");
   const [submittedMedicineId, setSubmittedMedicineId] = React.useState<string | null>(null);
@@ -86,6 +90,36 @@ export function MedicineSearch() {
   const filtersPanelId = "medicine-search-filters";
 
   const groups = React.useMemo(() => groupByMedicine(results), [results]);
+
+  // Which medicines the empty state can offer a back-in-stock alert for.
+  //
+  // The backend sends catalogue_matches whenever a search finds no listings, so a
+  // patient who simply typed a name can now subscribe. When it sends nothing — an
+  // unknown term, or an older backend — this falls back to the medicine picked from
+  // autocomplete, which is the behaviour this screen has always had.
+  //
+  // The two sources overlap: picking "Insulin" from autocomplete and finding no stock
+  // returns that same medicine in catalogue_matches. Taking the matches whole, rather
+  // than appending the submitted id, is what keeps one medicine to one button.
+  const notifyTargets = React.useMemo<MedicineSuggestion[]>(() => {
+    if (catalogueMatches.length > 0) {
+      const seen = new Set<string>();
+      return catalogueMatches.filter((match) => {
+        if (!match.medicine_id || seen.has(match.medicine_id)) return false;
+        seen.add(match.medicine_id);
+        return true;
+      });
+    }
+    if (!submittedMedicineId) return [];
+    const picked = suggestions.find((s) => s.medicine_id === submittedMedicineId);
+    return [
+      picked ?? {
+        medicine_id: submittedMedicineId,
+        display_name: submittedQuery,
+        match_type: "generic",
+      },
+    ];
+  }, [catalogueMatches, submittedMedicineId, submittedQuery, suggestions]);
 
   const filtersT = t.dashboard.search.filters;
   const activeFilters = activeFilterCount(filters);
@@ -174,6 +208,7 @@ export function MedicineSearch() {
       if (page === 1) {
         setResults(data.results);
         setNearby(data.nearby ?? []);
+        setCatalogueMatches(data.catalogue_matches ?? []);
         setSubmittedQuery(trimmed);
       } else {
         setResults((previous) => [...previous, ...data.results]);
@@ -214,6 +249,7 @@ export function MedicineSearch() {
     if (phase === "success" || phase === "error") {
       setResults([]);
       setNearby([]);
+      setCatalogueMatches([]);
       setError("");
       setPhase("idle");
     }
@@ -227,6 +263,7 @@ export function MedicineSearch() {
     setError("");
     setResults([]);
     setNearby([]);
+    setCatalogueMatches([]);
     setNearbyError("");
     setSubmittedQuery("");
     setSubmittedMedicineId(null);
@@ -692,20 +729,42 @@ export function MedicineSearch() {
               <p className={"mt-1 max-w-sm text-sm text-muted-foreground"}>
                 {location ? t.dashboard.search.empty.tryDifferent : t.dashboard.search.empty.noLocation}
               </p>
-              {submittedMedicineId && (
-                <div className={"mt-5 w-full max-w-sm border-t border-border pt-5"}>
+              {notifyTargets.length > 0 ? (
+                <div className={"mt-5 w-full max-w-sm border-t border-border pt-5 text-left"}>
                   <p className={"mb-3 text-sm text-foreground"}>
-                    {t.dashboard.search.notify.emptyPrompt}
+                    {notifyTargets.length === 1
+                      ? t.dashboard.search.notify.emptyPrompt
+                      : t.dashboard.search.notify.emptyPromptMany}
                   </p>
-                  <NotifyButton
-                    subscribed={subs.has(submittedMedicineId)}
-                    pending={notifyPending.has(submittedMedicineId)}
-                    error={notifyError.get(submittedMedicineId)}
-                    onToggle={() => toggleNotify(submittedMedicineId)}
-                    t={t}
-                  />
+                  <ul className={"flex flex-col gap-4"}>
+                    {notifyTargets.map((target) => (
+                      <li key={target.medicine_id} className={"flex flex-col gap-1.5"}>
+                        {/* With one medicine the heading above already names what the
+                            patient searched for, so repeating it adds nothing. */}
+                        {notifyTargets.length > 1 && (
+                          <div className={"min-w-0"}>
+                            <p className={"truncate text-sm font-medium text-foreground"}>
+                              {target.display_name}
+                            </p>
+                            {suggestionDetail(target) ? (
+                              <p className={"truncate text-xs text-muted-foreground"}>
+                                {suggestionDetail(target)}
+                              </p>
+                            ) : null}
+                          </div>
+                        )}
+                        <NotifyButton
+                          subscribed={subs.has(target.medicine_id)}
+                          pending={notifyPending.has(target.medicine_id)}
+                          error={notifyError.get(target.medicine_id)}
+                          onToggle={() => toggleNotify(target.medicine_id)}
+                          t={t}
+                        />
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
+              ) : null}
             </div>
           </Card>
 
