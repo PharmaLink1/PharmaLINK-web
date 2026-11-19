@@ -169,7 +169,8 @@ export function SiteHeader() {
           )}
         >
           <div className="flex items-center">
-            <Logo />
+            {/* Below 380px the wordmark would crowd the three header controls. */}
+            <Logo className="max-[379px]:[&>span:last-child]:hidden" />
           </div>
 
           {/* desktop nav */}
@@ -191,8 +192,8 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center justify-end gap-1.5">
             <ThemeToggle
               variant="blinds"
-              className="hidden size-9 shrink-0 rounded-md text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground sm:inline-flex"
-              iconClassName="size-4"
+              className="inline-flex size-10 shrink-0 rounded-md text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:size-9"
+              iconClassName="size-5 sm:size-4"
             />
             <LanguageToggle />
             <div className="hidden items-center gap-2 lg:flex">{authButtons(false)}</div>
@@ -297,19 +298,6 @@ export function SiteHeader() {
                       </motion.div>
                     )}
                   </motion.nav>
-
-                  {/* Below sm the bar keeps only the brand, language and menu, so
-                      appearance lives here instead. */}
-                  <div className="mt-8 flex items-center justify-between gap-3 rounded-md border border-border/70 px-4 py-2.5 sm:hidden">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {t.nav.appearance}
-                    </span>
-                    <ThemeToggle
-                      variant="blinds"
-                      className="size-9 rounded-md text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
-                      iconClassName="size-4"
-                    />
-                  </div>
 
                   <div className="mt-auto">
                     <p className="pb-5 text-xs text-muted-foreground">{t.home.footerTrust}</p>

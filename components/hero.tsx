@@ -13,10 +13,10 @@ import { MedicineSearch } from "@/components/dashboard/medicine-search";
 // Etatics Inc., Pexels photo 12585202, Pexels License. Next serves it as WebP at roughly
 // 80KB on desktop and 27KB on mobile. One unbranded blister reads as medicine without
 // looking like a product ad.
-// A soft ivory pool is painted over it so the centered copy keeps full contrast at any
-// crop while the photo still reads to the edges. Dark mode turns the photo grayscale at
-// 65% so the hero reads as night-time and matches the black canvas, while the blister
-// stays recognizable.
+// A soft pool of canvas sits behind the headline only, so the photograph still reads
+// through the middle instead of flattening into a blank field. Dark mode turns the
+// photo grayscale at 65% so the hero reads as night-time and matches the black canvas,
+// while the blister stays recognizable.
 //
 // Responsive intent: the section fills the viewport at every width; the header floats
 // above it. Copy sits high, the search sits at the bottom, and short viewports compress
@@ -38,7 +38,7 @@ export function HeroSection() {
 
         {/* A luminous pool of canvas under the copy, thinning toward the frame edges. */}
         <div className="absolute inset-0 bg-background/30 dark:bg-background/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_64%_56%_at_50%_45%,var(--background)_0%,var(--background)_34%,transparent_82%)] opacity-95 dark:opacity-90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_46%_34%_at_50%_36%,var(--background)_0%,color-mix(in_oklab,var(--background)_68%,transparent)_55%,transparent_80%)]" />
         {/* Settle into the tagline section below. */}
         <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-background to-transparent" />
       </div>
