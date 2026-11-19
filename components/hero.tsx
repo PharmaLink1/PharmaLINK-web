@@ -36,9 +36,11 @@ export function HeroSection() {
           className="object-cover object-[64%_45%] saturate-[0.94] dark:opacity-[0.65] dark:grayscale dark:brightness-105"
         />
 
-        {/* A luminous pool of canvas under the copy, thinning toward the frame edges. */}
-        <div className="absolute inset-0 bg-background/30 dark:bg-background/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_46%_34%_at_50%_36%,var(--background)_0%,color-mix(in_oklab,var(--background)_68%,transparent)_55%,transparent_80%)]" />
+        {/* Light: a luminous pool of canvas under the copy, thinning toward the frame edges.
+            Dark: a wider, softer veil — cinematic rather than a harsh black blob. */}
+        <div className="absolute inset-0 bg-background/30 dark:bg-background/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_46%_34%_at_50%_36%,var(--background)_0%,color-mix(in_oklab,var(--background)_68%,transparent)_55%,transparent_80%)] dark:hidden" />
+        <div className="absolute inset-0 hidden dark:block bg-[radial-gradient(ellipse_72%_52%_at_50%_38%,color-mix(in_oklab,var(--background)_55%,transparent)_0%,color-mix(in_oklab,var(--background)_20%,transparent)_50%,transparent_75%)]" />
         {/* Settle into the tagline section below. */}
         <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-background to-transparent" />
       </div>
