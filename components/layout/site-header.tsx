@@ -157,10 +157,10 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4">
+      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-2">
         <div
           className={cn(
-            "mx-auto flex h-14 w-full max-w-6xl items-center gap-2 rounded-full border px-3 transition-[background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-4",
+            "mx-auto flex h-14 w-full max-w-6xl items-center gap-2 rounded-md border px-3 transition-[background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-4",
             // Over the hero the bar is invisible; frost and a hairline settle in once
             // the page moves so the links stay legible above content.
             scrolled
@@ -181,7 +181,7 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-foreground/5 hover:text-foreground focus-visible:bg-foreground/5 focus-visible:text-foreground"
+                className="rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-foreground/5 hover:text-foreground focus-visible:bg-foreground/5 focus-visible:text-foreground"
               >
                 {link.label}
               </Link>
@@ -191,7 +191,7 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center justify-end gap-1.5">
             <ThemeToggle
               variant="blinds"
-              className="hidden size-9 shrink-0 rounded-full text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground sm:inline-flex"
+              className="hidden size-9 shrink-0 rounded-md text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground sm:inline-flex"
               iconClassName="size-4"
             />
             <LanguageToggle />
@@ -202,7 +202,7 @@ export function SiteHeader() {
               aria-label={t.nav.openMenu}
               aria-haspopup="dialog"
               aria-expanded={open}
-              className="ml-0.5 inline-flex size-10 items-center justify-center rounded-full border border-border/70 bg-card/70 text-foreground backdrop-blur-sm transition-colors duration-300 hover:bg-muted active:scale-95 lg:hidden"
+              className="ml-0.5 inline-flex size-10 items-center justify-center rounded-md border border-border/70 bg-card/70 text-foreground backdrop-blur-sm transition-colors duration-300 hover:bg-muted active:scale-95 lg:hidden"
             >
               <Menu className="size-5" aria-hidden />
             </button>
@@ -244,7 +244,7 @@ export function SiteHeader() {
                       type="button"
                       onClick={close}
                       aria-label={t.nav.closeMenu}
-                      className="inline-flex size-10 items-center justify-center rounded-full border border-border/70 text-foreground transition-colors duration-300 hover:bg-muted active:scale-95"
+                      className="inline-flex size-10 items-center justify-center rounded-md border border-border/70 text-foreground transition-colors duration-300 hover:bg-muted active:scale-95"
                     >
                       <X className="size-4" aria-hidden />
                     </button>
@@ -261,7 +261,7 @@ export function SiteHeader() {
                       <Link
                         href="#search"
                         onClick={close}
-                        className="group flex min-h-14 items-center gap-3 rounded-xl px-3 text-lg font-medium text-foreground transition-colors duration-300 hover:bg-foreground/5"
+                        className="group flex min-h-14 items-center gap-3 rounded-md px-3 text-lg font-medium text-foreground transition-colors duration-300 hover:bg-foreground/5"
                       >
                         <Search className="size-5 shrink-0 text-primary-strong" aria-hidden />
                         <span className="truncate">{t.hero.findMedicine}</span>
@@ -274,7 +274,7 @@ export function SiteHeader() {
                         <Link
                           href={link.href}
                           onClick={close}
-                          className="group flex min-h-14 items-center gap-3 rounded-xl px-3 text-lg font-medium text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
+                          className="group flex min-h-14 items-center gap-3 rounded-md px-3 text-lg font-medium text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
                         >
                           <link.icon className="size-5 shrink-0" aria-hidden />
                           <span className="truncate">{link.label}</span>
@@ -288,7 +288,7 @@ export function SiteHeader() {
                         <Link
                           href="/dashboard"
                           onClick={close}
-                          className="group flex min-h-14 items-center gap-3 rounded-xl px-3 text-lg font-medium text-primary-strong transition-colors duration-300 hover:bg-primary-subtle"
+                          className="group flex min-h-14 items-center gap-3 rounded-md px-3 text-lg font-medium text-primary-strong transition-colors duration-300 hover:bg-primary-subtle"
                         >
                           <LayoutDashboard className="size-5 shrink-0" aria-hidden />
                           <span className="truncate">{t.nav.dashboard}</span>
@@ -300,13 +300,13 @@ export function SiteHeader() {
 
                   {/* Below sm the bar keeps only the brand, language and menu, so
                       appearance lives here instead. */}
-                  <div className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-border/70 px-4 py-2.5 sm:hidden">
+                  <div className="mt-8 flex items-center justify-between gap-3 rounded-md border border-border/70 px-4 py-2.5 sm:hidden">
                     <span className="text-sm font-medium text-muted-foreground">
                       {t.nav.appearance}
                     </span>
                     <ThemeToggle
                       variant="blinds"
-                      className="size-9 rounded-full text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
+                      className="size-9 rounded-md text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
                       iconClassName="size-4"
                     />
                   </div>

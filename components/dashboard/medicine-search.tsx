@@ -409,7 +409,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
       <Card
         className={
           variant === "hero"
-            ? "border-border/70 bg-card/95 p-4 shadow-xl shadow-black/5 backdrop-blur-xl sm:p-5"
+            ? "rounded-md border-border/70 bg-card/95 p-4 shadow-xl shadow-black/5 backdrop-blur-xl sm:p-5"
             : "p-4 sm:p-5"
         }
       >
@@ -422,7 +422,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
         <div className={"relative"}>
           <div
             className={cn(
-              "flex items-center gap-1.5 rounded-lg border border-input bg-card p-1.5 pl-3.5",
+              "flex items-center gap-1.5 rounded-md border border-input bg-card p-1.5 pl-3.5",
               "transition-colors focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20",
             )}
           >
@@ -464,7 +464,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
                 type={"button"}
                 onClick={handleClear}
                 aria-label={t.dashboard.search.clearSearch}
-                className={"grid size-11 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"}
+                className={"grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"}
               >
                 <X className={"size-4"} aria-hidden />
               </button>
@@ -474,7 +474,14 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
                 id={listboxId}
                 role={"listbox"}
                 aria-label={t.dashboard.search.inputLabel}
-                className={"absolute inset-x-0 z-30 mt-1.5 max-h-72 overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-lg"}
+                className={cn(
+                  // The hero docks the search near the viewport bottom, so its
+                  // suggestions open upward and stay on screen.
+                  "absolute inset-x-0 z-30 max-h-72 overflow-y-auto rounded-md border border-border bg-card py-1 shadow-lg",
+                  variant === "hero"
+                    ? "bottom-full mb-1.5 max-h-[min(18rem,calc(100svh_-_15rem))]"
+                    : "mt-1.5",
+                )}
               >
                 {suggestionsLoading && (
                   <li
@@ -536,7 +543,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
               type={"button"}
               onClick={clearLocation}
               aria-label={t.dashboard.search.location.turnOff}
-              className={"inline-flex h-9 items-center gap-1.5 rounded-full bg-primary-subtle px-3 text-xs font-medium text-primary-strong transition-colors hover:bg-primary/30"}
+              className={"inline-flex h-9 items-center gap-1.5 rounded-md bg-primary-subtle px-3 text-xs font-medium text-primary-strong transition-colors hover:bg-primary/30"}
             >
               <LocateFixed className={"size-3.5"} aria-hidden />
               {t.dashboard.search.location.on}
@@ -547,7 +554,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
               type={"button"}
               onClick={handleUseLocation}
               disabled={locating}
-              className={"inline-flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary-subtle hover:text-primary-strong disabled:opacity-60"}
+              className={"inline-flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary-subtle hover:text-primary-strong disabled:opacity-60"}
             >
               {locating ? (
                 <LoaderCircle className={"size-3.5 animate-spin"} aria-hidden />
@@ -569,7 +576,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
                 : undefined
             }
             className={cn(
-              "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors",
+              "inline-flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors",
               filtersOpen || activeFilters > 0
                 ? "border-primary/40 bg-primary-subtle text-primary-strong"
                 : "border-border text-muted-foreground hover:border-primary/40 hover:bg-primary-subtle hover:text-primary-strong",
@@ -595,7 +602,7 @@ export function MedicineSearch({ variant }: { variant?: "hero" }) {
             <button
               type={"button"}
               onClick={() => setFilters(DEFAULT_FILTERS)}
-              className={"inline-flex h-9 items-center gap-1 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline hover:underline-offset-4"}
+              className={"inline-flex h-9 items-center gap-1 rounded-md px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline hover:underline-offset-4"}
             >
               <X className={"size-3.5"} aria-hidden />
               {filtersT.clear}
