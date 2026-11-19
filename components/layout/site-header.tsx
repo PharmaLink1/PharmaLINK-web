@@ -12,6 +12,7 @@ import {
   LogIn,
   LogOut,
   Menu,
+  Search,
   Store,
   User,
   UserPlus,
@@ -24,10 +25,10 @@ import type { Role } from "@/lib/auth-types";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
 import { buttonVariants } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
-import { SPRING_PANEL } from "@/lib/ease";
+
+const EASE_BASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const emptySubscribe = () => () => {};
 
@@ -39,6 +40,16 @@ function useMounted() {
   );
 }
 
+const menuList = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const menuItem = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE_BASE } },
+};
+
 export function SiteHeader() {
   const { user, status, logout } = useSession();
   const { t } = useLanguage();
@@ -47,6 +58,7 @@ export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sheetRef = React.useRef<HTMLDivElement>(null);
   const close = () => setOpen(false);
 
   const name = user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : "";
@@ -63,8 +75,7 @@ export function SiteHeader() {
     { label: t.nav.forPharmacies, href: "#pharmacies", icon: Store },
   ];
 
-  // Full-width and transparent at the top; on scroll it floats into a compact,
-  // centered rounded pill (border + blur + shadow).
+  // Track scroll so the bar can frost once the hero starts moving under it.
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
@@ -79,7 +90,25 @@ export function SiteHeader() {
     document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      // Keep focus inside the sheet while it is open.
+      const nodes = sheetRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (!nodes?.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -108,11 +137,19 @@ export function SiteHeader() {
         <Link
           href="/signin"
           onClick={close}
-          className={buttonVariants({ variant: block ? "outline" : "ghost", block, size: block ? "md" : "sm" })}
+          className={buttonVariants({
+            variant: block ? "outline" : "ghost",
+            block,
+            size: block ? "md" : "sm",
+          })}
         >
           {t.nav.login}
         </Link>
-        <Link href="/signup" onClick={close} className={buttonVariants({ block, size: block ? "md" : "sm" })}>
+        <Link
+          href="/signup"
+          onClick={close}
+          className={buttonVariants({ block, size: block ? "md" : "sm" })}
+        >
           {t.nav.signUp}
         </Link>
       </>
@@ -120,13 +157,15 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50">
+      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4">
         <div
           className={cn(
-            "relative mx-auto flex h-12 items-center gap-2 px-1 transition-all duration-300 ease-out",
+            "mx-auto flex h-14 w-full max-w-6xl items-center gap-2 rounded-full border px-3 transition-[background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-4",
+            // Over the hero the bar is invisible; frost and a hairline settle in once
+            // the page moves so the links stay legible above content.
             scrolled
-              ? "max-md:bg-background/60 backdrop-blur-2xl backdrop-saturate-150 md:mt-2 md:h-12 md:max-w-3xl md:rounded-xl md:border md:border-white/60 md:bg-white/40 md:px-1 md:shadow-lg md:shadow-black/5 lg:max-w-5xl dark:md:border-white/10 dark:md:bg-white/5"
-              : "max-w-6xl bg-background/30 backdrop-blur-lg backdrop-saturate-150",
+              ? "border-border/70 bg-background/85 shadow-xl shadow-black/5 backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/75"
+              : "border-transparent bg-transparent shadow-none",
           )}
         >
           <div className="flex items-center">
@@ -134,22 +173,25 @@ export function SiteHeader() {
           </div>
 
           {/* desktop nav */}
-          <nav aria-label={t.nav.primary} className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1.5 lg:flex">
+          <nav
+            aria-label={t.nav.primary}
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex"
+          >
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-md px-4 py-1 text-sm text-foreground transition-colors hover:bg-muted focus-visible:bg-muted"
+                className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-foreground/5 hover:text-foreground focus-visible:bg-foreground/5 focus-visible:text-foreground"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center justify-end gap-2">
+          <div className="ml-auto flex items-center justify-end gap-1.5">
             <ThemeToggle
               variant="blinds"
-              className="size-9 shrink-0 rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+              className="hidden size-9 shrink-0 rounded-full text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground sm:inline-flex"
               iconClassName="size-4"
             />
             <LanguageToggle />
@@ -158,9 +200,9 @@ export function SiteHeader() {
               type="button"
               onClick={() => setOpen(true)}
               aria-label={t.nav.openMenu}
-              aria-haspopup="menu"
+              aria-haspopup="dialog"
               aria-expanded={open}
-              className="ml-2 inline-flex size-9 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-muted sm:ml-2.5 lg:hidden"
+              className="ml-0.5 inline-flex size-10 items-center justify-center rounded-full border border-border/70 bg-card/70 text-foreground backdrop-blur-sm transition-colors duration-300 hover:bg-muted active:scale-95 lg:hidden"
             >
               <Menu className="size-5" aria-hidden />
             </button>
@@ -168,12 +210,12 @@ export function SiteHeader() {
         </div>
       </header>
 
-      {/* Mobile menu — animated centered card portaled to body to escape backdrop-blur stacking context */}
+      {/* Mobile menu: a full-height sheet with links arriving in reading order. */}
       {mounted &&
         createPortal(
           <AnimatePresence>
             {open && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-6 lg:hidden">
+              <div className="fixed inset-0 z-50 lg:hidden">
                 <motion.button
                   type="button"
                   aria-label={t.nav.closeMenu}
@@ -181,115 +223,131 @@ export function SiteHeader() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-0 bg-background/60 backdrop-blur-xl"
+                  transition={{ duration: 0.3, ease: EASE_BASE }}
+                  className="absolute inset-0 bg-background/70 backdrop-blur-xl"
                 />
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: -8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: -8 }}
-                  transition={SPRING_PANEL}
-                  className="relative my-auto w-full max-w-xs"
+                  ref={sheetRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={t.nav.openMenu}
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.5, ease: EASE_BASE }}
+                  className="relative ml-auto flex h-full w-full flex-col overflow-y-auto overscroll-contain bg-background/95 px-6 pb-8 pt-5 shadow-2xl backdrop-blur-2xl sm:max-w-sm sm:border-l sm:border-border/70"
                 >
-                  <Card
-                    variant="modal"
-                    role="dialog"
-                    aria-modal="true"
-                    className="p-6"
-                  >
-                    <div className="mb-5 flex items-center justify-between">
-                      <Logo />
-                      <button
-                        ref={closeButtonRef}
-                        type="button"
-                        onClick={close}
-                        aria-label={t.nav.closeMenu}
-                        className="inline-flex size-9 items-center justify-center rounded-full border border-border/70 text-foreground transition-all hover:bg-muted active:scale-95"
-                      >
-                        <X className="size-4" aria-hidden />
-                      </button>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <Logo />
+                    <button
+                      ref={closeButtonRef}
+                      type="button"
+                      onClick={close}
+                      aria-label={t.nav.closeMenu}
+                      className="inline-flex size-10 items-center justify-center rounded-full border border-border/70 text-foreground transition-colors duration-300 hover:bg-muted active:scale-95"
+                    >
+                      <X className="size-4" aria-hidden />
+                    </button>
+                  </div>
 
-                    <nav className="flex flex-col gap-1">
-                      {status === "authenticated" && (
+                  <motion.nav
+                    aria-label={t.nav.primary}
+                    variants={menuList}
+                    initial="hidden"
+                    animate="show"
+                    className="mt-10 flex flex-col gap-0.5"
+                  >
+                    <motion.div variants={menuItem}>
+                      <Link
+                        href="#search"
+                        onClick={close}
+                        className="group flex min-h-14 items-center gap-3 rounded-xl px-3 text-lg font-medium text-foreground transition-colors duration-300 hover:bg-foreground/5"
+                      >
+                        <Search className="size-5 shrink-0 text-primary-strong" aria-hidden />
+                        <span className="truncate">{t.hero.findMedicine}</span>
+                        <ChevronRight className="ml-auto size-4 shrink-0 text-muted-foreground/60" aria-hidden />
+                      </Link>
+                    </motion.div>
+
+                    {navLinks.map((link) => (
+                      <motion.div key={link.href} variants={menuItem}>
+                        <Link
+                          href={link.href}
+                          onClick={close}
+                          className="group flex min-h-14 items-center gap-3 rounded-xl px-3 text-lg font-medium text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
+                        >
+                          <link.icon className="size-5 shrink-0" aria-hidden />
+                          <span className="truncate">{link.label}</span>
+                          <ChevronRight className="ml-auto size-4 shrink-0 text-muted-foreground/60" aria-hidden />
+                        </Link>
+                      </motion.div>
+                    ))}
+
+                    {status === "authenticated" && (
+                      <motion.div variants={menuItem}>
                         <Link
                           href="/dashboard"
                           onClick={close}
-                          className="group flex min-h-11 items-center justify-between rounded-lg border-l-2 border-primary bg-primary-subtle py-2.5 pl-3 pr-3.5 text-sm font-medium text-primary-strong shadow-xs shadow-primary/10 transition-all active:scale-[0.99]"
+                          className="group flex min-h-14 items-center gap-3 rounded-xl px-3 text-lg font-medium text-primary-strong transition-colors duration-300 hover:bg-primary-subtle"
                         >
-                          <span className="flex items-center gap-2.5">
-                            <LayoutDashboard className="size-4 shrink-0 text-primary-strong" aria-hidden />
-                            <span className="truncate">{t.nav.dashboard}</span>
-                          </span>
-                          <ChevronRight className="size-4 shrink-0 text-primary-strong/80 transition-transform duration-200 group-hover:translate-x-0.5" />
+                          <LayoutDashboard className="size-5 shrink-0" aria-hidden />
+                          <span className="truncate">{t.nav.dashboard}</span>
+                          <ChevronRight className="ml-auto size-4 shrink-0 opacity-60" aria-hidden />
                         </Link>
-                      )}
+                      </motion.div>
+                    )}
+                  </motion.nav>
 
-                      {navLinks.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          onClick={close}
-                          className="group flex min-h-11 items-center justify-between rounded-lg py-2.5 pl-3 pr-3.5 text-sm text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground active:bg-muted active:scale-[0.99]"
-                        >
-                          <span className="flex items-center gap-2.5">
-                            <link.icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                            <span className="truncate font-medium">{link.label}</span>
-                          </span>
-                          <ChevronRight className="size-4 shrink-0 text-muted-foreground/50 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-foreground" />
-                        </Link>
-                      ))}
-                    </nav>
+                  {/* Below sm the bar keeps only the brand, language and menu, so
+                      appearance lives here instead. */}
+                  <div className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-border/70 px-4 py-2.5 sm:hidden">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {t.nav.appearance}
+                    </span>
+                    <ThemeToggle
+                      variant="blinds"
+                      className="size-9 rounded-full text-muted-foreground transition-colors duration-300 hover:bg-foreground/5 hover:text-foreground"
+                      iconClassName="size-4"
+                    />
+                  </div>
 
+                  <div className="mt-auto">
+                    <p className="pb-5 text-xs text-muted-foreground">{t.home.footerTrust}</p>
+                    <div className="border-t border-border/70 pt-6">
                     {status === "authenticated" ? (
-                      <div className="mt-5 border-t border-border/70 pt-5">
-                        <div className="rounded-xl border border-border/70 bg-muted/30 p-3.5">
-                          <div className="flex items-center gap-3">
-                            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-primary-strong ring-2 ring-primary/20">
-                              <User className="size-5" aria-hidden />
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-semibold leading-tight text-foreground">
-                                {name || t.nav.account}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3">
+                          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
+                            <User className="size-5" aria-hidden />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium">{name || t.nav.account}</p>
+                            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+                            {user?.role && (
+                              <p className="mt-0.5 text-xs font-medium text-primary-strong">
+                                {roleLabels[user.role] ?? user.role}
                               </p>
-                              <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-                              {user?.role && (
-                                <span className="mt-1 inline-flex items-center rounded-full border border-primary/25 bg-primary-subtle px-2 py-0.5 text-[10px] font-medium text-primary-strong uppercase tracking-wider">
-                                  {roleLabels[user.role] ?? user.role}
-                                </span>
-                              )}
-                            </div>
+                            )}
                           </div>
                         </div>
-
-                        <div className="mt-3.5 flex flex-col gap-2">
-                          <Link
-                            href="/dashboard"
-                            onClick={close}
-                            className={cn(buttonVariants({ block: true }), "min-h-11 justify-start font-medium")}
-                          >
-                            <LayoutDashboard className="size-4" aria-hidden />
-                            {t.nav.dashboard}
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={handleLogout}
-                            className={cn(
-                              buttonVariants({ variant: "ghost", block: true }),
-                              "min-h-11 justify-start text-muted-foreground hover:text-foreground",
-                            )}
-                          >
-                            <LogOut className="size-4 text-muted-foreground" aria-hidden />
-                            {t.nav.logOut}
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className={cn(
+                            buttonVariants({ variant: "outline", block: true }),
+                            "justify-start",
+                          )}
+                        >
+                          <LogOut className="size-4 text-muted-foreground" aria-hidden />
+                          {t.nav.logOut}
+                        </button>
                       </div>
                     ) : (
-                      <div className="mt-5 flex flex-col gap-2.5 border-t border-border/70 pt-5">
+                      <div className="flex flex-col gap-2.5">
                         <Link
                           href="/signin"
                           onClick={close}
-                          className={cn(buttonVariants({ variant: "outline", block: true }), "min-h-11 justify-start")}
+                          className={cn(buttonVariants({ variant: "outline", block: true }), "justify-start")}
                         >
                           <LogIn className="size-4 text-muted-foreground" aria-hidden />
                           {t.nav.login}
@@ -297,14 +355,15 @@ export function SiteHeader() {
                         <Link
                           href="/signup"
                           onClick={close}
-                          className={cn(buttonVariants({ block: true }), "min-h-11 justify-start font-medium")}
+                          className={cn(buttonVariants({ block: true }), "justify-start")}
                         >
                           <UserPlus className="size-4" aria-hidden />
                           {t.nav.signUp}
                         </Link>
                       </div>
                     )}
-                  </Card>
+                    </div>
+                  </div>
                 </motion.div>
               </div>
             )}

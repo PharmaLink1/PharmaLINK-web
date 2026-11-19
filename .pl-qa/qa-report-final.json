@@ -1,0 +1,257 @@
+{
+  "report": [
+    {
+      "name": "1440",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "h1": {
+          "w": 624,
+          "h": 144
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 1440,
+          "h": 960
+        }
+      }
+    },
+    {
+      "name": "1440-dark",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0 0 0 / 0.75)",
+        "border": "oklab(0.999994 0.0000455678 0.0000200868 / 0.1)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "h1": {
+          "w": 624,
+          "h": 144
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 1440,
+          "h": 960
+        }
+      }
+    },
+    {
+      "name": "834",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 834,
+        "innerWidth": 834,
+        "h1": {
+          "w": 624,
+          "h": 96
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 834,
+          "h": 556
+        }
+      }
+    },
+    {
+      "name": "390",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "h1": {
+          "w": 342,
+          "h": 80
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 390,
+          "h": 260
+        }
+      }
+    },
+    {
+      "name": "390-dark",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0 0 0 / 0.75)",
+        "border": "oklab(0.999994 0.0000455678 0.0000200868 / 0.1)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "h1": {
+          "w": 342,
+          "h": 80
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 390,
+          "h": 260
+        }
+      }
+    },
+    {
+      "name": "390-am",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "h1": {
+          "w": 342,
+          "h": 80
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 390,
+          "h": 260
+        }
+      }
+    },
+    {
+      "name": "320",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 320,
+        "innerWidth": 320,
+        "h1": {
+          "w": 272,
+          "h": 80
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 320,
+          "h": 213
+        }
+      }
+    },
+    {
+      "name": "320-am",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 320,
+        "innerWidth": 320,
+        "h1": {
+          "w": 272,
+          "h": 80
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 320,
+          "h": 213
+        }
+      }
+    },
+    {
+      "name": "844x390",
+      "headerAtTop": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "border": "rgba(0, 0, 0, 0)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "blur": "none"
+      },
+      "headerScrolled": {
+        "bg": "oklab(0.994042 0.0000453293 0.0000199079 / 0.85)",
+        "border": "oklab(0.930316 -0.000886142 -0.00447488 / 0.7)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 20px 25px -5px, oklab(0 0 0 / 0.05) 0px 8px 10px -6px",
+        "blur": "blur(24px) saturate(1.5)"
+      },
+      "layout": {
+        "scrollWidth": 844,
+        "innerWidth": 844,
+        "h1": {
+          "w": 624,
+          "h": 72
+        },
+        "image": {
+          "src": "http://localhost:3000/_next/image",
+          "w": 844,
+          "h": 562
+        }
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,85 +1,58 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
 import { useLanguage } from "@/lib/i18n";
-import { buttonVariants } from "@/components/ui/button";
-import { DecorIcon } from "@/components/decor-icon";
-import { FullWidthDivider } from "@/components/full-width-divider";
 import { MedicineSearch } from "@/components/dashboard/medicine-search";
 
+// Patient home hero: one full-bleed photograph, one headline, the live search.
+// Nothing else competes, so the search reads as the product.
+//
+// The photo is a 2400px JPEG (~260KB on disk): "White Tablets in Close Up Shot" by
+// Etatics Inc., Pexels photo 12585202, Pexels License. Next serves it as WebP at roughly
+// 80KB on desktop and 27KB on mobile. One unbranded blister reads as medicine without
+// looking like a product ad.
+// A soft ivory pool is painted over it so the centered copy keeps full contrast at any
+// crop while the photo still reads to the edges.
+//
+// Responsive intent: the section fills the viewport at every width; the header floats
+// above it. The image is free of people and branding so it works for both patient and
+// pharmacy audiences and never competes with the copy.
 export function HeroSection() {
   const { t } = useLanguage();
 
   return (
-    <section className="overflow-x-clip">
-      {/* Hero copy: badge, headline, subtitle, and CTAs. */}
-      <div className="relative flex min-h-[calc(100svh-8rem)] flex-col px-4 py-10 md:px-4 md:py-16">
-        {/* Faded vertical rules - efferd hero structure */}
-        <div aria-hidden="true" className="absolute inset-0 -z-10 size-full overflow-hidden">
-          <div className="absolute inset-y-0 left-4 w-px bg-linear-to-b from-transparent via-border to-border md:left-8" />
-          <div className="absolute inset-y-0 right-4 w-px bg-linear-to-b from-transparent via-border to-border md:right-8" />
-          <div className="absolute inset-y-0 left-8 w-px bg-linear-to-b from-transparent via-border/50 to-border/50 md:left-12" />
-          <div className="absolute inset-y-0 right-8 w-px bg-linear-to-b from-transparent via-border/50 to-border/50 md:right-12" />
-        </div>
+    <section className="relative isolate flex min-h-svh flex-col justify-center overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-0 -z-10">
+        <Image
+          src="/img/hero-tablets.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[64%_45%] saturate-[0.94] dark:opacity-35 dark:saturate-[0.5]"
+        />
 
-        <div className="flex w-full flex-1 flex-col items-center justify-center gap-5">
-          {/* Live badge */}
-          <a
-            href="#audiences"
-            className="inline-flex w-fit items-center gap-2.5 rounded-md border bg-card py-1.5 pl-2 pr-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-primary-subtle px-2.5 py-0.5 text-xs font-semibold text-primary-strong">
-              <span className="size-1.5 rounded-full bg-primary" aria-hidden />
-              {t.hero.live}
-            </span>
-            {t.hero.builtForEthiopia}
-            <span className="block h-4 border-l" aria-hidden />
-            <ArrowRight className="size-3.5" aria-hidden />
-          </a>
-
-          {/* Headline */}
-          <h1 className="max-w-3xl text-balance text-center text-4xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            {t.hero.titlePart1}
-            <br />
-            <span className="text-primary-strong">{t.hero.titlePart2}</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="fade-in slide-in-from-bottom-10 max-w-xl animate-in text-balance text-center text-sm font-light text-muted-foreground/80 fill-mode-backwards delay-200 duration-500 ease-out sm:text-base">
-            {t.hero.subtitle}
-          </p>
-
-          {/* CTAs: patient search + pharmacy onboarding */}
-          <div className="fade-in slide-in-from-bottom-10 flex w-fit animate-in flex-col items-center justify-center gap-3 fill-mode-backwards pt-2 delay-300 duration-500 ease-out sm:flex-row">
-            <a
-              href="#search"
-              className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}
-            >
-              {t.hero.findMedicine}
-              <ArrowRight className="size-4" aria-hidden />
-            </a>
-            <Link
-              href="/signup/pharmacy"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full sm:w-auto",
-              )}
-            >
-              {t.hero.listPharmacy}
-            </Link>
-          </div>
-        </div>
+        {/* A luminous pool of canvas under the copy, thinning toward the frame edges. */}
+        <div className="absolute inset-0 bg-background/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_64%_56%_at_50%_45%,var(--background)_0%,var(--background)_34%,transparent_82%)] opacity-95" />
+        {/* Settle into the tagline section below. */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-background to-transparent" />
       </div>
 
-      {/* Live medicine search - open to guests, no sign-in needed */}
-      <div id="search" className="relative mx-auto w-full max-w-3xl scroll-mt-24 px-4 pb-16">
-        <DecorIcon className="hidden size-4 xl:block" position="top-left" />
-        <DecorIcon className="hidden size-4 xl:block" position="top-right" />
+      <div className="mx-auto w-full max-w-2xl px-6 pb-16 pt-32 text-center sm:pt-36 [@media(max-height:520px)]:pb-0 [@media(max-height:520px)]:pt-20">
+        <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-7xl [@media(max-height:520px)]:text-3xl">
+          {t.hero.titlePart1}
+          <br />
+          {t.hero.titlePart2}
+        </h1>
 
-        <FullWidthDivider className="-top-px" />
-        <MedicineSearch />
+        <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg [@media(max-height:520px)]:mt-3 [@media(max-height:520px)]:text-sm [@media(max-height:380px)]:hidden">
+          {t.hero.subtitle}
+        </p>
+
+        <div id="search" className="mt-8 scroll-mt-28 text-left sm:mt-10 [@media(max-height:520px)]:mt-5">
+          <MedicineSearch variant="hero" />
+        </div>
       </div>
     </section>
   );

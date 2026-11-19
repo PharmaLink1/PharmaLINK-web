@@ -41,7 +41,7 @@ function suggestionDetail(suggestion: MedicineSuggestion): string {
 type SearchPhase = "idle" | "loading" | "success" | "error";
 type Location = { lat: number; lng: number };
 
-export function MedicineSearch() {
+export function MedicineSearch({ variant }: { variant?: "hero" }) {
   const { t } = useLanguage();
   const { status: sessionStatus } = useSession();
   const time = t.dashboard.search.time;
@@ -406,8 +406,17 @@ export function MedicineSearch() {
 
   return (
     <section aria-label={t.dashboard.search.label} className={"space-y-4"}>
-      <Card className={"p-4 sm:p-5"}>
-        <label htmlFor={inputId} className={"mb-2 block text-sm font-medium"}>
+      <Card
+        className={
+          variant === "hero"
+            ? "border-border/70 bg-card/95 p-4 shadow-xl shadow-black/5 backdrop-blur-xl sm:p-5"
+            : "p-4 sm:p-5"
+        }
+      >
+        <label
+          htmlFor={inputId}
+          className={variant === "hero" ? "sr-only" : "mb-2 block text-sm font-medium"}
+        >
           {t.dashboard.search.inputLabel}
         </label>
         <div className={"relative"}>
@@ -441,7 +450,11 @@ export function MedicineSearch() {
                 activeIndex >= 0 ? listboxId + "-option-" + activeIndex : undefined
               }
               aria-label={t.dashboard.search.inputLabel}
-              placeholder={t.dashboard.search.placeholder}
+              placeholder={
+                variant === "hero"
+                  ? t.hero.searchPlaceholderShort
+                  : t.dashboard.search.placeholder
+              }
               autoComplete={"off"}
               enterKeyHint={"search"}
               className={"h-11 min-w-0 flex-1 rounded-md border-0 bg-transparent px-0 text-base outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0"}
@@ -598,7 +611,14 @@ export function MedicineSearch() {
           )}
 
           {phase === "idle" && (
-            <div className={"ml-auto flex flex-wrap items-center gap-x-1 gap-y-1"}>
+            <div
+              className={cn(
+                "items-center gap-x-1 gap-y-1",
+                variant === "hero"
+                  ? "ml-auto hidden sm:flex"
+                  : "ml-auto flex flex-wrap",
+              )}
+            >
               <span className={"px-1 text-xs text-muted-foreground"}>
                 {t.dashboard.search.exampleLabel}
               </span>

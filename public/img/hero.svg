@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900" role="img" aria-label="">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eafff6"/>
+      <stop offset="0.55" stop-color="#f4fff9"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.35" r="0.6">
+      <stop offset="0" stop-color="#51f0a8" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#51f0a8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.15" cy="0.9" r="0.5">
+      <stop offset="0" stop-color="#0d9f5d" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#0d9f5d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cap1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d8fbec"/>
+    </linearGradient>
+    <linearGradient id="cap2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d9f5d"/>
+      <stop offset="1" stop-color="#0b7a4a"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <rect width="1440" height="900" fill="url(#glow)"/>
+  <rect width="1440" height="900" fill="url(#glow2)"/>
+
+  <!-- Large pharmacy cross, soft -->
+  <g opacity="0.10" transform="translate(1050 250)">
+    <rect x="70" y="0" width="80" height="220" rx="26" fill="#0d9f5d"/>
+    <rect x="0" y="70" width="220" height="80" rx="26" fill="#0d9f5d"/>
+  </g>
+
+  <!-- Capsule cluster, right side -->
+  <g transform="translate(980 470) rotate(-24)" filter="url(#soft)"><ellipse cx="120" cy="60" rx="150" ry="70" fill="#0d9f5d" opacity="0.10"/></g>
+  <g transform="translate(1000 420) rotate(-24)">
+    <rect x="0" y="0" width="200" height="92" rx="46" fill="url(#cap1)" stroke="#0d9f5d" stroke-opacity="0.15"/>
+    <path d="M100 0h54a46 46 0 0 1 0 92H100Z" fill="url(#cap2)"/>
+    <rect x="20" y="16" width="70" height="14" rx="7" fill="#ffffff" opacity="0.7"/>
+  </g>
+
+  <g transform="translate(1180 610) rotate(18)">
+    <rect x="0" y="0" width="150" height="70" rx="35" fill="url(#cap1)" stroke="#0d9f5d" stroke-opacity="0.15"/>
+    <path d="M75 0h40a35 35 0 0 1 0 70H75Z" fill="url(#cap2)"/>
+  </g>
+
+  <!-- Soft circles -->
+  <circle cx="1260" cy="330" r="70" fill="#51f0a8" opacity="0.22"/>
+  <circle cx="900" cy="700" r="46" fill="#0d9f5d" opacity="0.12"/>
+  <g transform="translate(230 600)">
+    <rect x="0" y="0" width="120" height="56" rx="28" fill="url(#cap1)" stroke="#0d9f5d" stroke-opacity="0.12"/>
+    <path d="M60 0h32a28 28 0 0 1 0 56H60Z" fill="#7efe8f" opacity="0.85"/>
+  </g>
+  <circle cx="180" cy="230" r="54" fill="#51f0a8" opacity="0.16"/>
+  <circle cx="420" cy="760" r="30" fill="#0d9f5d" opacity="0.10"/>
+</svg>
