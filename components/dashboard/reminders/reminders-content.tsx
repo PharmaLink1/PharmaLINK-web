@@ -12,7 +12,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardPageShell } from "@/components/dashboard/page-shell";
 import { ReminderForm } from "@/components/dashboard/reminders/reminder-form";
 import { cn } from "@/lib/cn";
 
@@ -111,23 +111,19 @@ export function RemindersContent() {
   }
 
   return (
-    <div className={"flex min-h-dvh flex-col"}>
-      <AppHeader />
-
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <header className={"flex flex-wrap items-start justify-between gap-4"}>
-          <div>
-            <h1 className={"text-2xl font-semibold tracking-tight"}>{r.title}</h1>
-            <p className={"mt-1 text-muted-foreground"}>{r.subtitle}</p>
-          </div>
-          {!formOpen && phase === "ready" && (
-            <Button type={"button"} size={"sm"} onClick={() => setFormOpen(true)}>
-              <Plus className={"size-4"} aria-hidden />
-              {r.newReminder}
-            </Button>
-          )}
-        </header>
-
+    <DashboardPageShell
+      title={r.title}
+      subtitle={r.subtitle}
+      headerAction={
+        !formOpen && phase === "ready" ? (
+          <Button type="button" size="sm" onClick={() => setFormOpen(true)}>
+            <Plus className="size-4" aria-hidden />
+            {r.newReminder}
+          </Button>
+        ) : undefined
+      }
+    >
+      <div>
         {formOpen && <ReminderForm onCreated={addCreated} onClose={() => setFormOpen(false)} />}
 
         {actionError && (
@@ -186,8 +182,8 @@ export function RemindersContent() {
             ))}
           </ul>
         )}
-      </main>
-    </div>
+      </div>
+    </DashboardPageShell>
   );
 }
 

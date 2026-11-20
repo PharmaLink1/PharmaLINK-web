@@ -7,9 +7,11 @@ import { cn } from "@/lib/cn";
 export function Logo({
   className,
   asLink = true,
+  href = "/",
 }: {
   className?: string;
   asLink?: boolean;
+  href?: string;
 }) {
   const { t } = useLanguage();
 
@@ -24,7 +26,7 @@ export function Logo({
 
   if (!asLink) return inner;
   return (
-    <Link href="/" aria-label={t.nav.homeAria} className="inline-flex">
+    <Link href={href} aria-label={t.nav.homeAria} className="inline-flex">
       {inner}
     </Link>
   );

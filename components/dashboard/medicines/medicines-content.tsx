@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { medicineApi } from "@/lib/pharmacy-api";
 import type { CatalogMedicine } from "@/lib/pharmacy-types";
 import { getErrorMessage } from "@/lib/i18n/errors";
@@ -13,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardPageShell } from "@/components/dashboard/page-shell";
 
 /** Pharmacist medicine catalogue: pharmacists (the clinical professionals) add
  * medicines to the shared catalogue and browse it. Seeding this is what lets any
@@ -96,24 +94,10 @@ export function MedicinesContent() {
   }
 
   return (
-    <div className={"flex min-h-dvh flex-col"}>
-      <AppHeader />
-
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <Link
-          href={"/dashboard"}
-          className={"inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"}
-        >
-          <ArrowLeft className={"size-4"} aria-hidden />
-          {t.nav.dashboard}
-        </Link>
-
-        <h1 className={"mt-4 text-2xl font-semibold tracking-tight"}>{m.title}</h1>
-        <p className={"mt-1 text-muted-foreground"}>{m.subtitle}</p>
-
-        <div className={"mt-6 space-y-4"}>
-          <Card className={"p-5"}>
-            <form onSubmit={handleSubmit} noValidate className={"flex flex-col gap-4"}>
+    <DashboardPageShell title={m.title} subtitle={m.subtitle}>
+      <div className="space-y-4">
+        <Card className="p-5">
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
               <h2 className={"font-semibold tracking-tight"}>{f.heading}</h2>
               {formError && <Alert variant={"danger"}>{formError}</Alert>}
               {notice && <Alert variant={"success"}>{notice}</Alert>}
@@ -203,7 +187,6 @@ export function MedicinesContent() {
             </Card>
           )}
         </div>
-      </main>
-    </div>
+    </DashboardPageShell>
   );
 }

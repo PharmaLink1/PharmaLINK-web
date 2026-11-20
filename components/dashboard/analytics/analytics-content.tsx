@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { analyticsApi, pharmacyApi } from "@/lib/pharmacy-api";
 import type { AnalyticsPeriod, MyPharmacy, PharmacyAnalytics } from "@/lib/pharmacy-types";
 import { interpolate, useLanguage } from "@/lib/i18n";
@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Spinner } from "@/components/ui/spinner";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardPageShell } from "@/components/dashboard/page-shell";
 import { cn } from "@/lib/cn";
 
 /** Look-back windows the backend accepts. Anything else is rejected as
@@ -139,144 +139,127 @@ export function AnalyticsContent() {
   const busiest = items.length > 0 ? items[0].searchCount : 0;
 
   return (
-    <div className={"flex min-h-dvh flex-col"}>
-      <AppHeader />
-
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <Link
-          href={"/dashboard"}
-          className={"inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"}
-        >
-          <ArrowLeft className={"size-4"} aria-hidden />
-          {t.nav.dashboard}
-        </Link>
-
-        <h1 className={"mt-4 text-2xl font-semibold tracking-tight"}>{a.title}</h1>
-        <p className={"mt-1 text-muted-foreground"}>{a.subtitle}</p>
-
-        {!ready ? (
-          <div className={"mt-8 flex justify-center py-10"}>
-            <Spinner label={a.loading} />
-          </div>
-        ) : !selected ? (
-          error ? (
-            <div className={"mt-6"}>
-              <Alert variant={"danger"}>
-                <div className={"flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"}>
-                  <span>{error}</span>
-                  <Button type={"button"} variant={"outline"} size={"sm"} onClick={retry}>
-                    {a.retry}
-                  </Button>
-                </div>
-              </Alert>
+    <DashboardPageShell title={a.title} subtitle={a.subtitle}>
+      {!ready ? (
+        <div className="flex justify-center py-10">
+          <Spinner label={a.loading} />
+        </div>
+      ) : !selected ? (
+        error ? (
+          <Alert variant="danger">
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <span>{error}</span>
+              <Button type="button" variant="outline" size="sm" onClick={retry}>
+                {a.retry}
+              </Button>
             </div>
-          ) : (
-            <Card className={"mt-8 p-5"}>
-              <p className={"text-sm text-muted-foreground"}>{a.noPharmacy}</p>
-              <div className={"mt-4"}>
+          </Alert>
+        ) : (
+          <Card className="p-5">
+            <p className="text-sm text-muted-foreground">{a.noPharmacy}</p>
+            <div className="mt-4">
+              <Link
+                href="/dashboard/pharmacy"
+                className={cn(buttonVariants({ variant: "primary", size: "sm" }))}
+              >
+                {t.dashboard.pharmacy.register}
+              </Link>
+            </div>
+          </Card>
+        )
+      ) : (
+        <div className="space-y-4">
+          {pharmacies.length > 1 && (
+            <Field label={a.pharmacyLabel} htmlFor="analytics-pharmacy" hint={a.selectPharmacyHint}>
+              <select
+                id="analytics-pharmacy"
+                value={selected.pharmacy_id}
+                onChange={(e) => handleSelectPharmacy(e.target.value)}
+                className={cn(
+                  "h-11 w-full rounded-md border border-input bg-card px-3.5 text-sm text-foreground",
+                  "transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+                )}
+              >
+                {pharmacies.map((ph) => (
+                  <option key={ph.pharmacy_id} value={ph.pharmacy_id}>
+                    {ph.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-foreground">{a.periodLabel}</span>
+            <SegmentedControl<AnalyticsPeriod>
+              ariaLabel={a.periodLabel}
+              value={period}
+              onChange={handleSelectPeriod}
+              options={PERIODS.map((value) => ({ value, label: periodLabels[value] }))}
+            />
+          </div>
+
+          {error && (
+            <Alert variant="danger">
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <span>{error}</span>
+                <Button type="button" variant="outline" size="sm" onClick={retry}>
+                  {a.retry}
+                </Button>
+              </div>
+            </Alert>
+          )}
+
+          {phase === "loading" && !error && (
+            <div className="flex justify-center py-10">
+              <Spinner label={a.loading} />
+            </div>
+          )}
+
+          {phase === "ready" && !error && items.length === 0 && (
+            <Card className="flex flex-col items-center gap-3 p-8 text-center">
+              <span className="flex size-12 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
+                <TrendingUp className="size-6" aria-hidden />
+              </span>
+              <h2 className="font-semibold">{a.emptyTitle}</h2>
+              <p className="max-w-sm text-sm text-muted-foreground">{a.emptyBody}</p>
+            </Card>
+          )}
+
+          {phase === "ready" && !error && items.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-semibold text-foreground">{a.listHeader}</h2>
+              <p className="text-xs text-muted-foreground">{a.listHint}</p>
+
+              <Card className="overflow-hidden">
+                <ul className="divide-y divide-border">
+                  {items.map((item) => (
+                    <UnmetDemandRow
+                      key={item.medicineId}
+                      name={item.medicineName || item.medicineId}
+                      count={item.searchCount}
+                      busiest={busiest}
+                    />
+                  ))}
+                </ul>
+              </Card>
+
+              <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted-foreground">
+                  {interpolate(a.count, { count: items.length })}
+                </p>
                 <Link
-                  href={"/dashboard/pharmacy"}
-                  className={cn(buttonVariants({ variant: "primary", size: "sm" }))}
+                  href={"/dashboard/inventory?pharmacy=" + encodeURIComponent(selected.pharmacy_id)}
+                  className={cn(buttonVariants({ variant: "outline", size: "sm" }), "sm:w-auto")}
                 >
-                  {t.dashboard.pharmacy.register}
+                  {a.manageInventory}
                 </Link>
               </div>
-            </Card>
-          )
-        ) : (
-          <div className={"mt-6 space-y-4"}>
-            {pharmacies.length > 1 && (
-              <Field label={a.pharmacyLabel} htmlFor={"analytics-pharmacy"} hint={a.selectPharmacyHint}>
-                <select
-                  id={"analytics-pharmacy"}
-                  value={selected.pharmacy_id}
-                  onChange={(e) => handleSelectPharmacy(e.target.value)}
-                  className={cn(
-                    "h-11 w-full rounded-md border border-input bg-card px-3.5 text-sm text-foreground",
-                    "transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
-                  )}
-                >
-                  {pharmacies.map((ph) => (
-                    <option key={ph.pharmacy_id} value={ph.pharmacy_id}>
-                      {ph.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            )}
-
-            <div className={"flex flex-col gap-1.5"}>
-              <span className={"text-sm font-medium text-foreground"}>{a.periodLabel}</span>
-              <SegmentedControl<AnalyticsPeriod>
-                ariaLabel={a.periodLabel}
-                value={period}
-                onChange={handleSelectPeriod}
-                options={PERIODS.map((value) => ({ value, label: periodLabels[value] }))}
-              />
             </div>
-
-            {error && (
-              <Alert variant={"danger"}>
-                <div className={"flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"}>
-                  <span>{error}</span>
-                  <Button type={"button"} variant={"outline"} size={"sm"} onClick={retry}>
-                    {a.retry}
-                  </Button>
-                </div>
-              </Alert>
-            )}
-
-            {phase === "loading" && !error && (
-              <div className={"flex justify-center py-10"}>
-                <Spinner label={a.loading} />
-              </div>
-            )}
-
-            {phase === "ready" && !error && items.length === 0 && (
-              <Card className={"flex flex-col items-center gap-3 p-8 text-center"}>
-                <span className={"flex size-12 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
-                  <TrendingUp className={"size-6"} aria-hidden />
-                </span>
-                <h2 className={"font-semibold"}>{a.emptyTitle}</h2>
-                <p className={"max-w-sm text-sm text-muted-foreground"}>{a.emptyBody}</p>
-              </Card>
-            )}
-
-            {phase === "ready" && !error && items.length > 0 && (
-              <div className={"space-y-2"}>
-                <h2 className={"font-semibold text-foreground"}>{a.listHeader}</h2>
-                <p className={"text-xs text-muted-foreground"}>{a.listHint}</p>
-
-                <Card className={"overflow-hidden"}>
-                  <ul className={"divide-y divide-border"}>
-                    {items.map((item) => (
-                      <UnmetDemandRow
-                        key={item.medicineId}
-                        name={item.medicineName || item.medicineId}
-                        count={item.searchCount}
-                        busiest={busiest}
-                      />
-                    ))}
-                  </ul>
-                </Card>
-
-                <div className={"flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between"}>
-                  <p className={"text-xs text-muted-foreground"}>
-                    {interpolate(a.count, { count: items.length })}
-                  </p>
-                  <Link
-                    href={"/dashboard/inventory?pharmacy=" + encodeURIComponent(selected.pharmacy_id)}
-                    className={cn(buttonVariants({ variant: "outline", size: "sm" }), "sm:w-auto")}
-                  >
-                    {a.manageInventory}
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </main>
-    </div>
+          )}
+        </div>
+      )}
+    </DashboardPageShell>
   );
 }
 

@@ -94,7 +94,7 @@ export function ApplicationDetail({ id }: { id: string }) {
     <div className={"flex min-h-dvh flex-col"}>
       <AppHeader />
 
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
+      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 pt-24 pb-10 sm:pt-28"}>
         <Link
           href={"/admin/pharmacist-applications"}
           className={"inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"}

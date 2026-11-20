@@ -13,7 +13,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardPageShell } from "@/components/dashboard/page-shell";
 import { VerifiedBadge } from "@/components/dashboard/pharmacy/verified-badge";
 import { cn } from "@/lib/cn";
 
@@ -74,17 +74,9 @@ export function PharmacyLocatorContent() {
   const visible = openNowOnly ? pharmacies.filter((p) => p.is_open_now) : pharmacies;
 
   return (
-    <div className={"flex min-h-dvh flex-col"}>
-      <AppHeader />
-
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <header>
-          <h1 className={"text-2xl font-semibold tracking-tight"}>{d.title}</h1>
-          <p className={"mt-1 text-muted-foreground"}>{d.subtitle}</p>
-        </header>
-
-        <div className={"mt-8"}>
-          {status === "idle" && (
+    <DashboardPageShell title={d.title} subtitle={d.subtitle}>
+      <div>
+        {status === "idle" && (
             <Card className={"flex flex-col items-center gap-4 p-8 text-center"}>
               <span className={"flex size-12 items-center justify-center rounded-full bg-primary-subtle text-primary-strong"}>
                 <MapPin className={"size-6"} aria-hidden />
@@ -167,8 +159,7 @@ export function PharmacyLocatorContent() {
             </div>
           )}
         </div>
-      </main>
-    </div>
+    </DashboardPageShell>
   );
 }
 

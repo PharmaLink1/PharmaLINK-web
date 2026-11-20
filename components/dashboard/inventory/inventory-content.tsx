@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { PlusCircle, UploadCloud } from "lucide-react";
 import Link from "next/link";
-import { ArrowLeft, PlusCircle, UploadCloud } from "lucide-react";
 import { inventoryApi, pharmacyApi } from "@/lib/pharmacy-api";
 import type { BulkSummary, InventoryListing, MyPharmacy } from "@/lib/pharmacy-types";
 import { getErrorMessage } from "@/lib/i18n/errors";
@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Spinner } from "@/components/ui/spinner";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardPageShell } from "@/components/dashboard/page-shell";
 import { ListingForm } from "@/components/dashboard/inventory/listing-form";
 import { BulkUploadForm } from "@/components/dashboard/inventory/bulk-upload-form";
 import { ListingRow } from "@/components/dashboard/inventory/listing-row";
@@ -133,122 +133,107 @@ export function InventoryContent() {
   }
 
   return (
-    <div className={"flex min-h-dvh flex-col"}>
-      <AppHeader />
-
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <Link
-          href={"/dashboard"}
-          className={"inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"}
-        >
-          <ArrowLeft className={"size-4"} aria-hidden />
-          {t.nav.dashboard}
-        </Link>
-
-        <h1 className={"mt-4 text-2xl font-semibold tracking-tight"}>{inv.title}</h1>
-        <p className={"mt-1 text-muted-foreground"}>{inv.subtitle}</p>
-
-        {!ready ? (
-          <div className={"mt-8 flex justify-center py-10"}>
-            <Spinner label={inv.loading} />
+    <DashboardPageShell title={inv.title} subtitle={inv.subtitle}>
+      {!ready ? (
+        <div className="flex justify-center py-10">
+          <Spinner label={inv.loading} />
+        </div>
+      ) : !selected ? (
+        <Card className="p-5">
+          <p className="text-sm text-muted-foreground">{inv.noPharmacy}</p>
+          <div className="mt-4">
+            <Link
+              href="/dashboard/pharmacy"
+              className={cn(buttonVariants({ variant: "primary", size: "sm" }))}
+            >
+              {t.dashboard.pharmacy.register}
+            </Link>
           </div>
-        ) : !selected ? (
-          <Card className={"mt-8 p-5"}>
-            <p className={"text-sm text-muted-foreground"}>{inv.noPharmacy}</p>
-            <div className={"mt-4"}>
-              <Link
-                href={"/dashboard/pharmacy"}
-                className={cn(buttonVariants({ variant: "primary", size: "sm" }))}
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {pharmacies.length > 1 && (
+            <Field
+              label={inv.pharmacyLabel}
+              htmlFor="inventory-pharmacy"
+              hint={inv.selectPharmacyHint}
+            >
+              <select
+                id="inventory-pharmacy"
+                value={selected.pharmacy_id}
+                onChange={(e) => void handleSelectPharmacy(e.target.value)}
+                className={cn(
+                  "h-11 w-full rounded-md border border-input bg-card px-3.5 text-sm text-foreground",
+                  "transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+                )}
               >
-                {t.dashboard.pharmacy.register}
-              </Link>
-            </div>
-          </Card>
-        ) : (
-          <div className={"mt-6 space-y-4"}>
-            {pharmacies.length > 1 && (
-              <Field
-                label={inv.pharmacyLabel}
-                htmlFor={"inventory-pharmacy"}
-                hint={inv.selectPharmacyHint}
-              >
-                <select
-                  id={"inventory-pharmacy"}
-                  value={selected.pharmacy_id}
-                  onChange={(e) => void handleSelectPharmacy(e.target.value)}
-                  className={cn(
-                    "h-11 w-full rounded-md border border-input bg-card px-3.5 text-sm text-foreground",
-                    "transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
-                  )}
-                >
-                  {pharmacies.map((ph) => (
-                    <option key={ph.pharmacy_id} value={ph.pharmacy_id}>
-                      {ph.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            )}
+                {pharmacies.map((ph) => (
+                  <option key={ph.pharmacy_id} value={ph.pharmacy_id}>
+                    {ph.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
 
-            {selected.verified_status !== "verified" && (
-              <Alert variant={"warning"}>{inv.pendingNotice}</Alert>
-            )}
-            {notice && <Alert variant={"success"}>{notice}</Alert>}
-            {error && <Alert variant={"danger"}>{error}</Alert>}
+          {selected.verified_status !== "verified" && (
+            <Alert variant="warning">{inv.pendingNotice}</Alert>
+          )}
+          {notice && <Alert variant="success">{notice}</Alert>}
+          {error && <Alert variant="danger">{error}</Alert>}
 
-            <SegmentedControl
-              options={[
-                { value: "single", label: inv.modeSingle, icon: PlusCircle },
-                { value: "bulk", label: inv.modeBulk, icon: UploadCloud },
-              ]}
-              value={mode}
-              onChange={setMode}
-              ariaLabel={inv.title}
+          <SegmentedControl
+            options={[
+              { value: "single", label: inv.modeSingle, icon: PlusCircle },
+              { value: "bulk", label: inv.modeBulk, icon: UploadCloud },
+            ]}
+            value={mode}
+            onChange={setMode}
+            ariaLabel={inv.title}
+          />
+
+          {mode === "single" ? (
+            <ListingForm
+              key={selected.pharmacy_id}
+              pharmacyID={selected.pharmacy_id}
+              onSaved={handleSaved}
             />
+          ) : (
+            <BulkUploadForm
+              key={selected.pharmacy_id}
+              pharmacyID={selected.pharmacy_id}
+              onUploaded={handleBulkUploaded}
+            />
+          )}
 
-            {mode === "single" ? (
-              <ListingForm
-                key={selected.pharmacy_id}
-                pharmacyID={selected.pharmacy_id}
-                onSaved={handleSaved}
-              />
-            ) : (
-              <BulkUploadForm
-                key={selected.pharmacy_id}
-                pharmacyID={selected.pharmacy_id}
-                onUploaded={handleBulkUploaded}
-              />
-            )}
-
-            {listings.length > 0 ? (
-              <div className={"space-y-2"}>
-                <p className={"text-xs text-muted-foreground"}>
-                  {interpolate(inv.count, { count: listings.length })}
-                </p>
-                <Card className={"overflow-hidden"}>
-                  <ul className={"divide-y divide-border"}>
-                    {listings.map((listing) => (
-                      <ListingRow
-                        key={listing.medicineId}
-                        listing={listing}
-                        name={listing.medicineName || listing.medicineId}
-                        marking={marking === listing.medicineId}
-                        onMarkOutOfStock={handleMarkOutOfStock}
-                        t={t}
-                      />
-                    ))}
-                  </ul>
-                </Card>
-              </div>
-            ) : (
-              <Card className={"p-5"}>
-                <p className={"font-medium text-foreground"}>{inv.empty}</p>
-                <p className={"mt-1 text-sm text-muted-foreground"}>{inv.emptyHint}</p>
+          {listings.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                {interpolate(inv.count, { count: listings.length })}
+              </p>
+              <Card className="overflow-hidden">
+                <ul className="divide-y divide-border">
+                  {listings.map((listing) => (
+                    <ListingRow
+                      key={listing.medicineId}
+                      listing={listing}
+                      name={listing.medicineName || listing.medicineId}
+                      marking={marking === listing.medicineId}
+                      onMarkOutOfStock={handleMarkOutOfStock}
+                      t={t}
+                    />
+                  ))}
+                </ul>
               </Card>
-            )}
-          </div>
-        )}
-      </main>
-    </div>
+            </div>
+          ) : (
+            <Card className="p-5">
+              <p className="font-medium text-foreground">{inv.empty}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{inv.emptyHint}</p>
+            </Card>
+          )}
+        </div>
+      )}
+    </DashboardPageShell>
   );
 }

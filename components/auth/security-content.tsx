@@ -12,7 +12,7 @@ export function SecurityContent() {
     <div className="flex min-h-dvh flex-col">
       <AppHeader />
 
-      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-6 pt-24 pb-10 sm:pt-28">
         <h1 className="text-2xl font-semibold tracking-tight">{t.settings.security}</h1>
         <p className="mt-1 text-muted-foreground">{t.settings.subtitle}</p>
 

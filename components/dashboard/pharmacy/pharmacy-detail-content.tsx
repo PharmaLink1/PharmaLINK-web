@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, Phone } from "lucide-react";
+import { Clock, MapPin, Phone } from "lucide-react";
 import { pharmacyApi } from "@/lib/pharmacy-api";
 import { ApiError } from "@/lib/auth-types";
 import type { Hours, PharmacyDetail } from "@/lib/pharmacy-types";
@@ -14,7 +14,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardPageShell } from "@/components/dashboard/page-shell";
 import { VerifiedBadge } from "@/components/dashboard/pharmacy/verified-badge";
 import { cn } from "@/lib/cn";
 
@@ -74,20 +74,12 @@ export function PharmacyDetailContent({ id }: { id: string }) {
   }, [load]);
 
   return (
-    <div className={"flex min-h-dvh flex-col"}>
-      <AppHeader />
-
-      <main className={"mx-auto w-full max-w-3xl flex-1 px-6 py-10"}>
-        <Link
-          href={"/dashboard"}
-          className={"inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"}
-        >
-          <ArrowLeft className={"size-4"} aria-hidden />
-          {t.nav.dashboard}
-        </Link>
-
-        <div className={"mt-6"}>
-          {phase === "loading" && (
+    <DashboardPageShell
+      title={detail?.name ?? t.meta.pharmacyDetail}
+      subtitle={detail?.address ?? undefined}
+    >
+      <div>
+        {phase === "loading" && (
             <div className={"flex justify-center py-16"}>
               <Spinner label={d.loading} />
             </div>
@@ -115,8 +107,7 @@ export function PharmacyDetailContent({ id }: { id: string }) {
             <PharmacyDetailView detail={detail} locale={locale} t={t} />
           )}
         </div>
-      </main>
-    </div>
+    </DashboardPageShell>
   );
 }
 

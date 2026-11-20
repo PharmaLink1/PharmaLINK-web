@@ -55,9 +55,19 @@ export function AppHeader() {
   const mounted = useMounted();
   const [open, setOpen] = React.useState(false); // desktop avatar dropdown
   const [menuOpen, setMenuOpen] = React.useState(false); // mobile full-screen drawer
+  const [scrolled, setScrolled] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
   const closeButtonRef = React.useRef<HTMLButtonElement>(null);
   const name = user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : "";
+
+  // Track scroll so the app header stays transparent over the hero banner,
+  // then frosts with backdrop-blur once the page scrolls.
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const roleLabels: Record<Role, string> = {
     user: t.nav.roles.user,
@@ -135,110 +145,130 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-border bg-card/70 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Logo />
+      <header
+        style={{ pointerEvents: "none" }}
+        className="fixed inset-x-0 top-0 z-50 pointer-events-none px-4 pt-3 sm:px-6 sm:pt-2"
+      >
+        <div
+          style={{ pointerEvents: "auto" }}
+          className={cn(
+            "pointer-events-auto mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-2 rounded-md border px-3 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-4",
+            scrolled
+              ? "border-border/60 bg-background/65 shadow-lg shadow-black/5 backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/60"
+              : "border-transparent bg-transparent shadow-none",
+          )}
+        >
+          <Logo href="/dashboard" />
 
-        <div className="flex items-center gap-1 sm:gap-2">
-          {/* Desktop: inline role links + avatar dropdown */}
-          <div className="hidden items-center gap-1 lg:flex sm:gap-2">
-            {roleNavLinks.map((link) => {
-              const active = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  <link.icon className="size-4 text-muted-foreground" aria-hidden />
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Toggles live in the bar on all screen sizes (desktop + mobile) */}
           <div className="flex items-center gap-1 sm:gap-2">
-            <ThemeToggle
-              variant="blinds"
-              className="size-9 shrink-0 rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
-              iconClassName="size-4"
-            />
-            <LanguageToggle />
-          </div>
+            {/* Desktop: inline role links + avatar dropdown */}
+            <div className="hidden items-center gap-1 lg:flex sm:gap-2">
+              {roleNavLinks.map((link) => {
+                const active = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors duration-200",
+                      active
+                        ? "bg-foreground/10 text-foreground"
+                        : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground",
+                    )}
+                  >
+                    <link.icon className="size-4 text-muted-foreground" aria-hidden />
+                    <span>{link.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
 
-          {/* Desktop avatar dropdown */}
-          <div ref={menuRef} className="relative hidden lg:block">
+            {/* Toggles live in the bar on all screen sizes (desktop + mobile) */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <ThemeToggle
+                variant="blinds"
+                className="size-9 shrink-0 rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                iconClassName="size-4"
+              />
+              <LanguageToggle />
+            </div>
+
+            {/* Desktop avatar dropdown */}
+            <div ref={menuRef} className="relative hidden lg:block">
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={open}
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-foreground/5"
+              >
+                <span className="flex size-8 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
+                  <User className="size-4" aria-hidden />
+                </span>
+                <span className="hidden text-left sm:block">
+                  <span className="block max-w-48 truncate font-medium leading-tight">
+                    {name || t.nav.account}
+                  </span>
+                  {user && (
+                    <span className="block text-xs leading-tight text-muted-foreground">
+                      {roleLabels[user.role] ?? user.role}
+                    </span>
+                  )}
+                </span>
+                <ChevronDown className="size-4 text-muted-foreground" aria-hidden />
+              </button>
+
+              {open && (
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-card shadow-md"
+                >
+                  <div className="border-b border-border px-3 py-2.5">
+                    <p className="truncate text-sm font-medium">{name || t.nav.account}</p>
+                    <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+                  </div>
+                  <Link
+                    href="/dashboard"
+                    role="menuitem"
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+                  >
+                    <LayoutDashboard className="size-4 text-muted-foreground" aria-hidden />
+                    {t.nav.dashboard}
+                  </Link>
+                  <Link
+                    href="/settings/security"
+                    role="menuitem"
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Settings className="size-4 text-muted-foreground" aria-hidden />
+                    {t.nav.changePassword}
+                  </Link>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+                  >
+                    <LogOut className="size-4 text-muted-foreground" aria-hidden />
+                    {t.nav.logOut}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile: hamburger */}
             <button
               type="button"
-              onClick={() => setOpen((v) => !v)}
+              onClick={() => setMenuOpen(true)}
+              aria-label={t.nav.openMenu}
               aria-haspopup="menu"
-              aria-expanded={open}
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
+              aria-expanded={menuOpen}
+              className="ml-1 inline-flex size-9 items-center justify-center rounded-md border border-border/70 bg-card/70 text-foreground backdrop-blur-sm transition-colors duration-300 hover:bg-muted active:scale-95 lg:hidden"
             >
-              <span className="flex size-8 items-center justify-center rounded-full bg-primary-subtle text-primary-strong">
-                <User className="size-4" aria-hidden />
-              </span>
-              <span className="hidden text-left sm:block">
-                <span className="block max-w-48 truncate font-medium leading-tight">
-                  {name || t.nav.account}
-                </span>
-                {user && (
-                  <span className="block text-xs leading-tight text-muted-foreground">
-                    {roleLabels[user.role] ?? user.role}
-                  </span>
-                )}
-              </span>
-              <ChevronDown className="size-4 text-muted-foreground" aria-hidden />
+              <Menu className="size-5" aria-hidden />
             </button>
-
-            {open && (
-              <div
-                role="menu"
-                className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-card shadow-md"
-              >
-                <div className="border-b border-border px-3 py-2.5">
-                  <p className="truncate text-sm font-medium">{name || t.nav.account}</p>
-                  <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-                </div>
-                <Link
-                  href="/settings/security"
-                  role="menuitem"
-                  onClick={() => setOpen(false)}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
-                >
-                  <Settings className="size-4 text-muted-foreground" aria-hidden />
-                  {t.nav.changePassword}
-                </Link>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
-                >
-                  <LogOut className="size-4 text-muted-foreground" aria-hidden />
-                  {t.nav.logOut}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile: hamburger */}
-          <button
-            type="button"
-            onClick={() => setMenuOpen(true)}
-            aria-label={t.nav.openMenu}
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            className="ml-2 inline-flex size-9 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-muted sm:ml-2.5 lg:hidden"
-          >
-            <Menu className="size-5" aria-hidden />
-          </button>
           </div>
         </div>
       </header>

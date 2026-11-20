@@ -157,14 +157,18 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-2">
+      <header
+        style={{ pointerEvents: "none" }}
+        className="fixed inset-x-0 top-0 z-50 pointer-events-none px-4 pt-3 sm:px-6 sm:pt-2"
+      >
         <div
+          style={{ pointerEvents: "auto" }}
           className={cn(
-            "mx-auto flex h-14 w-full max-w-6xl items-center gap-2 rounded-md border px-3 transition-[background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-4",
-            // Over the hero the bar is invisible; frost and a hairline settle in once
-            // the page moves so the links stay legible above content.
+            "pointer-events-auto mx-auto flex h-14 w-full max-w-6xl items-center gap-2 rounded-md border px-3 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-4",
+            // At the top over the hero the bar is completely transparent;
+            // frosted glass blur and a subtle border settle in on scroll.
             scrolled
-              ? "border-border/70 bg-background/85 shadow-xl shadow-black/5 backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/75"
+              ? "border-border/60 bg-background/65 shadow-lg shadow-black/5 backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/60"
               : "border-transparent bg-transparent shadow-none",
           )}
         >
